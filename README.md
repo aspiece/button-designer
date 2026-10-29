@@ -6,6 +6,10 @@ A student-friendly browser designer for creating 2.5-inch robotics pin-back butt
 
 The initial design uses Fenton orange (`#F58220`), black (`#111111`), and white. All five templates start in the Fenton palette but students can adjust colors individually. The **Fenton-themed artwork** dropdown contains four original graphics (tiger stripes, gear, F monogram, and 5114 shield). These are not official team logos. To use official assets, upload PNG/SVG files in the image upload control. Uploads stay in the current browser session unless the design is explicitly saved in local storage.
 
+## League logos and image layers
+
+Official FLL, FTC, and FRC logos are available through the linked [FIRST brand downloads](https://www.firstinspires.org/brand/logos-guidelines). They are **not bundled** with this repository yet; select the desired official PNG/SVG and upload it in the designer. Multiple images can be uploaded or dropped onto the circular canvas. Use **Selected image layer** to choose which image to reposition, resize, crop, or remove. Students may change all Fenton theme text, colors, and artwork.
+
 ## Features
 
 - Design custom buttons with text, colors, and uploaded images.
