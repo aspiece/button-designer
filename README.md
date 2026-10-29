@@ -41,3 +41,6 @@ This app is designed to edit artwork in the browser, without a student database.
 ## License
 
 No license selected yet. Add a LICENSE file if you want to permit redistribution or modification by others.
+## Fenton program logos
+
+The Fenton team picker now includes seven orange-and-black team logos and three white Titanium Tigers subgroup logos: Tungsten Tigers, Chromium Tigers, and Iridium Tigers, plus one unlabeled black artwork file. All eleven PNGs must be uploaded to the repository's `/logos` directory, using the filenames in the button-logo asset ZIP, for the picker to work. These are user-supplied artwork, not FIRST league marks.
