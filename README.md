@@ -2,6 +2,10 @@
 
 A student-friendly browser designer for creating 2.5-inch robotics pin-back buttons and printing sheets of matching designs.
 
+## Fenton Robotics defaults
+
+The initial design uses Fenton orange (`#F58220`), black (`#111111`), and white. All five templates start in the Fenton palette but students can adjust colors individually. The **Fenton-themed artwork** dropdown contains four original graphics (tiger stripes, gear, F monogram, and 5114 shield). These are not official team logos. To use official assets, upload PNG/SVG files in the image upload control. Uploads stay in the current browser session unless the design is explicitly saved in local storage.
+
 ## Features
 
 - Design custom buttons with text, colors, and uploaded images.
