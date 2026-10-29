@@ -44,3 +44,7 @@ No license selected yet. Add a LICENSE file if you want to permit redistribution
 ## Fenton program logos
 
 The Fenton team picker now includes seven orange-and-black team logos and three white Titanium Tigers subgroup logos: Tungsten Tigers, Chromium Tigers, and Iridium Tigers, plus one unlabeled black artwork file. All eleven PNGs must be uploaded to the repository's `/logos` directory, using the filenames in the button-logo asset ZIP, for the picker to work. These are user-supplied artwork, not FIRST league marks.
+
+## Latest logo selection
+
+The built-in generic graphics were removed from the menu. The team logo dropdown lists only the eleven user-supplied logos and the Fenton Paw. The 11 supplied PNGs still need to be uploaded to `logos/` with their exact names; until then the selector will report missing images. The Fenton Paw uses a school-hosted image URL, which may block browser canvas access; download the image from Fenton High School and upload it manually if that occurs. Uploaded layers are initially scaled to fit the circular face, and students can resize and reposition them.
