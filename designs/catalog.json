@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "designs": [
+    {
+      "id": "fenton-paw-classic",
+      "kind": "project",
+      "file": "designs/fenton-paw-classic.json",
+      "name": "Fenton Paw Classic",
+      "description": "Orange team spirit button with a centered tiger paw.",
+      "background": "#f58220",
+      "centerLogo": "paw"
+    },
+    {
+      "id": "titanium-tigers-badge",
+      "kind": "project",
+      "file": "designs/titanium-tigers-badge.json",
+      "name": "Titanium Tigers Badge",
+      "description": "Black and orange Titanium Tigers team badge.",
+      "background": "#111111",
+      "centerLogo": "t"
+    }
+  ]
+}
