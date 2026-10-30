@@ -8,6 +8,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  pages: write
 jobs:
   catalog:
     runs-on: ubuntu-latest
@@ -21,6 +22,7 @@ jobs:
       - name: Validate and update design catalog
         run: python scripts/build_library.py
       - name: Commit regenerated catalog if changed
+        id: publish
         run: |
           if ! git diff --quiet -- designs/catalog.json; then
             git config user.name "github-actions[bot]"
@@ -28,4 +30,10 @@ jobs:
             git add designs/catalog.json
             git commit -m "Refresh approved button design catalog"
             git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+      - name: Request Pages rebuild for refreshed catalog
+        if: steps.publish.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/${{ github.repository }}/pages/builds"
           fi
