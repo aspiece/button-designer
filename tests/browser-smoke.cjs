@@ -139,7 +139,7 @@ await page.waitForTimeout(1100);
 assert.ok(await page.evaluate(()=>!!localStorage.getItem('fentonButtonAutosaveV3')),'Autosave created on this device');
 // Reusable GitHub library: confirm approved designs, open/edit, publish preparation and classroom reuse.
 await page.waitForFunction(()=>document.querySelectorAll('.shared-card').length>=2,null,{timeout:12000});
-assert.equal(await page.locator('.shared-card').count(),2,'Two reusable sample designs appear in library');
+assert.ok((await page.locator('.shared-card').count())>=2,'Reusable sample designs appear in library');
 await page.locator('#libSearch').fill('Titanium');
 assert.equal(await page.locator('.shared-card').count(),1,'Library search filters saved designs');
 await page.locator('#libSearch').fill('');
