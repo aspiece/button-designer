@@ -26,7 +26,15 @@ const page=await ctx.newPage(),errors=[];
 page.on('pageerror',error=>errors.push(error.message));
 await page.goto('http://127.0.0.1:8765/',{waitUntil:'networkidle'});
 assert.equal(await page.locator('.template-card').count(),6,'Visual template gallery');
-await page.locator('#advancedTools > summary').click();
+assert.equal(await page.locator('.studio-logo-card').count(),10,'Ten named Fenton logo thumbnails');
+assert.equal(await page.locator('#uxBeginner').getAttribute('aria-pressed'),'true','Beginner mode is default');
+assert.equal(await page.locator('#advancedTools').isVisible(),false,'Advanced settings are initially hidden');
+await page.locator('#uxLogoSearch').fill('31558');
+assert.equal(await page.locator('.studio-logo-card:visible').count(),1,'Search filters logos by number');
+await page.locator('#uxLogoSearch').fill('');
+assert.equal(await page.locator('.studio-logo-card:visible').count(),10,'Clearing search restores logos');
+await page.click('#uxAdvanced');
+assert.equal(await page.locator('#advancedTools').isVisible(),true,'Advanced mode reveals settings');
 assert.equal(await page.locator('canvas#editorCanvas').isVisible(),true,'Canvas is visible');
 const expected={paw:['#f58220','paw'],tiger:['#111111','paw'],titanium:['#111111','t'],blank:['#ffffff','none'],orange:['#f58220','none'],black:['#111111','none']};
 for(const [template,[bg,logo]] of Object.entries(expected)){
@@ -57,7 +65,8 @@ const pdfData=fs.readFileSync(await pdf.path());
 assert.equal(pdfData.subarray(0,8).toString('ascii'),'%PDF-1.4');
 assert.ok(pdfData.length>1000,'PDF contains artwork');
 // Phase-one interaction tests: gallery, click-to-edit, drag, contextual controls and undo/redo.
-await page.locator('#advancedTools > summary').click();
+await page.click('#uxBeginner');
+assert.equal(await page.locator('#advancedTools').isVisible(),false,'Beginner mode hides precision controls');
 await page.locator('.template-card[data-template="black"]').click();
 assert.equal(await page.inputValue('#theme'),'black','Gallery changes template');
 assert.equal(await page.locator('.template-card[data-template="black"]').getAttribute('aria-pressed'),'true','Selected gallery card marked');
@@ -87,12 +96,22 @@ const xAfter=await page.evaluate(()=>layers[0].x);
 assert.ok(xAfter>xBefore+.04,'Image can be dragged on the canvas');
 await page.click('#uxUndo');
 assert.ok(Math.abs((await page.evaluate(()=>layers[0].x))-xBefore)<.01,'Undo restores image position');
+// Phase 2: add a logo from its thumbnail, select via layers, and reorder.
+await page.locator('.studio-logo-card[data-logo="tiger-cubs-29168"]').click();
+await page.waitForFunction(()=>window.ButtonStudioUX?.getState().layers.length===2,null,{timeout:12000});
+assert.equal(await page.locator('.studio-layer-select').count(),2,'Visual layer list shows both pictures');
+await page.locator('.studio-layer-select').last().click();
+assert.equal(await page.locator('.studio-layer-select[aria-pressed="true"]').count(),1,'Layer selection is highlighted');
+const priorNames=await page.evaluate(()=>window.ButtonStudioUX.getState().layers.map(l=>l.name).join('|'));
+await page.locator('.studio-layer-row').last().locator('button[data-action="forward"]').click();
+const newNames=await page.evaluate(()=>window.ButtonStudioUX.getState().layers.map(l=>l.name).join('|'));
+assert.notEqual(newNames,priorNames,'Layer order changes');
 await page.screenshot({path:path.join(__dirname,'browser-preview.png')});
 await page.setViewportSize({width:375,height:812});
 const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+4);
 assert.equal(overflow,false,'No horizontal overflow at phone width');
 assert.deepEqual(errors,[],'No browser JavaScript exceptions');
-console.log('PASS: browser templates, borders, team image, crop, editable project, PDF, mobile layout');
+console.log('PASS: Phase 2 logo library, search, modes, layers; plus templates, image editing, undo, PDF and mobile');
 }finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve))}
 }
 main().catch(e=>{console.error(e);process.exitCode=1;server.close()});
