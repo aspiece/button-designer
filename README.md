@@ -13,6 +13,19 @@ A browser-based 2.5-inch button designer for Fenton Robotics students. [Launch t
 - Save and restore the design using browser storage, or **download/open an editable JSON project file** to back up work outside the browser.
 - No login, paid backend, or account required. Artwork processing is in-browser.
 
+## Interactive editor — Phase 1
+
+The editor now starts with **six picture-based template cards**. Choose a design and tap any text or graphic on the button to edit it. The selection panel shows only the relevant controls:
+
+- **Top and bottom curved text:** change words, adjust size, drag the ring slightly to reposition it, or use the orange handle to resize.
+- **Center text:** edit, drag, resize, center, or remove it.
+- **Center graphic:** change F, paw, T, or blank; drag or resize it.
+- **Uploaded/team images:** tap one to select it, drag to move, drag the orange corner handle to resize, crop, change layer order, or remove it.
+- **Background:** change background and border colors.
+- **Undo / Redo:** buttons beside the canvas (Ctrl/Cmd+Z, Ctrl/Cmd+Y when not typing in a field). Up to 35 committed design changes are retained during this session.
+
+The **All design settings · advanced** section contains the original precise controls, print settings remain at the right, and PNG/PDF outputs never include the orange selection guides. Editable JSON project files now retain curved-text positions and center-logo placement.
+
 ## Student workflow
 
 1. Open the designer and select a starting template.
