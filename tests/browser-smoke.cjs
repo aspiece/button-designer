@@ -137,12 +137,34 @@ assert.ok(mixedLatin.includes('/Count 2'),'Combined PDF must have two pages');
 await page.click('#psClose');
 await page.waitForTimeout(1100);
 assert.ok(await page.evaluate(()=>!!localStorage.getItem('fentonButtonAutosaveV3')),'Autosave created on this device');
+// Reusable GitHub library: confirm approved designs, open/edit, publish preparation and classroom reuse.
+await page.waitForFunction(()=>document.querySelectorAll('.shared-card').length>=2,null,{timeout:12000});
+assert.equal(await page.locator('.shared-card').count(),2,'Two reusable sample designs appear in library');
+await page.locator('#libSearch').fill('Titanium');
+assert.equal(await page.locator('.shared-card').count(),1,'Library search filters saved designs');
+await page.locator('#libSearch').fill('');
+await page.once('dialog',dialog=>dialog.accept());
+await page.locator('.shared-card[data-id="fenton-paw-classic"] button[data-action="edit"]').click();
+await page.waitForFunction(()=>document.getElementById('libStatus').textContent.includes('Opened Fenton Paw Classic'),null,{timeout:12000});
+assert.equal(await page.inputValue('#headline'),'FENTON ROBOTICS','Saved JSON reopens as editable project');
+await page.locator('.shared-publish > summary').click();
+await page.locator('#libDesignName').fill('My School Button');
+await page.locator('#libDesignDesc').fill('Reusable classroom button');
+const [savedToPublish]=await Promise.all([page.waitForEvent('download'),page.locator('#libPrepare').click()]);
+assert.equal(savedToPublish.suggestedFilename(),'my-school-button.json','Editable file gets a clean upload filename');
+const approved=JSON.parse(fs.readFileSync(await savedToPublish.path(),'utf8'));
+assert.equal(approved.name,'My School Button','Shared design file preserves its name');
+assert.equal(approved.description,'Reusable classroom button','Shared design file preserves description');
+await page.locator('.shared-card[data-id="titanium-tigers-badge"] button[data-action="print"]').click();
+await page.waitForFunction(()=>document.querySelectorAll('.ps-queue-row').length===3,null,{timeout:12000});
+assert.equal(await page.locator('#psMixedTab').getAttribute('aria-selected'),'true','Saved design enters teacher print queue');
+await page.click('#psClose');
 await page.screenshot({path:path.join(__dirname,'browser-preview.png')});
 await page.setViewportSize({width:375,height:812});
 const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+4);
 assert.equal(overflow,false,'No horizontal overflow at phone width');
 assert.deepEqual(errors,[],'No browser JavaScript exceptions');
-console.log('PASS: Phase 3 Print Studio, safe area, autosave, mixed 2-page PDF; plus previous editor tests');
+console.log('PASS: GitHub saved-design library, search, edit, downloadable publishing project, print queue; all earlier tests');
 }finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve))}
 }
 main().catch(e=>{console.error(e);process.exitCode=1;server.close()});
