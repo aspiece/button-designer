@@ -69,7 +69,7 @@ if(guides){c.strokeStyle='#2f3c51';c.lineWidth=2;c.beginPath();c.arc(m,m,r,0,7);
 function sheetLayout(cut){
  cut=Number(cut);
  if(!Number.isFinite(cut)||cut<=0||cut>8.0)throw Error('Invalid paper cut diameter');
- const margin=.2,gap=.12,pageW=8.5,pageH=11;
+ const margin=.18,gap=.12,pageW=8.5,pageH=11;
  const cols=Math.max(1,Math.floor((pageW-2*margin+gap)/(cut+gap)));
  const rows=Math.max(1,Math.floor((pageH-2*margin+gap)/(cut+gap)));
  if(cut>pageW-2*margin||cut>pageH-2*margin)throw Error('Cut diameter is too large for US Letter');
@@ -125,6 +125,8 @@ function restoreProject(data){
 if(!data||typeof data!=='object'||!data.values||typeof data.values!=='object')throw new Error('Invalid design file.');
 uxText=data.textLayout&&data.textLayout.top&&data.textLayout.bottom&&data.textLayout.middle?{top:{radius:clamp(Number(data.textLayout.top.radius)||.73,.6,.78),angle:clamp(Number(data.textLayout.top.angle)||0,-.16,.16)},bottom:{radius:clamp(Number(data.textLayout.bottom.radius)||.73,.6,.78),angle:clamp(Number(data.textLayout.bottom.angle)||0,-.16,.16)},middle:{x:clamp(Number(data.textLayout.middle.x)||.5,.14,.86),y:clamp(Number(data.textLayout.middle.y)||.84,.15,.9)}}:defaultTextLayout();
 uxMark=data.markPosition?{x:clamp(Number(data.markPosition.x)||.5,.12,.88),y:clamp(Number(data.markPosition.y)||.5,.12,.88)}:{x:.5,y:.5};
+// Old projects did not store finishedSize and were authored for 2.5-inch buttons.
+if(!Object.prototype.hasOwnProperty.call(data.values,'finishedSize'))$('finishedSize').value='2.5';
 for(const [key,v] of Object.entries(data.values)){
  let el=$(key);if(!el||!tracked.includes(key))continue;
  if(el.type==='checkbox')el.checked=Boolean(v);else if(typeof v==='string'||typeof v==='number')el.value=String(v)
@@ -137,7 +139,7 @@ for(const item of items){
  im.onload=render;im.onerror=()=>setMessage('A saved image could not be decoded.');im.src=layer.data;layers.push(layer)
 }
 if(layers.length){selectedLayer=layers.length-1;image=layers[selectedLayer].im;imageData=layers[selectedLayer].data}
-syncLayerUI();render()
+syncLayerUI();updateSizeReadout();render()
 }
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 $('saveProject').onclick=()=>{try{localStorage.setItem('roboticsButtonDesign',JSON.stringify(state()));setMessage('Saved in this browser. For a reliable backup, also download an editable project.')}catch{setMessage('Browser storage is full. Use Download editable project instead.')}};
