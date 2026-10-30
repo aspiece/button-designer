@@ -22,7 +22,21 @@ if(kind==='paw'){for(const [x,y] of [[-60,-52],[-20,-78],[20,-78],[60,-52]]){c.b
 function state(){return {values:Object.fromEntries(tracked.map(id=>[id,$(id).type==='checkbox'?$(id).checked:$(id).value])),layers:layers.map(l=>({data:l.data,x:l.x,y:l.y,size:l.size,name:l.name})),imageData,logoX,logoY}}
 function changeTheme(){const a=themes[$('theme').value]||themes.paw;['bgColor','textColor','accentColor','headline','subline','centerText','centerLogoChoice','borderStyle','borderColor'].forEach((k,i)=>$(k).value=a[i]);render();setMessage('Template loaded. Your uploaded artwork remains in place.');}
 function fitText(c,text,maxW,size,font){let s=size;c.font=`900 ${s}px ${font}`;while(s>12&&c.measureText(text).width>maxW){s-=1;c.font=`900 ${s}px ${font}`}return s}
-function arcLetters(c,text,cx,cy,r,top,size,color,font){if(!text)return;c.save();c.fillStyle=color;c.textAlign='center';c.textBaseline='middle';let total=0;let chars=[...text];c.font=`900 ${size}px ${font}`;let widths=chars.map(x=>c.measureText(x).width+3);let scale=Math.min(1,(Math.PI*1.30*r)/widths.reduce((a,b)=>a+b,0));let angles=widths.map(w=>w*scale/r);let angle=-(angles.reduce((a,b)=>a+b,0)/2);for(let i=0;i<chars.length;i++){let step=angles[i];let at=angle+step/2;c.save();c.translate(cx+r*Math.sin(at),cy+(top?-r*Math.cos(at):r*Math.cos(at)));c.rotate(top?at:-at);c.fillText(chars[i],0,0);c.restore();angle+=step}c.restore()}
+function arcLetters(c,text,cx,cy,r,top,size,color,font){
+ if(!text)return;
+ c.save();c.fillStyle=color;c.textAlign='center';c.textBaseline='middle';
+ const chars=Array.from(text),maxArc=Math.PI*.88*r;
+ let widths=[],total=0,fontsize=Math.min(size,56);
+ // Shrink long labels instead of squeezing letters together or letting them collide at the sides.
+ do{c.font='900 '+fontsize+'px '+font;widths=chars.map(ch=>c.measureText(ch).width+fontsize*.045);total=widths.reduce((a,b)=>a+b,0);if(total<=maxArc||fontsize<=11)break;fontsize-=1}while(true);
+ let angle=-total/(2*r);
+ for(let k=0;k<chars.length;k++){
+  let step=widths[k]/r,at=angle+step/2;c.save();
+  c.translate(cx+r*Math.sin(at),cy+(top?-r*Math.cos(at):r*Math.cos(at)));
+  // Both lines read left-to-right, upright when the finished button is held upright.
+  c.rotate(top?at:-at);c.fillText(chars[k],0,0);c.restore();angle+=step
+ }c.restore()
+}
 function drawButton(c,w,{guides=false,cut=3}={}){const m=w/2,r=w/2-2,f=r*2.5/cut,fg=$('textColor').value,accent=$('accentColor').value;
 c.clearRect(0,0,w,w);c.save();c.beginPath();c.arc(m,m,r,0,7);c.clip();c.fillStyle=$('bgColor').value;c.fillRect(0,0,w,w);
 const st=$('borderStyle').value;if(st!=='none'){c.save();c.strokeStyle=$('borderColor').value;c.lineWidth=w*.009;if(st==='dashed')c.setLineDash([w*.028,w*.018]);c.beginPath();c.arc(m,m,f*.93,0,7);c.stroke();if(st==='double'){c.lineWidth=w*.004;c.beginPath();c.arc(m,m,f*.86,0,7);c.stroke()}c.restore()}
