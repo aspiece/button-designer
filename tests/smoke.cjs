@@ -19,7 +19,7 @@ return ()=>{};
 class Node {
 constructor(id){this.id=id;this.value='';this.checked=false;this.disabled=false;this.style={};this.classList={add(){},remove(){}};
 this.width=id==='editorCanvas'?800:id==='sheetPreview'?680:800;this.height=id==='sheetPreview'?880:800;}
-getContext(){return ctx}addEventListener(){}appendChild(){}remove(){}click(){}
+getContext(){return ctx}addEventListener(){}appendChild(){}remove(){}click(){}setCustomValidity(){}
 getBoundingClientRect(){return {left:0,top:0,width:800,height:800}}
 toDataURL(){return 'data:image/jpeg;base64,/9j/2Q=='}
 }
