@@ -145,8 +145,6 @@ assert.equal(await page.locator('.shared-card').count(),1,'Library search filter
 await page.locator('#libSearch').fill('');
 await page.once('dialog',dialog=>dialog.accept());
 await page.locator('.shared-card[data-id="fenton-paw-classic"] button[data-action="edit"]').click();
-await page.waitForTimeout(650);
-console.log('DEBUG LIBRARY OPEN STATUS:',await page.locator('#libStatus').textContent(),'ERRORS:',errors);
 await page.waitForFunction(()=>document.getElementById('libStatus').textContent.includes('Opened Fenton Paw Classic'),null,{timeout:12000});
 assert.equal(await page.inputValue('#headline'),'FENTON ROBOTICS','Saved JSON reopens as editable project');
 await page.locator('.shared-publish > summary').click();
