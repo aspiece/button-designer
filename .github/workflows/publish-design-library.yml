@@ -5,6 +5,7 @@ on:
     paths:
       - "designs/**"
       - "scripts/build_library.py"
+      - ".github/workflows/publish-design-library.yml"
   workflow_dispatch:
 permissions:
   contents: write
@@ -31,9 +32,9 @@ jobs:
             git commit -m "Refresh approved button design catalog"
             git push
             echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
       - name: Request Pages rebuild for refreshed catalog
         if: steps.publish.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh api --method POST "repos/${{ github.repository }}/pages/builds"
-          fi
