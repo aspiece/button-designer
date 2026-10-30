@@ -35,6 +35,16 @@ The **All design settings · advanced** section contains the original precise co
 - While dragging images and center artwork, teal **snap-to-center guides** appear only in the editor. They never print.
 - The existing advanced controls, cropping, portable save files, and PDF output remain available.
 
+## Phase 3 — classroom Print Studio
+
+Click **Preview, print & combine buttons** (or **Print Studio** beside Undo/Redo) to open a dedicated printing workspace. The editor stays unchanged while printing.
+
+- **My button**: Select cut-circle diameter and quantity, inspect the sheet preview, and download an actual-size US Letter PDF. Design warnings flag oversized images, very long arc text, and 2.5-inch circles without paper wrap. Warnings are guidance, not guaranteed collision detection.
+- **Classroom sheet**: Add your current design, import multiple student `.json` editable project files or finished `.png` designs, set each button's quantity, reorder the print queue, preview every page, and download one combined PDF. The total is capped at 120 buttons or 30 designs per batch. For PNG imports, the app assumes the PNG already represents the correct cut-circle layout, so **JSON projects are preferred** when mixing cut diameters.
+- **Local autosave and recovery**: The app stores a small automatic backup on the same browser/device. Students can restore a previous design when they reopen the site. If browser storage is full, students should use **Download editable project** instead.
+- **Print safety**: All PDFs use US Letter page geometry and the cut-circle size selected. Print at **Actual size / 100%**, check the press manufacturer's exact paper diameter, and measure a test sheet. A successful PDF download is not proof of physical printer calibration.
+- **Privacy**: All mixed-sheet imports and artwork rendering happen in the browser. Imported student projects are not sent to a server by this application.
+
 ## Student workflow
 
 1. Open the designer and select a starting template.
