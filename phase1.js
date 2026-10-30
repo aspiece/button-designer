@@ -233,7 +233,8 @@
  }
  function drawOverlay(){
   if(!selected||selected.kind==='background')return;
-  const r=getRect(),{m,f}=metrics();ctx.save();
+  const r=getRect();if(!r&&selected.kind!=='top'&&selected.kind!=='bottom')return;
+  const {m,f}=metrics();ctx.save();
   if(snapGuideX||snapGuideY){ctx.save();ctx.setLineDash([7,6]);ctx.strokeStyle='#137b70';ctx.lineWidth=2;
    if(snapGuideX){ctx.beginPath();ctx.moveTo(m,m-f*.95);ctx.lineTo(m,m+f*.95);ctx.stroke()}
    if(snapGuideY){ctx.beginPath();ctx.moveTo(m-f*.95,m);ctx.lineTo(m+f*.95,m);ctx.stroke()}ctx.restore()}
@@ -363,7 +364,7 @@
  });
  // Keep image selection and undo snapshots current when images finish loading asynchronously.
  const oldSync=syncLayerUI;
- syncLayerUI=function(){oldSync();if(selected?.kind==='image'&&selected.index>=layers.length)selected=null;if(!gesture&&!restoring&&!formFocus)commit();notifyPhase2()};
+ syncLayerUI=function(){oldSync();if(selected?.kind==='image'&&selected.index>=layers.length){selected=null;refreshContext()}if(!gesture&&!restoring&&!formFocus)commit();notifyPhase2()};
  const phase2Listeners=new Set();
  function notifyPhase2(){for(const cb of phase2Listeners){try{cb()}catch(e){console.error('Phase2 UI update error',e)}}}
  const priorRender=render;
