@@ -13,6 +13,8 @@ jobs:
           node-version: '22'
       - name: Verify editor, logos and PDF output
         run: node tests/smoke.cjs
+      - name: Validate reusable GitHub design library files
+        run: python3 scripts/build_library.py --validate
 
   browser:
     runs-on: ubuntu-latest
