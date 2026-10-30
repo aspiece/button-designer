@@ -53,6 +53,8 @@
  previewPanel.querySelector('.canvasWrap').after(help);
  const selectedLabel=$('selectedName'),undoBtn=$('uxUndo'),redoBtn=$('uxRedo');
  let selected=null,draggingObject=null,gesture=false,formFocus=false,restoring=false;
+ let snapGuideX=false,snapGuideY=false;
+ function snapCenter(v,axis){let close=Math.abs(v-.5)<.027;if(axis==='x')snapGuideX=close;else snapGuideY=close;return close?.5:v}
  let past=[],future=[],current=null;const MAX_HISTORY=35;
  function capture(){
   const values={};tracked.forEach(id=>{const el=$(id);values[id]=el.type==='checkbox'?el.checked:el.value});
@@ -232,6 +234,9 @@
  function drawOverlay(){
   if(!selected||selected.kind==='background')return;
   const r=getRect(),{m,f}=metrics();ctx.save();
+  if(snapGuideX||snapGuideY){ctx.save();ctx.setLineDash([7,6]);ctx.strokeStyle='#137b70';ctx.lineWidth=2;
+   if(snapGuideX){ctx.beginPath();ctx.moveTo(m,m-f*.95);ctx.lineTo(m,m+f*.95);ctx.stroke()}
+   if(snapGuideY){ctx.beginPath();ctx.moveTo(m-f*.95,m);ctx.lineTo(m+f*.95,m);ctx.stroke()}ctx.restore()}
   ctx.strokeStyle='#e66d08';ctx.fillStyle='#ffffff';ctx.lineWidth=3;
   ctx.setLineDash([9,6]);
   if(r){ctx.strokeRect(r.cx-r.w/2,r.cy-r.h/2,r.w,r.h)}
@@ -284,20 +289,20 @@
     l.size=clamp(Math.round(distance*2/(d.f*1.25)*100),15,100);
     $('logoSize').value=l.size
    }else{
-    l.x=clamp(d.origin.x+dx/(d.f*1.35),.08,.92);
-    l.y=clamp(d.origin.y+dy/(d.f*1.35),.08,.92)
+    l.x=snapCenter(clamp(d.origin.x+dx/(d.f*1.35),.08,.92),'x');
+    l.y=snapCenter(clamp(d.origin.y+dy/(d.f*1.35),.08,.92),'y')
    }
   }else if(d.kind==='middle'){
    if(d.mode==='resize'){$('middleSize').value=clamp(Math.round(+$('middleSize').value+(dx+dy)*.08),20,72);d.point=p}
    else{
-    uxText.middle.x=clamp(d.origin.x+dx/(d.f*1.35),.16,.84);
-    uxText.middle.y=clamp(d.origin.y+dy/(d.f*1.35),.17,.9)
+    uxText.middle.x=snapCenter(clamp(d.origin.x+dx/(d.f*1.35),.16,.84),'x');
+    uxText.middle.y=snapCenter(clamp(d.origin.y+dy/(d.f*1.35),.17,.9),'y')
    }
   }else if(d.kind==='mark'){
    if(d.mode==='resize'){$('centerSize').value=clamp(Math.round(Math.hypot(p.x-(d.m+(uxMark.x-.5)*d.f*1.35),p.y-(d.m+(uxMark.y-.5)*d.f*1.35))/(d.f*.75)*100),15,95)}
    else{
-    uxMark.x=clamp(d.origin.x+dx/(d.f*1.35),.15,.85);
-    uxMark.y=clamp(d.origin.y+dy/(d.f*1.35),.15,.85)
+    uxMark.x=snapCenter(clamp(d.origin.x+dx/(d.f*1.35),.15,.85),'x');
+    uxMark.y=snapCenter(clamp(d.origin.y+dy/(d.f*1.35),.15,.85),'y')
    }
   }else if(d.kind==='top'||d.kind==='bottom'){
    if(d.mode==='resize'){
@@ -313,7 +318,7 @@
   }
   render();e.preventDefault()
  });
- function stopDrag(){if(!draggingObject)return;draggingObject=null;editor.classList.remove('is-moving');finishGesture();refreshContext();render()}
+ function stopDrag(){if(!draggingObject)return;draggingObject=null;snapGuideX=snapGuideY=false;editor.classList.remove('is-moving');finishGesture();refreshContext();render()}
  editor.addEventListener('pointerup',stopDrag);editor.addEventListener('pointercancel',stopDrag);
  editor.addEventListener('lostpointercapture',stopDrag);
  // The dropdown remains available in Advanced tools; selections stay in sync.
