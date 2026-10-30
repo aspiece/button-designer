@@ -57,7 +57,7 @@ function arcLetters(c,text,cx,cy,r,top,size,color,font,arcShift=0){
   c.rotate(top?at:-at);c.fillText(chars[k],0,0);c.restore();angle+=step
  }c.restore()
 }
-function drawButton(c,w,{guides=false,cut=3}={}){const m=w/2,r=w/2-2,f=r*2.5/cut,fg=$('textColor').value,accent=$('accentColor').value;
+function drawButton(c,w,{guides=false,cut=selectedCut()}={}){const m=w/2,r=w/2-2,f=r*selectedSize()/cut,fg=$('textColor').value,accent=$('accentColor').value;
 c.clearRect(0,0,w,w);c.save();c.beginPath();c.arc(m,m,r,0,7);c.clip();c.fillStyle=$('bgColor').value;c.fillRect(0,0,w,w);
 const st=$('borderStyle').value;if(st!=='none'){c.save();c.strokeStyle=$('borderColor').value;c.lineWidth=w*.009;if(st==='dashed')c.setLineDash([w*.028,w*.018]);c.beginPath();c.arc(m,m,f*.93,0,7);c.stroke();if(st==='double'){c.lineWidth=w*.004;c.beginPath();c.arc(m,m,f*.86,0,7);c.stroke()}c.restore()}
 const hasMiddle=$('centerText').value.trim().length>0;const markSize=hasMiddle?Math.min(42,+$('centerSize').value):+$('centerSize').value;drawCenter(c,m+(uxMark.x-.5)*f*1.35,m+(uxMark.y-.5)*f*1.35-(hasMiddle?f*.12:0),f,fg,accent,$('centerLogoChoice').value,markSize);
@@ -66,11 +66,23 @@ let font=$('font').value;arcLetters(c,$('headline').value.trim(),m,m,f*uxText.to
 arcLetters(c,$('subline').value.trim(),m,m,f*uxText.bottom.radius,false,w*(+$('bottomSize').value)/800,fg,font,uxText.bottom.angle);
 let txt=$('centerText').value.trim();if(txt){c.save();c.fillStyle=fg;c.textAlign='center';c.textBaseline='middle';let n=fitText(c,txt,f*1.12,w*(+$('middleSize').value)/800,font);c.font='900 '+n+'px '+font;c.fillText(txt,m+(uxText.middle.x-.5)*f*1.35,m+(uxText.middle.y-.5)*f*1.35);c.restore()}c.restore();
 if(guides){c.strokeStyle='#2f3c51';c.lineWidth=2;c.beginPath();c.arc(m,m,r,0,7);c.stroke();c.save();c.setLineDash([10,8]);c.strokeStyle='#17ab9c';c.lineWidth=3;c.beginPath();c.arc(m,m,f,0,7);c.stroke();c.restore()}}
-function getCols(cut){return cut<=2.5?3:2}function sheetLayout(cut){let cols=getCols(cut),rows=cut<=2.5?4:3,count=cols*rows, gap=(cols===3?.2:.3),hgap=(8.5-cols*cut)/(cols+1),vgap=(11-rows*cut)/(rows+1);return {cols,rows,count,hgap,vgap,cut}}
-function drawSheet(c,w,h,hires=false,limit=Infinity){let cut=+$('cutSize').value,ly=sheetLayout(cut);c.fillStyle='#fff';c.fillRect(0,0,w,h);let dia=cut/8.5*w,img=document.createElement('canvas');img.width=hires?900:520;img.height=img.width;drawButton(img.getContext('2d'),img.width,{cut});for(let n=0;n<Math.min(ly.count,limit);n++){let col=n%ly.cols,row=Math.floor(n/ly.cols),x=(ly.hgap+col*(cut+ly.hgap))/8.5*w,y=(ly.vgap+row*(cut+ly.vgap))/11*h;c.drawImage(img,x,y,dia,dia);c.strokeStyle='#455063';c.lineWidth=hires?2:1;c.beginPath();c.arc(x+dia/2,y+dia/2,dia/2,0,Math.PI*2);c.stroke();if($('faceGuide').checked){c.save();c.strokeStyle='#9aa4b2';c.setLineDash([hires?9:4,hires?9:4]);c.lineWidth=hires?1.6:1;c.beginPath();c.arc(x+dia/2,y+dia/2,dia/2*2.5/cut,0,Math.PI*2);c.stroke();c.restore()}}return ly}
-function render(){drawButton(ctx,editor.width,{guides:true,cut:+$('cutSize').value});$('centerSizeLabel').textContent=$('centerSize').value+'%'+($('centerText').value.trim()&&+$('centerSize').value>42?' (auto-fit)':'');let ly=drawSheet(pctx,preview.width,preview.height);$('sheetStatus').textContent=`${ly.count} buttons per page · ${Math.ceil(+$('copies').value/ly.count)} PDF page(s) · ${$('cutSize').value}″ cut circles`;$('sizeLabel').textContent=$('logoSize').value+'%'}
+function sheetLayout(cut){
+ cut=Number(cut);
+ if(!Number.isFinite(cut)||cut<=0||cut>8.0)throw Error('Invalid paper cut diameter');
+ const margin=.2,gap=.12,pageW=8.5,pageH=11;
+ const cols=Math.max(1,Math.floor((pageW-2*margin+gap)/(cut+gap)));
+ const rows=Math.max(1,Math.floor((pageH-2*margin+gap)/(cut+gap)));
+ if(cut>pageW-2*margin||cut>pageH-2*margin)throw Error('Cut diameter is too large for US Letter');
+ const count=cols*rows;
+ const hgap=cols>1?gap:0,vgap=rows>1?gap:0;
+ const x0=(pageW-cols*cut-(cols-1)*hgap)/2;
+ const y0=(pageH-rows*cut-(rows-1)*vgap)/2;
+ return {cols,rows,count,cut,hgap,vgap,x0,y0};
+}
+function drawSheet(c,w,h,hires=false,limit=Infinity){let cut=selectedCut(),ly=sheetLayout(cut);c.fillStyle='#fff';c.fillRect(0,0,w,h);let dia=cut/8.5*w,img=document.createElement('canvas');img.width=hires?900:520;img.height=img.width;drawButton(img.getContext('2d'),img.width,{cut});for(let n=0;n<Math.min(ly.count,limit);n++){let col=n%ly.cols,row=Math.floor(n/ly.cols),x=(ly.x0+col*(cut+ly.hgap))/8.5*w,y=(ly.y0+row*(cut+ly.vgap))/11*h;c.drawImage(img,x,y,dia,dia);c.strokeStyle='#455063';c.lineWidth=hires?2:1;c.beginPath();c.arc(x+dia/2,y+dia/2,dia/2,0,Math.PI*2);c.stroke();if($('faceGuide').checked){c.save();c.strokeStyle='#9aa4b2';c.setLineDash([hires?9:4,hires?9:4]);c.lineWidth=hires?1.6:1;c.beginPath();c.arc(x+dia/2,y+dia/2,dia/2*selectedSize()/cut,0,Math.PI*2);c.stroke();c.restore()}}return ly}
+function render(){updateSizeReadout();drawButton(ctx,editor.width,{guides:true,cut:selectedCut()});$('centerSizeLabel').textContent=$('centerSize').value+'%'+($('centerText').value.trim()&&+$('centerSize').value>42?' (auto-fit)':'');let ly=drawSheet(pctx,preview.width,preview.height);$('sheetStatus').textContent=`${ly.count} buttons per page · ${Math.ceil(+$('copies').value/ly.count)} PDF page(s) · ${selectedSize()}″ finished / ${selectedCut()}″ cut`;$('sizeLabel').textContent=$('logoSize').value+'%'}
 function setMessage(t){$('message').textContent=t}
-for(let id of tracked){$(id).addEventListener('input',()=>{if(id==='theme')changeTheme();else render()})}
+for(let id of tracked){$(id).addEventListener('input',()=>{if(id==='theme')changeTheme();else if(id==='finishedSize')selectFinishedSize();else render()})}
 function syncLayerUI(){let sel=$('imageLayer');sel.innerHTML='';layers.forEach((l,i)=>{let opt=document.createElement('option');opt.value=i;opt.textContent=(i+1)+'. '+l.name;sel.appendChild(opt)});if(!layers.length){let opt=document.createElement('option');opt.value='';opt.textContent='No uploaded images';sel.appendChild(opt);selectedLayer=-1}else{selectedLayer=Math.max(0,Math.min(selectedLayer,layers.length-1));sel.value=String(selectedLayer);$('logoSize').value=layers[selectedLayer].size}$('cropLogo').disabled=selectedLayer<0;render()}
 function addImages(files){
 const accept=['image/png','image/jpeg','image/webp','image/avif'];
@@ -107,7 +119,7 @@ editor.addEventListener('dragover',e=>{e.preventDefault();editor.style.outline='
 editor.addEventListener('dragleave',()=>editor.style.outline='');
 editor.addEventListener('drop',e=>{e.preventDefault();editor.style.outline='';addImages(e.dataTransfer.files)});
 // Interactive pointer selection, moving and resizing are supplied by phase1.js.
-$('downloadPng').onclick=()=>{let c=document.createElement('canvas');c.width=c.height=1200;drawButton(c.getContext('2d'),1200,{cut:+$('cutSize').value});downloadUrl(c.toDataURL('image/png'),'robotics-button-artwork.png')};function downloadUrl(url,name){let a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove()}
+$('downloadPng').onclick=()=>{let c=document.createElement('canvas');c.width=c.height=1200;drawButton(c.getContext('2d'),1200,{cut:selectedCut()});downloadUrl(c.toDataURL('image/png'),'robotics-button-'+selectedSize()+'-inch.png')};function downloadUrl(url,name){let a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove()}
 
 function restoreProject(data){
 if(!data||typeof data!=='object'||!data.values||typeof data.values!=='object')throw new Error('Invalid design file.');
@@ -154,14 +166,14 @@ function pdfFromJpegs(jpegs){let parts=[],off=0,offsets=[0];const enc=new TextEn
 let n=jpegs.length,objects=2+n*3;txt('%PDF-1.4\n');obj(1,'<< /Type /Catalog /Pages 2 0 R >>');let kids=jpegs.map((_,i)=>`${3+i*3} 0 R`).join(' ');obj(2,`<< /Type /Pages /Count ${n} /Kids [ ${kids} ] >>`);jpegs.forEach(({bytes,w,h},i)=>{let pid=3+i*3,imgid=pid+1,contentid=pid+2;obj(pid,`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /XObject << /Im${i} ${imgid} 0 R >> >> /Contents ${contentid} 0 R >>`);obj(imgid,`<< /Type /XObject /Subtype /Image /Width ${w} /Height ${h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${bytes.length} >>\nstream\n`,bytes,'\nendstream');let content=enc.encode(`q\n612 0 0 792 0 0 cm\n/Im${i} Do\nQ\n`);obj(contentid,`<< /Length ${content.length} >>\nstream\n`,content,'endstream')});let xref=off;txt(`xref\n0 ${objects+1}\n0000000000 65535 f \n`);for(let i=1;i<=objects;i++)txt(`${String(offsets[i]).padStart(10,'0')} 00000 n \n`);txt(`trailer\n<< /Size ${objects+1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);return new Blob(parts,{type:'application/pdf'})}
 $('downloadPdf').onclick=()=>{
 const btn=$('downloadPdf');if(btn.disabled)return;btn.disabled=true;btn.textContent='Preparing PDF…';
-try{let ly=sheetLayout(+$('cutSize').value),num=+$('copies').value,pages=Math.ceil(num/ly.count),jpegs=[];
+try{let ly=sheetLayout(selectedCut()),num=+$('copies').value,pages=Math.ceil(num/ly.count),jpegs=[];
 if(!num||pages>100)throw new Error('Invalid print quantity.');
 if(layers.some(l=>!l.im.complete||!l.im.naturalWidth))throw new Error('An image is still loading. Please try again.');
 for(let p=0;p<pages;p++){let c=document.createElement('canvas');c.width=1700;c.height=2200;let count=Math.min(ly.count,num-p*ly.count);drawSheet(c.getContext('2d'),c.width,c.height,true,count);
 let encoded=c.toDataURL('image/jpeg',.92).split(',')[1],binary=atob(encoded),bytes=new Uint8Array(binary.length);
 for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);jpegs.push({bytes,w:c.width,h:c.height})}
-let pdf=pdfFromJpegs(jpegs),url=URL.createObjectURL(pdf);downloadUrl(url,'fenton-robotics-2.5-inch-buttons.pdf');
-setTimeout(()=>URL.revokeObjectURL(url),30000);setMessage('Downloaded '+num+' buttons on '+pages+' page(s). Print at Actual Size / 100%. Measure one circle before printing all sheets.');
+let pdf=pdfFromJpegs(jpegs),url=URL.createObjectURL(pdf);downloadUrl(url,'fenton-robotics-'+selectedSize()+'-inch-buttons.pdf');
+setTimeout(()=>URL.revokeObjectURL(url),30000);setMessage('Downloaded '+num+' buttons at '+selectedSize()+'″ finished and '+selectedCut()+'″ cut on '+pages+' page(s). Print at Actual Size / 100% and measure one circle.');
 }catch(err){console.error(err);setMessage('PDF export failed: '+err.message)}
 finally{btn.disabled=false;btn.textContent='⬇ Download print-ready PDF'}};
 changeTheme();</script><script src="phase1.js" defer></script><script src="phase2.js" defer></script><script src="phase3.js" defer></script><script src="library.js" defer></script></body></html>
