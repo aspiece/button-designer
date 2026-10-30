@@ -1,0 +1,45 @@
+{
+  "version": 2,
+  "name": "Fenton Orange Team Spirit",
+  "description": "A customizable orange-and-black robotics button for team events.",
+  "values": {
+    "theme": "orange",
+    "headline": "FENTON",
+    "subline": "ROBOTICS",
+    "centerText": "",
+    "bgColor": "#f58220",
+    "textColor": "#111111",
+    "accentColor": "#ffffff",
+    "font": "Arial Black",
+    "centerLogoChoice": "f",
+    "borderStyle": "double",
+    "borderColor": "#111111",
+    "centerSize": "60",
+    "logoSize": "52",
+    "topSize": "34",
+    "bottomSize": "28",
+    "middleSize": "52",
+    "cutSize": "3",
+    "copies": "6",
+    "faceGuide": false
+  },
+  "layers": [],
+  "textLayout": {
+    "top": {
+      "radius": 0.73,
+      "angle": 0
+    },
+    "bottom": {
+      "radius": 0.73,
+      "angle": 0
+    },
+    "middle": {
+      "x": 0.5,
+      "y": 0.84
+    }
+  },
+  "markPosition": {
+    "x": 0.5,
+    "y": 0.5
+  }
+}
