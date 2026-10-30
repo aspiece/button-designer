@@ -26,6 +26,18 @@ const page=await ctx.newPage(),errors=[];
 page.on('pageerror',error=>errors.push(error.message));
 await page.goto('http://127.0.0.1:8765/',{waitUntil:'networkidle'});
 assert.equal(await page.locator('.template-card').count(),6,'Visual template gallery');
+assert.equal(await page.inputValue('#finishedSize'),'2.25','Default finished diameter is 2.25 inches');
+assert.equal(await page.inputValue('#cutSize'),'2.625','Default paper cut is 2.625 inches');
+assert.equal(await page.locator('#buttonSizeControl').isVisible(),true,'Finished size selector is visible without opening Advanced');
+const sizePairs={'1':'1.313','1.25':'1.629','1.5':'1.837','1.75':'2.088','2.25':'2.625','2.5':'2.8','3':'3.451','3.5':'4','4':'4.5','6':'6.656'};
+for(const [finished,cut] of Object.entries(sizePairs)){
+ await page.selectOption('#finishedSize',finished);
+ assert.equal(await page.inputValue('#cutSize'),cut,'Default cut circle for '+finished+'-inch button');
+ assert.equal(await page.locator('#faceGuideLegend').textContent(),'Dashed ring: '+finished+'″ finished face','Visible face legend reflects selected size');
+}
+await page.selectOption('#finishedSize','2.25');
+assert.equal(await page.inputValue('#cutSize'),'2.625','Returning to standard size restores default paper diameter');
+
 assert.equal(await page.locator('.studio-logo-card').count(),10,'Ten named Fenton logo thumbnails');
 assert.equal(await page.locator('#uxBeginner').getAttribute('aria-pressed'),'true','Beginner mode is default');
 assert.equal(await page.locator('#advancedTools').isVisible(),false,'Advanced settings are initially hidden');
@@ -58,7 +70,7 @@ assert.ok(save.suggestedFilename().endsWith('.json'));
 const json=JSON.parse(fs.readFileSync(await save.path(),'utf8'));
 assert.equal(json.layers.length,1,'Editable project includes logo layer');
 await page.locator('#legacyPrint > summary').click();
-await page.selectOption('#cutSize','2.5');
+await page.locator('#cutSize').fill('2.5');await page.locator('#cutSize').dispatchEvent('input');
 await page.selectOption('#copies','6');
 const [pdf]=await Promise.all([page.waitForEvent('download'),page.click('#downloadPdf')]);
 assert.ok(pdf.suggestedFilename().endsWith('.pdf'));
@@ -109,8 +121,18 @@ const newNames=await page.evaluate(()=>window.ButtonStudioUX.getState().layers.m
 assert.notEqual(newNames,priorNames,'Layer order changes');
 // Phase 3 printing workflow: dedicated dialog, safe-area warning and mixed batch PDF.
 await page.click('#openPrintStudio');
+assert.equal(await page.inputValue('#psSize'),await page.inputValue('#finishedSize'),'Print Studio and editor use the same finished diameter');
+assert.equal(await page.inputValue('#psCut'),await page.inputValue('#cutSize'),'Print Studio and editor use the same cut diameter');
+await page.selectOption('#psSize','6');
+assert.equal(await page.inputValue('#psCut'),'6.656','Print Studio updates cut circle for 6-inch buttons');
+assert.equal(await page.locator('#psPage').textContent(),'Page 1 of 6','6-inch buttons fit one per page');
+await page.selectOption('#psSize','2.25');
+assert.equal(await page.inputValue('#psCut'),'2.625','Print Studio resets to the selected 2.25-inch cut');
+
 assert.equal(await page.locator('#printWorkspace').isVisible(),true,'Print Studio opens');
-await page.selectOption('#psCut','2.5');
+await page.locator('#psCut').fill('2.5');await page.locator('#psCut').dispatchEvent('change');
+assert.equal(await page.inputValue('#cutSize'),'2.5','Custom paper cut size syncs to editor');
+
 assert.equal(await page.locator('#psWarnings').textContent().then(t=>t.includes('wrap')),true,'No-wrap paper warning');
 await page.selectOption('#psCopies','12');
 const [singlePrint]=await Promise.all([page.waitForEvent('download'),page.click('#psDownloadSingle')]);
@@ -147,6 +169,7 @@ await page.once('dialog',dialog=>dialog.accept());
 await page.locator('.shared-card[data-id="fenton-paw-classic"] button[data-action="edit"]').click();
 await page.waitForFunction(()=>document.getElementById('libStatus').textContent.includes('Opened Fenton Paw Classic'),null,{timeout:12000});
 assert.equal(await page.inputValue('#headline'),'FENTON ROBOTICS','Saved JSON reopens as editable project');
+assert.equal(await page.inputValue('#finishedSize'),'2.5','Old design files retain original 2.5-inch size');
 await page.locator('.shared-publish > summary').click();
 await page.locator('#libDesignName').fill('My School Button');
 await page.locator('#libDesignDesc').fill('Reusable classroom button');
