@@ -2,6 +2,15 @@
   "version": 1,
   "designs": [
     {
+      "id": "fenton-orange-team-spirit",
+      "kind": "project",
+      "file": "designs/fenton-orange-team-spirit.json",
+      "name": "Fenton Orange Team Spirit",
+      "description": "A customizable orange-and-black robotics button for team events.",
+      "background": "#f58220",
+      "centerLogo": "f"
+    },
+    {
       "id": "fenton-paw-classic",
       "kind": "project",
       "file": "designs/fenton-paw-classic.json",
