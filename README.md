@@ -1,50 +1,45 @@
-# Robotics Button Studio
+# Fenton Robotics Button Studio
 
-A student-friendly browser designer for creating 2.5-inch robotics pin-back buttons and printing sheets of matching designs.
-
-## Fenton Robotics defaults
-
-The initial design uses Fenton orange (`#F58220`), black (`#111111`), and white. All five templates start in the Fenton palette but students can adjust colors individually. The **Fenton-themed artwork** dropdown contains four original graphics (tiger stripes, gear, F monogram, and 5114 shield). These are not official team logos. To use official assets, upload PNG/SVG files in the image upload control. Uploads stay in the current browser session unless the design is explicitly saved in local storage.
-
-## League logos and image layers
-
-Official FLL, FTC, and FRC logos are available through the linked [FIRST brand downloads](https://www.firstinspires.org/brand/logos-guidelines). They are **not bundled** with this repository yet; select the desired official PNG/SVG and upload it in the designer. Multiple images can be uploaded or dropped onto the circular canvas. Use **Selected image layer** to choose which image to reposition, resize, crop, or remove. Students may change all Fenton theme text, colors, and artwork.
+A browser-based 2.5-inch button designer for Fenton Robotics students. [Launch the designer](https://aspiece.github.io/button-designer/).
 
 ## Features
 
-- Design custom buttons with text, colors, and uploaded images.
-- Crop uploaded images before placing them on the design.
-- Adjust the paper cut-circle diameter to match your button press.
-- Export printable PDF sheets of repeated designs.
-- Works as a static site; no student accounts or server required.
+- Six editable starting templates: **Fenton Paw**, **Tiger**, **Titanium Tigers**, **Blank**, **Orange**, and **Black**.
+- Change background, top/bottom curved text, middle text, fonts, border style and border color (black, white, orange).
+- Choose a **custom-drawn** center graphic: none, Fenton F lettermark, tiger paw, or T shield. These drawn graphics are not official logo files.
+- Add Fenton team logos from the files already uploaded to `logos/`: Tiger Paws (24471), Tiger Cubs (29168), Tiger Kits (31558), Tiger Claws (31575), Tiger Eyes (31577), Siberian Tigers (38050), Bengal Tigers (52545), Tungsten Tigers, Chromium Tigers, and Iridium Tigers.
+- Drag-and-drop multiple PNG/JPEG/WebP/AVIF images onto the button. Select a layer to move, crop, resize, center or remove it.
+- Export a button PNG or a **US Letter, actual-size PDF** of repeated button designs.
+- Save and restore the design using browser storage, or **download/open an editable JSON project file** to back up work outside the browser.
+- No login, paid backend, or account required. Artwork processing is in-browser.
 
-## Run locally
+## Student workflow
 
-Download `index.html` and open it in a modern browser.
+1. Open the designer and select a starting template.
+2. Customize text and colors. Choose a border and center graphic.
+3. Select a Fenton team logo or upload/drag an image, then adjust its size and position.
+4. **Download editable project** if you want to return to the design later. Browser storage can be cleared or fill up.
+5. Select the paper cut-circle diameter required by your actual button press, choose the number of buttons, then **Download print-ready PDF**.
+6. Print at **100% / Actual size**, not Fit to page, and **measure a test cut circle with a ruler** before production.
 
-## Publish for free with GitHub Pages
+## Print dimensions
 
-1. Create a public repository named `robotics-button-studio`.
-2. Upload `index.html` and `README.md` to the repository's root folder.
-3. Open **Settings → Pages**.
-4. Under **Build and deployment**, select **Deploy from a branch**, choose `main` and `/ (root)`, then save.
-5. GitHub Pages will show your published URL when the deployment finishes, commonly `https://YOUR-USERNAME.github.io/robotics-button-studio/`.
+The finished button face is **2.5 inches**. The cut diameter is typically larger (for wrapping paper around the button) but is press-specific. The app offers 2.75, 2.8, 3.0, and 2.5-inch cutting circles; choose the one specified by your particular machine. A 3.0-inch cut fits six on a letter-sized sheet. The app does not calibrate physical printers automatically.
 
-## Printing
+## School deployment
 
-Set your cut circle to the template diameter required by **your specific button press**. A finished 2.5-inch button typically needs a larger printed cut circle to wrap around the back. Print PDFs at **Actual size / 100%**, not **Fit to page**, and test one sheet before mass production.
+This is a static site published from the `main` branch root through GitHub Pages (repository **aspiece/button-designer**). To deploy changes: Settings → Pages → Deploy from branch → `main` → `/ (root)`.
 
-## Student privacy
+Logo assets are stored within the same public repository. Do not put photos of students or private information in this public GitHub repo. Student-provided images and editable designs remain on the student's device unless they manually export/share them. Imported file contents are not sent to a server by the app.
 
-This app is designed to edit artwork in the browser, without a student database. Do not upload student personal data or photos without school approval. If externally hosted scripts are introduced later, review their privacy and content security implications before classroom use.
+## FIRST branding
 
-## License
+FIRST LEGO League, FIRST Tech Challenge, and FIRST Robotics Competition marks should be obtained from FIRST's official brand resources and used according to its guidelines: https://www.firstinspires.org/brand/logos-guidelines
 
-No license selected yet. Add a LICENSE file if you want to permit redistribution or modification by others.
-## Fenton program logos
+## Release checklist
 
-The Fenton team picker now includes seven orange-and-black team logos and three white Titanium Tigers subgroup logos: Tungsten Tigers, Chromium Tigers, and Iridium Tigers, plus one unlabeled black artwork file. All eleven PNGs must be uploaded to the repository's `/logos` directory, using the filenames in the button-logo asset ZIP, for the picker to work. These are user-supplied artwork, not FIRST league marks.
+Test in Chrome/Edge on school-managed computers, including logo loading, mobile/pointer drag, image cropping, save/reopen, and PDF printing at Actual size. Verify a physical cut circle against the button press's paper specifications. JavaScript parsing and code-level checks **do not replace** an end-to-end browser and physical print test.
 
-## Latest logo selection
+## Licensing
 
-The built-in generic graphics were removed from the menu. The team logo dropdown lists only the eleven user-supplied logos and the Fenton Paw. The 11 supplied PNGs still need to be uploaded to `logos/` with their exact names; until then the selector will report missing images. The Fenton Paw uses a school-hosted image URL, which may block browser canvas access; download the image from Fenton High School and upload it manually if that occurs. Uploaded layers are initially scaled to fit the circular face, and students can resize and reposition them.
+No license has been selected. Fenton/team logos are not licensed for unrelated redistribution by this repository.
