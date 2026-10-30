@@ -26,6 +26,15 @@ The editor now starts with **six picture-based template cards**. Choose a design
 
 The **All design settings · advanced** section contains the original precise controls, print settings remain at the right, and PNG/PDF outputs never include the orange selection guides. Editable JSON project files now retain curved-text positions and center-logo placement.
 
+## Phase 2: Find and arrange team logos
+
+- **Beginner / Advanced** buttons keep precise configuration out of the way until students want it.
+- A **thumbnail library** shows all ten named Fenton team PNG files already available in `logos/`, grouped by numbered teams and Titanium Tigers teams.
+- **Search by team name or number** filters the library. Clicking a logo inserts it onto the canvas.
+- The **Pictures on your button** panel lists uploaded and team art, lets students select a layer, and moves it forward/backward in the stack.
+- While dragging images and center artwork, teal **snap-to-center guides** appear only in the editor. They never print.
+- The existing advanced controls, cropping, portable save files, and PDF output remain available.
+
 ## Student workflow
 
 1. Open the designer and select a starting template.
