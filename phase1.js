@@ -358,6 +358,23 @@
  });
  // Keep image selection and undo snapshots current when images finish loading asynchronously.
  const oldSync=syncLayerUI;
- syncLayerUI=function(){oldSync();if(selected?.kind==='image'&&selected.index>=layers.length)selected=null;if(!gesture&&!restoring&&!formFocus)commit()};
+ syncLayerUI=function(){oldSync();if(selected?.kind==='image'&&selected.index>=layers.length)selected=null;if(!gesture&&!restoring&&!formFocus)commit();notifyPhase2()};
+ const phase2Listeners=new Set();
+ function notifyPhase2(){for(const cb of phase2Listeners){try{cb()}catch(e){console.error('Phase2 UI update error',e)}}}
+ const priorRender=render;
+ render=function(){priorRender();notifyPhase2()};
+ window.ButtonStudioUX={
+  onUpdate(fn){phase2Listeners.add(fn);fn();return ()=>phase2Listeners.delete(fn)},
+  getState(){return {layers:layers.map((l,i)=>({index:i,name:l.name,data:l.data,size:l.size})),selected:selected?{...selected}:null}},
+  selectImage(index){if(Number.isInteger(index)&&layers[index])newSelection('image',index)},
+  addLogo(id){const select=$('teamLogo');if(!select||![...select.options].some(o=>o.value===id))return false;
+   select.value=id;select.dispatchEvent(new Event('change',{bubbles:true}));return true},
+  reorderImage(index,move){
+   const to=index+move;if(!layers[index]||to<0||to>=layers.length)return false;
+   commit();[layers[index],layers[to]]=[layers[to],layers[index]];
+   selectedLayer=to;image=layers[to].im;imageData=layers[to].data;
+   syncLayerUI();newSelection('image',to);commit();notifyPhase2();return true
+  }
+ };
  current=capture();historyButtons();syncGallery();refreshContext();render();
 })();
