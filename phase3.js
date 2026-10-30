@@ -298,6 +298,24 @@ function autosave(){
 function schedule(){if(!autosaveReady)return;clearTimeout(timer);timer=setTimeout(autosave,900)}
 document.addEventListener('input',e=>{if(e.target.closest('.app'))schedule()});
 document.addEventListener('pointerup',e=>{if(e.target===editor)schedule()});
+window.ButtonStudioPrint={
+ async addProject(raw,name){
+  if(queue.length>=MAX_DESIGNS)throw Error('Classroom queue is full');
+  const filename=(String(name||'saved-design').toLowerCase().replace(/[^a-z0-9-]/g,'-').slice(0,50)||'saved-design')+'.json';
+  const file=new File([JSON.stringify(raw)],filename,{type:'application/json'});
+  open();setMode('mixed');const before=queue.length;await importFiles([file]);
+  if(queue.length===before)throw Error(get('psImportMessage').textContent||'Could not import saved design');
+  return true
+ },
+ async addPNG(blob,name){
+  if(queue.length>=MAX_DESIGNS)throw Error('Classroom queue is full');
+  const filename=(String(name||'saved-button').toLowerCase().replace(/[^a-z0-9-]/g,'-').slice(0,50)||'saved-button')+'.png';
+  open();setMode('mixed');const before=queue.length;
+  await importFiles([new File([blob],filename,{type:'image/png'})]);
+  if(queue.length===before)throw Error(get('psImportMessage').textContent||'Could not import saved image');
+  return true
+ }
+};
 const priorRender=render;
 render=function(){priorRender();if(dialog.open&&mode==='single')paintWarnings();schedule()};
 })();
