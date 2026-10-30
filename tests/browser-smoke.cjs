@@ -133,7 +133,9 @@ assert.equal(await page.locator('#printWorkspace').isVisible(),true,'Print Studi
 await page.locator('#psCut').fill('2.5');await page.locator('#psCut').dispatchEvent('change');
 assert.equal(await page.inputValue('#cutSize'),'2.5','Custom paper cut size syncs to editor');
 
+await page.locator('#psCut').fill('2.25');await page.locator('#psCut').dispatchEvent('change');
 assert.equal(await page.locator('#psWarnings').textContent().then(t=>t.includes('wrap')),true,'No-wrap paper warning');
+await page.locator('#psCut').fill('2.5');await page.locator('#psCut').dispatchEvent('change');
 await page.selectOption('#psCopies','12');
 const [singlePrint]=await Promise.all([page.waitForEvent('download'),page.click('#psDownloadSingle')]);
 const singleBytes=fs.readFileSync(await singlePrint.path());
