@@ -26,7 +26,7 @@ const page=await ctx.newPage(),errors=[];
 page.on('pageerror',error=>errors.push(error.message));
 await page.goto('http://127.0.0.1:8765/',{waitUntil:'networkidle'});
 assert.equal(await page.locator('.template-card').count(),6,'Visual template gallery');
-await page.locator('#advancedTools summary').click();
+await page.locator('#advancedTools > summary').click();
 assert.equal(await page.locator('canvas#editorCanvas').isVisible(),true,'Canvas is visible');
 const expected={paw:['#f58220','paw'],tiger:['#111111','paw'],titanium:['#111111','t'],blank:['#ffffff','none'],orange:['#f58220','none'],black:['#111111','none']};
 for(const [template,[bg,logo]] of Object.entries(expected)){
@@ -57,7 +57,7 @@ const pdfData=fs.readFileSync(await pdf.path());
 assert.equal(pdfData.subarray(0,8).toString('ascii'),'%PDF-1.4');
 assert.ok(pdfData.length>1000,'PDF contains artwork');
 // Phase-one interaction tests: gallery, click-to-edit, drag, contextual controls and undo/redo.
-await page.locator('#advancedTools summary').click();
+await page.locator('#advancedTools > summary').click();
 await page.locator('.template-card[data-template="black"]').click();
 assert.equal(await page.inputValue('#theme'),'black','Gallery changes template');
 assert.equal(await page.locator('.template-card[data-template="black"]').getAttribute('aria-pressed'),'true','Selected gallery card marked');
