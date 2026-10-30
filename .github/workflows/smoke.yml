@@ -13,3 +13,23 @@ jobs:
           node-version: '22'
       - name: Verify editor, logos and PDF output
         run: node tests/smoke.cjs
+
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser test driver
+        run: npm install --no-save playwright-core
+      - name: Test student workflow in Chrome
+        run: node tests/browser-smoke.cjs
+      - name: Keep button preview from browser test
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: button-browser-preview
+          path: tests/browser-preview.png
+          if-no-files-found: ignore
+          retention-days: 7
