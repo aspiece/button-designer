@@ -57,6 +57,7 @@ const [save]=await Promise.all([page.waitForEvent('download'),page.click('#expor
 assert.ok(save.suggestedFilename().endsWith('.json'));
 const json=JSON.parse(fs.readFileSync(await save.path(),'utf8'));
 assert.equal(json.layers.length,1,'Editable project includes logo layer');
+await page.locator('#legacyPrint > summary').click();
 await page.selectOption('#cutSize','2.5');
 await page.selectOption('#copies','6');
 const [pdf]=await Promise.all([page.waitForEvent('download'),page.click('#downloadPdf')]);
@@ -106,12 +107,42 @@ const priorNames=await page.evaluate(()=>window.ButtonStudioUX.getState().layers
 await page.locator('.studio-layer-row').last().locator('button[data-action="forward"]').click();
 const newNames=await page.evaluate(()=>window.ButtonStudioUX.getState().layers.map(l=>l.name).join('|'));
 assert.notEqual(newNames,priorNames,'Layer order changes');
+// Phase 3 printing workflow: dedicated dialog, safe-area warning and mixed batch PDF.
+await page.click('#openPrintStudio');
+assert.equal(await page.locator('#printWorkspace').isVisible(),true,'Print Studio opens');
+await page.selectOption('#psCut','2.5');
+assert.equal(await page.locator('#psWarnings').textContent().then(t=>t.includes('wrap')),true,'No-wrap paper warning');
+await page.selectOption('#psCopies','12');
+const [singlePrint]=await Promise.all([page.waitForEvent('download'),page.click('#psDownloadSingle')]);
+const singleBytes=fs.readFileSync(await singlePrint.path());
+assert.equal(singleBytes.subarray(0,8).toString('ascii'),'%PDF-1.4','Print Studio single PDF header');
+assert.equal(await page.locator('#psPage').textContent(),'Page 1 of 1','Twelve 2.5-inch circles on one page');
+await page.click('#psMixedTab');
+await page.click('#psAddCurrent');
+await page.waitForFunction(()=>document.querySelectorAll('.ps-queue-row').length===1);
+const jsonBuffer=fs.readFileSync(await save.path());
+await page.locator('#psUploadProjects').setInputFiles([{name:'student-two.json',mimeType:'application/json',buffer:jsonBuffer}]);
+await page.waitForFunction(()=>document.querySelectorAll('.ps-queue-row').length===2,null,{timeout:12000});
+assert.equal(await page.locator('#psQueueCount').textContent(),'2 buttons','Two distinct designs in queue');
+const qty=page.locator('.ps-queue-row input[type=number]').last();
+await qty.fill('12');await qty.dispatchEvent('change');
+assert.equal(await page.locator('#psQueueCount').textContent(),'13 buttons','Per-design quantities used');
+assert.equal(await page.locator('#psPage').textContent(),'Page 1 of 2','Mixed batch spans two sheets');
+await page.click('#psNext');
+assert.equal(await page.locator('#psPage').textContent(),'Page 2 of 2','Preview next page');
+const [mixedPrint]=await Promise.all([page.waitForEvent('download'),page.click('#psDownloadMixed')]);
+const mixedBytes=fs.readFileSync(await mixedPrint.path()),mixedLatin=mixedBytes.toString('latin1');
+assert.equal(mixedBytes.subarray(0,8).toString('ascii'),'%PDF-1.4','Mixed PDF header');
+assert.ok(mixedLatin.includes('/Count 2'),'Combined PDF must have two pages');
+await page.click('#psClose');
+await page.waitForTimeout(1100);
+assert.ok(await page.evaluate(()=>!!localStorage.getItem('fentonButtonAutosaveV3')),'Autosave created on this device');
 await page.screenshot({path:path.join(__dirname,'browser-preview.png')});
 await page.setViewportSize({width:375,height:812});
 const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+4);
 assert.equal(overflow,false,'No horizontal overflow at phone width');
 assert.deepEqual(errors,[],'No browser JavaScript exceptions');
-console.log('PASS: Phase 2 logo library, search, modes, layers; plus templates, image editing, undo, PDF and mobile');
+console.log('PASS: Phase 3 Print Studio, safe area, autosave, mixed 2-page PDF; plus previous editor tests');
 }finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve))}
 }
 main().catch(e=>{console.error(e);process.exitCode=1;server.close()});
