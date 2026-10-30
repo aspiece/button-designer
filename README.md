@@ -45,6 +45,18 @@ Click **Preview, print & combine buttons** (or **Print Studio** beside Undo/Redo
 - **Print safety**: All PDFs use US Letter page geometry and the cut-circle size selected. Print at **Actual size / 100%**, check the press manufacturer's exact paper diameter, and measure a test sheet. A successful PDF download is not proof of physical printer calibration.
 - **Privacy**: All mixed-sheet imports and artwork rendering happen in the browser. Imported student projects are not sent to a server by this application.
 
+## Shared GitHub button design library
+
+Approved designs stored in the public [`designs/` folder](https://github.com/aspiece/button-designer/tree/main/designs) are available in the **Saved team designs** gallery. Students can search and:
+
+- **Open & edit** a saved `.json` project. Editable layers, text, logo positions, and color settings are restored, without changing the original repository file.
+- **Use PNG on canvas** to insert a finished flattened button image. PNGs do not retain independently editable lettering.
+- **Add to print sheet** to send a library design directly to the teacher's Classroom Print Studio queue.
+
+Two starter buttons are included: Fenton Paw Classic and Titanium Tigers Badge. To contribute another approved design, use **Save a new design for future projects** in the library panel. This downloads an editable `.json` with the design name and notes. A repository maintainer reviews it, then uploads it to `designs/` and commits the files. The **Publish approved button designs** GitHub Action validates uploaded projects, updates `designs/catalog.json` and requests a new Pages build. No student GitHub authentication, backend database, or paid service is required.
+
+**Privacy:** The repository and its shared assets are public. Do not upload student names, photographs, or other identifying details without the school's approval. Saving a project in the student browser is local; clicking Download does **not** publish it to the repo. See [the designs folder instructions](designs/README.md).
+
 ## Student workflow
 
 1. Open the designer and select a starting template.
