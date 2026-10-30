@@ -17,16 +17,16 @@ legacy.append(legacySummary,...movable);panel.append(legacy);
 const dialog=document.createElement('dialog');dialog.id='printWorkspace';
 dialog.setAttribute('aria-labelledby','printStudioTitle');
 dialog.innerHTML=`
-<div class="ps-heading"><div><h2 id="printStudioTitle">Print Studio</h2><p>2.5-inch finished buttons · US Letter paper</p></div><button id="psClose" type="button" aria-label="Close print workspace">✕</button></div>
+<div class="ps-heading"><div><h2 id="printStudioTitle">Print Studio</h2><p>Selectable finished diameters · US Letter paper</p></div><button id="psClose" type="button" aria-label="Close print workspace">✕</button></div>
 <div class="ps-tabs" role="tablist" aria-label="Print mode">
  <button id="psSingleTab" role="tab" aria-selected="true" aria-controls="psSingle" type="button">My button</button>
  <button id="psMixedTab" role="tab" aria-selected="false" aria-controls="psMixed" type="button">Classroom sheet</button>
 </div>
 <div class="ps-layout">
  <div class="ps-options">
-  <div class="ps-common"><label for="psCut">Cut-circle diameter</label><select id="psCut">
-    <option value="2.5">2.5″ (no paper wrap)</option><option value="2.75">2.75″</option><option value="2.8">2.8″</option><option value="3">3.0″</option>
-  </select><p class="ps-muted">Choose the size required by your button press, not the finished face diameter.</p></div>
+  <div class="ps-common"><label for="psSize">Finished button diameter</label><select id="psSize">
+<option value="1">1″</option><option value="1.25">1.25″</option><option value="1.5">1.5″</option><option value="1.75">1.75″</option><option value="2.25">2.25″ · Standard</option><option value="2.5">2.5″</option><option value="3">3″</option><option value="3.5">3.5″</option><option value="4">4″</option><option value="6">6″</option>
+</select><label for="psCut" style="margin-top:10px">Paper cut diameter (inches)</label><input id="psCut" type="number" min="1" max="8" step="0.001" inputmode="decimal" value="2.625"><p class="ps-muted" id="psSizingHelp">2.25″ finished · 2.625″ paper cut. Verify with your press manufacturer.</p></div>
   <section id="psSingle" role="tabpanel" aria-labelledby="psSingleTab">
     <label for="psCopies">Number of identical buttons</label><select id="psCopies"><option value="6">6</option><option value="12">12</option><option value="18">18</option><option value="24">24</option><option value="36">36</option><option value="48">48</option></select>
     <h3>Design checks</h3><div id="psWarnings" class="ps-warnings" aria-live="polite"></div>
@@ -55,7 +55,7 @@ dialog.innerHTML=`
 </div>`;
 document.body.append(dialog);
 const get=id=>document.getElementById(id);
-const cutInput=get('psCut'),copiesInput=get('psCopies'),canvas=get('psCanvas'),canvasCtx=canvas.getContext('2d');
+const cutInput=get('psCut'),sizeInput=get('psSize'),copiesInput=get('psCopies'),canvas=get('psCanvas'),canvasCtx=canvas.getContext('2d');
 let mode='single',page=0,queue=[],nextId=1,previewCache=new Map(),busy=false;
 const MAX_DESIGNS=30,MAX_BUTTONS=120,MAX_JSON_BYTES=20000000;
 const cleanName=s=>String(s||'Student design').replace(/\.[^.]+$/,'').slice(0,70);
@@ -68,8 +68,8 @@ function editorValues(){const o={};for(const id of tracked){const el=$(id);o[id]
 function projectFromCurrent(){return {values:editorValues(),layers:layers.map(l=>({data:l.data,x:l.x,y:l.y,size:l.size,name:l.name})),textLayout:JSON.parse(JSON.stringify(uxText)),markPosition:{...uxMark}}}
 function cloneJson(p){return JSON.parse(JSON.stringify(p))}
 function safeWarnings(){
- const errors=[],cut=+$('cutSize').value,f=(editor.width/2-2)*2.5/cut;
- const border=$('borderStyle').value!=='none',safe=border?.82:.91;
+ const errors=[],cut=selectedCut(),f=(editor.width/2-2)*selectedSize()/cut;
+ const border=$('borderStyle').value!=='none',safe=Math.min((safeInches()/selectedSize())*(border?.90:.97),.94);
  for(let i=0;i<layers.length;i++){
   const l=layers[i];if(!l.im?.naturalWidth||!l.im?.naturalHeight)continue;
   const z=f*1.25*l.size/100,r=l.im.naturalWidth/l.im.naturalHeight,w=r>=1?z:z*r,h=r>=1?z/r:z;
@@ -78,8 +78,8 @@ function safeWarnings(){
   if(far>safe)errors.push('Picture '+(i+1)+' may overlap the border or wrap onto the back. Reduce its size or move it inward.')
  }
  if($('centerLogoChoice').value!=='none'&&+$('centerSize').value>=88&&!$('centerText').value.trim())errors.push('The center graphic is large. Check its clearance from the text and border.');
- if($('headline').value.length>23||$('subline').value.length>23)errors.push('Long curved text may print small. Shorter text is easier to read on a 2.5-inch button.');
- if(+cutInput.value===2.5)errors.push('2.5-inch cutting circles leave no paper to wrap. Confirm your button press supports this.');
+ if($('headline').value.length>23||$('subline').value.length>23)errors.push('Long curved text may print small. Shorter text is easier to read on a '+selectedSize()+'-inch button.');
+ if(+cutInput.value<=selectedSize())errors.push('Cut diameter is not larger than the finished button. Check the paper-wrap requirement.');
  return errors
 }
 function paintWarnings(){
@@ -91,6 +91,9 @@ function withProject(project,fn){
  const saved={values:editorValues(),layers,uxText,uxMark};
  try{
   for(const [id,v] of Object.entries(project.values||{})){if(!tracked.includes(id))continue;const el=$(id);if(el){if(el.type==='checkbox')el.checked=!!v;else el.value=String(v)}}
+  // Mixed designs are uniformly scaled to the selected physical sheet size.
+  $('finishedSize').value=sizeInput.value;
+  $('cutSize').value=cutInput.value;
   layers=project.preparedLayers||[];
   uxText=project.textLayout||defaultTextLayout();uxMark=project.markPosition||{x:.5,y:.5};
   return fn()
@@ -114,7 +117,7 @@ function drawMixed(ctx,w,h,items,offset,count,hires=false){
  ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);
  const dia=cut/8.5*w,detail=hires?900:520;
  for(let i=0;i<count;i++){
-  const col=i%ly.cols,row=Math.floor(i/ly.cols),x=(ly.hgap+col*(cut+ly.hgap))/8.5*w,y=(ly.vgap+row*(cut+ly.vgap))/11*h;
+  const col=i%ly.cols,row=Math.floor(i/ly.cols),x=(ly.x0+col*(cut+ly.hgap))/8.5*w,y=(ly.y0+row*(cut+ly.vgap))/11*h;
   const tile=makeTile(items[offset+i],cut,detail);
   ctx.drawImage(tile,x,y,dia,dia);
   ctx.strokeStyle='#495465';ctx.lineWidth=hires?2:1;ctx.beginPath();ctx.arc(x+dia/2,y+dia/2,dia/2,0,Math.PI*2);ctx.stroke()
@@ -135,7 +138,7 @@ function preview(){
   if(items.length)drawMixed(canvasCtx,canvas.width,canvas.height,items,offset,Math.min(ly.count,items.length-offset))
  }
  const n=mode==='single'?+copiesInput.value:total(),pageNo=page+1;
- note((n||0)+' buttons · '+pageCount()+' sheet(s) · '+cutInput.value+'-inch cut circles'+(mode==='mixed'?' · showing page '+pageNo:''))
+ note((n||0)+' buttons · '+pageCount()+' sheet(s) · '+sizeInput.value+'-inch finished / '+cutInput.value+'-inch cut circles'+(mode==='mixed'?' · showing page '+pageNo:''))
 }
 function labelRow(item){
  const row=document.createElement('div');row.className='ps-queue-row';row.dataset.id=String(item.id);
@@ -176,6 +179,7 @@ async function prepare(raw){
  const safeValues={};
  for(const id of tracked){const el=$(id);safeValues[id]=el.type==='checkbox'?el.checked:el.value}
  for(const [k,v] of Object.entries(input.values)){if(tracked.includes(k))safeValues[k]=v}
+ if(!Object.prototype.hasOwnProperty.call(input.values,'finishedSize'))safeValues.finishedSize='2.5';
  const clamp=(n,a,b,fallback)=>Number.isFinite(Number(n))?Math.max(a,Math.min(b,Number(n))):fallback;
  const tl=input.textLayout||{},mark=input.markPosition||{};
  return {values:safeValues,preparedLayers,textLayout:{
@@ -245,7 +249,20 @@ get('psSingleTab').onclick=()=>setMode('single');
 get('psMixedTab').onclick=()=>setMode('mixed');
 get('psClose').onclick=()=>dialog.close();
 dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});
-get('psCut').onchange=()=>{page=0;const v=cutInput.value;$('cutSize').value=v;$('cutSize').dispatchEvent(new Event('input',{bubbles:true}));previewCache.clear();preview()};
+get('psSize').onchange=()=>{
+ page=0;$('finishedSize').value=sizeInput.value;
+ $('finishedSize').dispatchEvent(new Event('input',{bubbles:true}));
+ cutInput.value=$('cutSize').value;previewCache.clear();updatePrintSize();preview()
+};
+get('psCut').onchange=()=>{
+ page=0;let v=+cutInput.value;
+ if(!Number.isFinite(v)||v<+sizeInput.value||v>8){v=BUTTON_SIZES[String(+sizeInput.value)].cut;cutInput.value=v;note('Restored recommended cut diameter.')}
+ $('cutSize').value=v;$('cutSize').dispatchEvent(new Event('input',{bubbles:true}));
+ previewCache.clear();updatePrintSize();preview()
+};
+function updatePrintSize(){
+ get('psSizingHelp').textContent=sizeInput.value+'″ finished · '+cutInput.value+'″ paper cut. Mixed designs are scaled to this finished diameter. Verify your press.'
+}
 get('psCopies').onchange=()=>{page=0;$('copies').value=copiesInput.value;$('copies').dispatchEvent(new Event('input',{bubbles:true}));preview()};
 get('psPrevious').onclick=()=>{page=Math.max(0,page-1);preview()};
 get('psNext').onclick=()=>{page=Math.min(pageCount()-1,page+1);preview()};
@@ -268,7 +285,7 @@ get('psQueue').addEventListener('click',e=>{
  if(b.dataset.action==='down'&&index<queue.length-1)[queue[index+1],queue[index]]=[queue[index],queue[index+1]];
  refreshQueue()
 });
-function open(){cutInput.value=$('cutSize').value;copiesInput.value=$('copies').value;setMode(mode);dialog.showModal();preview()}
+function open(){sizeInput.value=$('finishedSize').value;cutInput.value=$('cutSize').value;copiesInput.value=$('copies').value;updatePrintSize();setMode(mode);dialog.showModal();preview()}
 openButton.onclick=open;
 const toolbar=document.querySelector('.studio-toolbar');
 if(toolbar){const b=document.createElement('button');b.type='button';b.className='studio-tool';b.textContent='🖨 Print Studio';b.onclick=open;toolbar.append(b)}

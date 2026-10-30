@@ -1,6 +1,6 @@
 # Fenton Robotics Button Studio
 
-A browser-based 2.5-inch button designer for Fenton Robotics students. [Launch the designer](https://aspiece.github.io/button-designer/).
+A browser-based multi-size round button designer for Fenton Robotics students. [Launch the designer](https://aspiece.github.io/button-designer/).
 
 ## Features
 
@@ -40,7 +40,7 @@ The **All design settings · advanced** section contains the original precise co
 Click **Preview, print & combine buttons** (or **Print Studio** beside Undo/Redo) to open a dedicated printing workspace. The editor stays unchanged while printing.
 
 - **My button**: Select cut-circle diameter and quantity, inspect the sheet preview, and download an actual-size US Letter PDF. Design warnings flag oversized images, very long arc text, and 2.5-inch circles without paper wrap. Warnings are guidance, not guaranteed collision detection.
-- **Classroom sheet**: Add your current design, import multiple student `.json` editable project files or finished `.png` designs, set each button's quantity, reorder the print queue, preview every page, and download one combined PDF. The total is capped at 120 buttons or 30 designs per batch. For PNG imports, the app assumes the PNG already represents the correct cut-circle layout, so **JSON projects are preferred** when mixing cut diameters.
+- **Classroom sheet**: Add your current design, import multiple student `.json` editable project files or finished `.png` designs, set each button's quantity, reorder the print queue, preview every page, and download one combined PDF. The total is capped at 120 buttons or 30 designs per batch. PNG artwork is flattened, and the whole classroom sheet uses one selected finished size; **JSON projects are preferred** so the editor can rescale each design consistently.
 - **Local autosave and recovery**: The app stores a small automatic backup on the same browser/device. Students can restore a previous design when they reopen the site. If browser storage is full, students should use **Download editable project** instead.
 - **Print safety**: All PDFs use US Letter page geometry and the cut-circle size selected. Print at **Actual size / 100%**, check the press manufacturer's exact paper diameter, and measure a test sheet. A successful PDF download is not proof of physical printer calibration.
 - **Privacy**: All mixed-sheet imports and artwork rendering happen in the browser. Imported student projects are not sent to a server by this application.
@@ -66,9 +66,28 @@ Three reusable examples are included: Fenton Paw Classic, Titanium Tigers Badge,
 5. Select the paper cut-circle diameter required by your actual button press, choose the number of buttons, then **Download print-ready PDF**.
 6. Print at **100% / Actual size**, not Fit to page, and **measure a test cut circle with a ruler** before production.
 
-## Print dimensions
+## Button sizes and print dimensions
 
-The finished button face is **2.5 inches**. The cut diameter is typically larger (for wrapping paper around the button) but is press-specific. The app offers 2.75, 2.8, 3.0, and 2.5-inch cutting circles; choose the one specified by your particular machine. A 3.0-inch cut fits six on a letter-sized sheet. The app does not calibrate physical printers automatically.
+**2.25 inches is the default finished button size.** It uses a manufacturer-reference **2.625-inch paper cut circle** and **2.063-inch safe artwork diameter**. The app offers every common round size below. Choose a finished diameter in the beginner editor or Print Studio; it updates the design face, cut line, artwork position, PDF filename, and letter-sheet grid.
+
+| Finished diameter | Initial paper cut diameter | Safe artwork diameter | Buttons per US Letter sheet |
+|---|---:|---:|---:|
+| 1" | 1.313" | 0.875" | 35 |
+| 1.25" | 1.629" | 1.156" | 24 |
+| 1.5" | 1.837" | 1.375" | 20 |
+| 1.75" | 2.088" | 1.593" | 12 |
+| **2.25" (default)** | **2.625"** | **2.063"** | **9** |
+| 2.5" | 2.8" | 2.2" | 6 |
+| 3" | 3.451" | 2.875" | 6 |
+| 3.5" | 4.0" | 3.312" | 4 |
+| 4" | 4.5" | 3.75" | 2 |
+| 6" | 6.656" | 5.812" | 1 |
+
+**Do not assume every press uses these exact cut sizes.** Dimensions from American Button Machines and Tecre provide reference values for 1", 1.25", 1.5", 1.75", 2.25", 3", 3.5", and 6"; the 2.5" and 4" cut sizes are supplier-dependent examples. A 58 mm imported machine may not accept American Standard 2.25" tooling.
+
+You can adjust the paper cut diameter independently after choosing the finished size. The grid uses the chosen cut diameter and includes gap/margin allowances for cutting, but each printer has different unprintable margins. Print at **Actual size / 100%**, measure one paper cut circle with a ruler, and make one physical button before production. Older saved projects without an explicit size continue using their original **2.5-inch finished size**.
+
+References: [ABM print sizing guide](https://nlc.nebraska.gov/grants/InnovationStudios/Documents/buttonmaker_instructions.pdf), [ABM standard sizes](https://www.americanbuttonmachines.com/pages/how-to-choose-a-button-size), [Tecre 6-inch cutter](https://www.tecre.com/sft629/600-button-maker-machine-layout.pdf).
 
 ## School deployment
 
