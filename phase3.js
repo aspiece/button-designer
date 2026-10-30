@@ -252,7 +252,7 @@ get('psNext').onclick=()=>{page=Math.min(pageCount()-1,page+1);preview()};
 get('psDownloadSingle').onclick=()=>exportPdf(false);
 get('psDownloadMixed').onclick=()=>exportPdf(true);
 get('psAddCurrent').onclick=()=>addCurrent().catch(e=>note('Could not add current design: '+e.message));
-get('psUploadProjects').onchange=e=>{const files=e.target.files;e.target.value='';importFiles(files)};
+get('psUploadProjects').onchange=e=>{const files=Array.from(e.target.files||[]);e.target.value='';importFiles(files).catch(err=>{busy=false;get('psImportMessage').textContent='Import failed: '+err.message;refreshQueue()})};
 get('psQueue').addEventListener('change',e=>{
  if(e.target.dataset.action!=='qty')return;
  const row=e.target.closest('[data-id]'),item=queue.find(q=>q.id===Number(row?.dataset.id));if(!item)return;
