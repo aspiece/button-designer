@@ -37,7 +37,7 @@ await page.selectOption('#borderStyle','dashed');
 await page.selectOption('#borderColor','#ffffff');
 assert.equal(await page.inputValue('#borderColor'),'#ffffff');
 await page.selectOption('#teamLogo','tiger-paws-24471');
-await page.waitForFunction(()=>document.querySelectorAll('#imageLayer option').length===1&&document.querySelector('#imageLayer option')?.textContent.includes('tiger-paws'),{timeout:12000});
+await page.waitForFunction(()=>document.querySelectorAll('#imageLayer option').length===1&&document.querySelector('#imageLayer option')?.textContent.includes('tiger paws'),null,{timeout:12000});
 assert.equal(await page.locator('#cropLogo').isEnabled(),true,'Crop enabled for team logo');
 await page.click('#cropLogo');
 assert.equal(await page.locator('#cropOverlay').evaluate(el=>el.classList.contains('active')),true);
