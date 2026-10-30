@@ -1,0 +1,45 @@
+{
+  "name": "Fenton Paw Classic",
+  "description": "Orange team spirit button with a centered tiger paw.",
+  "version": 2,
+  "values": {
+    "theme": "paw",
+    "headline": "FENTON ROBOTICS",
+    "subline": "TIGER PRIDE",
+    "centerText": "",
+    "bgColor": "#f58220",
+    "textColor": "#111111",
+    "accentColor": "#ffffff",
+    "font": "Arial Black",
+    "centerLogoChoice": "paw",
+    "borderStyle": "double",
+    "borderColor": "#111111",
+    "centerSize": "58",
+    "logoSize": "52",
+    "topSize": "34",
+    "bottomSize": "28",
+    "middleSize": "52",
+    "cutSize": "3",
+    "copies": "6",
+    "faceGuide": false
+  },
+  "layers": [],
+  "textLayout": {
+    "top": {
+      "radius": 0.73,
+      "angle": 0
+    },
+    "bottom": {
+      "radius": 0.73,
+      "angle": 0
+    },
+    "middle": {
+      "x": 0.5,
+      "y": 0.84
+    }
+  },
+  "markPosition": {
+    "x": 0.5,
+    "y": 0.5
+  }
+}

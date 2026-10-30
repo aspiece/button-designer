@@ -1,0 +1,45 @@
+{
+  "name": "Titanium Tigers Badge",
+  "description": "Black and orange Titanium Tigers team badge.",
+  "version": 2,
+  "values": {
+    "theme": "titanium",
+    "headline": "TITANIUM TIGERS",
+    "subline": "FENTON ROBOTICS",
+    "centerText": "5114",
+    "bgColor": "#111111",
+    "textColor": "#ffffff",
+    "accentColor": "#f58220",
+    "font": "Arial Black",
+    "centerLogoChoice": "t",
+    "borderStyle": "double",
+    "borderColor": "#ffffff",
+    "centerSize": "58",
+    "logoSize": "52",
+    "topSize": "34",
+    "bottomSize": "28",
+    "middleSize": "52",
+    "cutSize": "3",
+    "copies": "6",
+    "faceGuide": false
+  },
+  "layers": [],
+  "textLayout": {
+    "top": {
+      "radius": 0.73,
+      "angle": 0
+    },
+    "bottom": {
+      "radius": 0.73,
+      "angle": 0
+    },
+    "middle": {
+      "x": 0.5,
+      "y": 0.84
+    }
+  },
+  "markPosition": {
+    "x": 0.5,
+    "y": 0.5
+  }
+}
