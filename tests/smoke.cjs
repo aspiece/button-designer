@@ -35,6 +35,16 @@ const api=sandbox.appTest;
 const names=['paw','tiger','titanium','blank','orange','black'];
 assert.deepEqual(Object.keys(api.themes),names,'Six template names');
 for(const name of names){nodes.get('theme').value=name;api.changeTheme();api.drawButton(ctx,800,{cut:3});assert.ok(nodes.get('bgColor').value.startsWith('#'),name+' background');}
+assert.equal(api.sheetLayout(2.625).count,9,'Default 2.25-inch button yields nine 2.625-inch cuts per US Letter');
+assert.equal(api.sheetLayout(1.313).count,35,'One-inch buttons fit 35 per page');
+assert.equal(api.sheetLayout(6.656).count,1,'Six-inch button fits once per page');
+for(const [cut,expected] of [[1.629,24],[1.837,20],[2.088,12],[2.8,6],[3.451,6],[4,4],[4.5,2]]){
+ const layout=api.sheetLayout(cut);
+ assert.equal(layout.count,expected,'Sheet layout for '+cut+'-inch cuts');
+ assert.ok(layout.x0>0.17&&layout.y0>0.17,'Printable margins must be positive for '+cut);
+ assert.ok(layout.x0+layout.cols*cut+(layout.cols-1)*layout.hgap<=8.5,'Print stays on page width');
+ assert.ok(layout.y0+layout.rows*cut+(layout.rows-1)*layout.vgap<=11,'Print stays on page height')
+}
 assert.equal(api.sheetLayout(3).count,6);
 assert.equal(api.sheetLayout(2.8).count,6);
 assert.equal(api.sheetLayout(2.5).count,12);
