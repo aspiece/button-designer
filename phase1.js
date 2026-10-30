@@ -17,6 +17,7 @@
  const sum=document.createElement('summary');sum.textContent='All design settings · advanced';advanced.append(sum);
  existing.forEach(n=>advanced.append(n));
  left.append(gallery,quick,advanced);
+ const sizes=document.getElementById('buttonSizeControl');if(sizes)left.insertBefore(sizes,gallery);
  const thumbs={
  paw:['#f58220','#111111','paw'],tiger:['#111111','#f58220','paw'],
  titanium:['#111111','#ffffff','T'],blank:['#ffffff','#111111',''],orange:['#f58220','#111111',''],black:['#111111','#ffffff','']
@@ -190,7 +191,7 @@
   syncGallery();newSelection(null);commit()
  });
  // Context coordinates in canvas native pixels; rendering uses the same units.
- function metrics(){const m=editor.width/2,f=(m-2)*2.5/(+$('cutSize').value);return {m,f}}
+ function metrics(){const m=editor.width/2,f=(m-2)*selectedSize()/selectedCut();return {m,f}}
  function imageRect(i){
   const l=layers[i];if(!l||!l.im.naturalWidth)return null;
   const {m,f}=metrics(),z=f*1.25*l.size/100,ratio=l.im.naturalWidth/l.im.naturalHeight;
