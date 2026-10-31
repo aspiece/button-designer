@@ -1,0 +1,12 @@
+/* Installed-app button and readable device instructions. */
+header .install-app-btn{background:#f58220;color:#111;white-space:nowrap;min-height:40px}
+header .install-app-btn[hidden]{display:none!important}
+.install-help{border:0;border-radius:16px;max-width:min(440px,calc(100vw - 32px));padding:0;box-shadow:0 20px 70px #0007;color:#172235}
+.install-help::backdrop{background:#101820aa}
+.install-help-inner{padding:22px;line-height:1.55}
+.install-help-head{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.install-help h2{font-size:20px;margin:0}
+.install-help-close{cursor:pointer;border:0;background:#eaf0fa;border-radius:8px;padding:9px 12px;font-size:16px}
+.install-help-note{font-size:13px;color:#506277}
+.install-help .btn{width:100%;min-height:42px}
+@media(max-width:600px){header{flex-wrap:wrap}header .edition-nav{width:100%;justify-content:flex-start;flex-wrap:wrap}}

@@ -122,3 +122,9 @@ Test in Chrome/Edge on school-managed computers, including logo loading, mobile/
 ## Licensing
 
 No license has been selected. Fenton/team logos are not licensed for unrelated redistribution by this repository.
+
+## Install on a phone or computer
+
+Both editions are installable web apps (PWAs), served from GitHub Pages without an app store or account. Open the Fenton edition or General Edition, then select **Install app** in the header. Chrome and Edge can display a native installation dialog when supported. Safari on iPhone/iPad uses **Share → Add to Home Screen**; Safari on macOS uses **File → Add to Dock**. The site provides these instructions when the browser cannot show a prompt.
+
+The installed app launches without browser tabs and saves browser-local designs on that device. An offline service worker caches the editor shell and previously fetched resources, but previously unseen gallery images may require internet. Installing does not sync designs across devices or change GitHub Pages hosting.
