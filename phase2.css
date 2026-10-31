@@ -44,3 +44,10 @@
 .studio-logo-card:disabled{cursor:wait;opacity:.65}
 #uxLogoEmpty{padding:12px;background:#fff8ee;color:#794e20;border-radius:8px;font-size:12px}
 .studio-logo-group h4{border-bottom:1px solid #edf0f4;padding-bottom:5px}
+
+/* Team name and color choices in the searchable logo gallery */
+.team-logo-choice{min-width:0;display:flex;flex-direction:column;gap:6px;padding:5px;border:1px solid #e3e8ed;border-radius:10px}
+.team-logo-choice .studio-logo-card{width:100%;border:0}
+.team-logo-choice label{display:flex;gap:6px;align-items:center;justify-content:space-between;font-size:12px;font-weight:650;color:#263544}
+.team-logo-choice .team-logo-color{max-width:110px;min-width:75px;padding:6px 5px;border:1px solid #aebed0;border-radius:6px;background:#fff;color:#101820}
+.team-logo-choice select:focus-visible{outline:3px solid #f58220;outline-offset:2px}
