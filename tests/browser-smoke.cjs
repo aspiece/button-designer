@@ -121,7 +121,7 @@ assert.ok(xAfter>xBefore+.04,'Image can be dragged on the canvas');
 await page.click('#uxUndo');
 assert.ok(Math.abs((await page.evaluate(()=>layers[0].x))-xBefore)<.01,'Undo restores image position');
 // Phase 2: add a logo from its thumbnail, select via layers, and reorder.
-await page.locator('.studio-logo-card[data-logo="tiger-cubs-29168"]').click();
+await page.locator('.studio-logo-card[data-path="logos/tiger-cubs-29168.png"]').click();
 await page.waitForFunction(()=>window.ButtonStudioUX?.getState().layers.length===2,null,{timeout:12000});
 assert.equal(await page.locator('.studio-layer-select').count(),2,'Visual layer list shows both pictures');
 await page.locator('.studio-layer-select').last().click();
