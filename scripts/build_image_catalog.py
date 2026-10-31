@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Build a static, teacher-approved image gallery from images committed under logos/.
-New approved images are discovered on push; no live GitHub API keys needed in browsers.
+"""Build a static, teacher-curated image gallery from images committed under logos/.
+New gallery images are discovered on push; no live GitHub API keys needed in browsers.
 """
 from __future__ import annotations
 
@@ -14,12 +14,13 @@ ROOT = Path(__file__).resolve().parents[1]
 LOGOS = ROOT / "logos"
 CATALOG = LOGOS / "catalog.json"
 METADATA = LOGOS / "gallery-metadata.json"
-CATEGORIES = ("School Logos", "Robotics Teams", "FIRST Logos", "Custom Artwork")
+CATEGORIES = ("Robotics Teams", "FIRST Logos", "School Logos")
 FOLDERS = {
     "school-logos": "School Logos",
     "robotics-teams": "Robotics Teams",
     "first-logos": "FIRST Logos",
-    "custom-artwork": "Custom Artwork",
+    "first": "FIRST Logos",
+    "first logos": "FIRST Logos",
 }
 EXT = {".png", ".jpg", ".jpeg", ".webp", ".avif"}
 MAX_FILES = 300
@@ -34,14 +35,14 @@ def pretty_name(stem: str) -> str:
 def infer_category(path: Path) -> str:
     relative = path.relative_to(LOGOS)
     if len(relative.parts) > 1:
-        return FOLDERS.get(relative.parts[0].lower(), "Custom Artwork")
+        return FOLDERS.get(relative.parts[0].lower(), "School Logos")
     if re.search(r"(?i)tiger|^tiger[-_]|robotics|^team[-_]", path.stem):
         return "Robotics Teams"
     if re.search(r"(?i)^fenton|school|^paw[-_]", path.stem):
         return "School Logos"
     if re.search(r"(?i)^first[-_]|^fll[-_]|^ftc[-_]|^frc[-_]", path.stem):
         return "FIRST Logos"
-    return "Custom Artwork"
+    return "School Logos"
 
 
 def read_metadata() -> dict:
@@ -64,7 +65,7 @@ def make_catalog(root: Path = LOGOS) -> dict:
         metadata = document.get("assets", {})
     paths = [p for p in root.rglob("*") if p.is_file() and p.suffix.lower() in EXT]
     if len(paths) > MAX_FILES:
-        raise ValueError(f"Limit is {MAX_FILES} approved images")
+        raise ValueError(f"Limit is {MAX_FILES} gallery images")
     # Prefer files without '(1)' if identical copies were uploaded.
     paths.sort(key=lambda p: (bool(re.search(r"\s*\(\d+\)$", p.stem)), str(p).casefold()))
     images, hashes = [], set()
@@ -75,14 +76,16 @@ def make_catalog(root: Path = LOGOS) -> dict:
         size = path.stat().st_size
         if not 0 < size <= MAX_FILE_BYTES:
             raise ValueError(f"Image must be 1 byte to 8 MB: {rel}")
-        digest = hashlib.sha256(path.read_bytes()).hexdigest()
-        if digest in hashes:
-            continue
-        hashes.add(digest)
         public_path = "logos/" + rel.as_posix()
         extra = metadata.get(public_path, {})
         if not isinstance(extra, dict):
             raise ValueError(f"Metadata for {public_path} must be an object")
+        if extra.get("exclude") is True:
+            continue
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        if digest in hashes:
+            continue
+        hashes.add(digest)
         category = extra.get("category")
         if not category:
             folder = rel.parts[0].lower() if len(rel.parts) > 1 else ""
@@ -92,7 +95,7 @@ def make_catalog(root: Path = LOGOS) -> dict:
                 category = ("Robotics Teams" if ("tiger" in stem or "robotics" in stem or stem.startswith("team-"))
                             else "School Logos" if ("fenton" in stem or "school" in stem)
                             else "FIRST Logos" if stem.startswith(("first-", "fll-", "ftc-", "frc-"))
-                            else "Custom Artwork")
+                            else "School Logos")
         if category not in CATEGORIES:
             raise ValueError(f"Invalid category in metadata for {public_path}: {category}")
         name = extra.get("name") or pretty_name(path.stem)
@@ -118,7 +121,7 @@ def main():
             raise SystemExit("Image catalog is out of date; run scripts/build_image_catalog.py")
     elif not args.validate:
         CATALOG.write_text(encoded, encoding="utf-8")
-    print(f"Image gallery: {len(result['images'])} unique approved images across {len(CATEGORIES)} categories")
+    print(f"Image gallery: {len(result['images'])} unique images across {len(CATEGORIES)} categories")
 
 
 if __name__ == "__main__":
