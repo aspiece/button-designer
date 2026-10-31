@@ -1,0 +1,40 @@
+name: Refresh Fenton approved image gallery
+on:
+  push:
+    branches: [main]
+    paths:
+      - "logos/**"
+      - "scripts/build_image_catalog.py"
+      - ".github/workflows/publish-image-gallery.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+jobs:
+  gallery:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Scan approved images and rebuild catalog
+        run: python scripts/build_image_catalog.py
+      - name: Commit updated catalog
+        id: catalog
+        run: |
+          if ! git diff --quiet -- logos/catalog.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add logos/catalog.json
+            git commit -m "Refresh Fenton approved image catalog"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Publish refreshed gallery to GitHub Pages
+        if: steps.catalog.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/${{ github.repository }}/pages/builds"
