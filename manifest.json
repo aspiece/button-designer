@@ -1,10 +1,10 @@
 {
-  "id": "/button-designer/",
+  "id": "./",
   "name": "Fenton Robotics Button Designer",
   "short_name": "Fenton Buttons",
   "description": "Design and print Fenton Robotics buttons.",
-  "start_url": "/button-designer/",
-  "scope": "/button-designer/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#f1f5fa",
   "theme_color": "#171717",
