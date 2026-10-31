@@ -44,10 +44,10 @@
    function validPath(path){
      if(typeof path!=='string'||!path.startsWith('logos/'))return false;
      const parts=path.split('/');
-     return parts.length>=2&&!parts.some(p=>!p||p==='.'||p==='..'||p.includes('\\'))&&/\\.(png|jpe?g|webp|avif)$/i.test(path);
+     return parts.length>=2&&!parts.some(p=>!p||p==='.'||p==='..'||p.includes('\\'))&&/\.(png|jpe?g|webp|avif)$/i.test(path);
    }
    const imageUrl=path=>path.split('/').map(encodeURIComponent).join('/');
-   const mimetype=path=>/\\.png$/i.test(path)?'image/png':/\\.jpe?g$/i.test(path)?'image/jpeg':/\\.webp$/i.test(path)?'image/webp':'image/avif';
+   const mimetype=path=>/\.png$/i.test(path)?'image/png':/\.jpe?g$/i.test(path)?'image/jpeg':/\.webp$/i.test(path)?'image/webp':'image/avif';
    function showGallery(){
      groupsContainer.replaceChildren();
      const query=search.value.trim().toLowerCase(),category=select.value;
