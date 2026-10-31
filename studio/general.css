@@ -1,0 +1,16 @@
+/* General Button Studio branding; shared editor and print styles remain in ../ files. */
+:root{--studio-blue:#2a68b8}
+body{background:#eef3f9}
+header{background:linear-gradient(115deg,#122744,#234c76)}
+header b{font-size:24px}
+.btn.primary,#psDownloadSingle,#psDownloadMixed,.studio-upload{background:#2364b4;color:white}
+.template-card[aria-pressed="true"]{border-color:#2563ae;background:#f0f6ff;box-shadow:0 0 0 2px #2563ae33}
+.template-card:hover{border-color:#2563ae;background:#f4f9ff}
+.quick-panel{background:#f5f9fe;border-color:#c8dcf2}
+.quick-actions button:hover,.studio-tool:hover{border-color:#2563ae;background:#f0f6ff}
+.studio-logo-library{background:#f6f9fd;border:1px solid #dce5f0;border-radius:12px;padding:14px}
+.studio-logo-library .studio-upload{min-height:45px}
+#advancedTools{margin-top:18px}
+#editorCanvas:focus-visible,.template-card:focus-visible{outline-color:#246ec4}
+.general-edition-note{font-size:11px;color:#526a85}
+@media(max-width:700px){header b{font-size:20px}}
