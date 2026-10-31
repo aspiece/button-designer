@@ -51,3 +51,10 @@
 .team-logo-choice label{display:flex;gap:6px;align-items:center;justify-content:space-between;font-size:12px;font-weight:650;color:#263544}
 .team-logo-choice .team-logo-color{max-width:110px;min-width:75px;padding:6px 5px;border:1px solid #aebed0;border-radius:6px;background:#fff;color:#101820}
 .team-logo-choice select:focus-visible{outline:3px solid #f58220;outline-offset:2px}
+
+/* Team previews use a contrasting surface so White is never mistaken for a blank image. */
+.team-logo-choice .studio-logo-card img{background:#fff0d6;transition:background-color .16s ease}
+.team-logo-choice[data-logo-color="white"] .studio-logo-card img{background:#263244}
+.team-logo-choice[data-logo-color="orange"] .studio-logo-card img{background:#263244}
+.team-logo-choice[data-logo-color="black"] .studio-logo-card img{background:#f9d7a6}
+.team-logo-choice .studio-logo-card small{white-space:normal}
