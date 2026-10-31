@@ -49,7 +49,7 @@
   if ('serviceWorker' in navigator && window.isSecureContext) {
     const workerURL = document.body.dataset.studioEdition === 'general' ? '../service-worker.js' : './service-worker.js';
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register(workerURL, {scope: new URL('../', new URL(workerURL, location.href)).pathname})
+      navigator.serviceWorker.register(workerURL)
         .catch(err => console.warn('Offline app registration unavailable:', err));
     });
   }
