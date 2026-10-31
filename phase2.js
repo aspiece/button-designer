@@ -26,11 +26,24 @@
  setMode(false);
  
  const library=document.createElement('section');library.className='studio-logo-library';
- library.setAttribute('aria-label',general?'Upload your own images':'Approved Fenton robotics image gallery');
+ library.setAttribute('aria-label',general?'Upload your own images':'Fenton robotics image gallery');
  library.innerHTML=general?
   '<h3>Your artwork</h3><p>No preloaded team images. Upload a photo, logo, or illustration from your own device.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload an image</button>':
-  '<h3>Approved image library</h3><p>Choose a reusable image uploaded to GitHub. New approved artwork appears after the gallery updates.</p><label for="uxLogoSearch">Search approved images</label><input type="search" id="uxLogoSearch" placeholder="Search names, teams, or keywords" autocomplete="off"><label for="uxLogoCategory">Category</label><select id="uxLogoCategory"><option value="All">All images</option><option value="School Logos">School Logos</option><option value="Robotics Teams">Robotics Teams</option><option value="FIRST Logos">FIRST Logos</option></select><div class="studio-logo-results" id="uxLogoResults" role="status" aria-live="polite">Loading approved images…</div><div id="uxLogoGroups"></div><p id="uxLogoEmpty" hidden>No images match these filters.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload my own picture</button>';
+  '<h3>Image Library</h3><p>Choose a reusable image uploaded to GitHub. New artwork appears after the gallery updates.</p><label for="uxLogoSearch">Search images</label><input type="search" id="uxLogoSearch" placeholder="Search names, teams, or keywords" autocomplete="off"><label for="uxLogoCategory">Category</label><select id="uxLogoCategory"><option value="All">All images</option><option value="School Logos">School Logos</option><option value="Robotics Teams">Robotics Teams</option><option value="FIRST Logos">FIRST Logos</option></select><div class="studio-logo-results" id="uxLogoResults" role="status" aria-live="polite">Loading images…</div><div id="uxLogoGroups"></div><p id="uxLogoEmpty" hidden>No images match these filters.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload my own picture</button>';
  const logoTab=!general?document.getElementById('logosTools')?.querySelector('.toolSectionBody'):null;
+ if(logoTab){
+  // Keep the existing hidden inputs and layer controls wired to the editor,
+  // while using the searchable gallery as the single image selection UI.
+  ['teamLogo','firstLogo','logo'].forEach(id=>{
+   const field=document.getElementById(id);
+   const container=field?.closest('.group');
+   if(container){container.hidden=true;container.style.display='none'}
+  });
+  const layerField=document.getElementById('imageLayer')?.closest('.group');
+  if(layerField){layerField.hidden=true;layerField.style.display='none'}
+  const upload=document.getElementById('uxUpload');
+ }
+
  (logoTab||left).insertBefore(library,logoTab?logoTab.firstChild:quick);
 
  if(!general){
@@ -76,10 +89,10 @@
        group.append(grid);groupsContainer.append(group)
      }
      empty.hidden=filtered.length!==0;
-     results.textContent=filtered.length+' of '+assets.length+' approved image'+(assets.length===1?'':'s')+' shown';
+     results.textContent=filtered.length+' of '+assets.length+' image'+(assets.length===1?'':'s')+' shown';
    }
    async function loadGallery(){
-     results.textContent='Loading approved images…';
+     results.textContent='Loading images…';
      try{
        const response=await fetch('logos/catalog.json',{cache:'no-store'});
        if(!response.ok)throw Error('Catalog not available ('+response.status+')');
@@ -95,7 +108,7 @@
        }));
        showGallery()
      }catch(error){
-       results.textContent='Could not load the approved image gallery: '+error.message;
+       results.textContent='Could not load the image gallery: '+error.message;
        empty.hidden=true
      }
    }
