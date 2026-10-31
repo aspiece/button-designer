@@ -85,7 +85,7 @@
    // Team logos are displayed and inserted as black-only artwork on transparent pixels.
    // The source PNGs remain unchanged in the repo for future revisions.
    const teamPreviewCache=new Map();
-   async function blackOnlyTeamLogo(blob){
+   async function blackOnlyTeamLogo(blob,color='black'){
      const bitmap=await createImageBitmap(blob),cv=document.createElement('canvas');
      const scale=Math.min(1,1400/Math.max(bitmap.width,bitmap.height));
      cv.width=Math.max(1,Math.round(bitmap.width*scale));cv.height=Math.max(1,Math.round(bitmap.height*scale));
@@ -99,18 +99,20 @@
        const neutral=Math.max(r,g,b)-Math.min(r,g,b)<42;
        const darkness=Math.max(0,Math.min(1,(180-(r*.299+g*.587+b*.114))/115));
        const ink=orange?0:(neutral?darkness:(Math.max(r,g,b)<110?darkness:0));
-       data[i]=data[i+1]=data[i+2]=0;data[i+3]=Math.round(original*ink);
+       const rgb=color==='white'?[255,255,255]:color==='orange'?[245,130,32]:[0,0,0];
+       data[i]=rgb[0];data[i+1]=rgb[1];data[i+2]=rgb[2];data[i+3]=Math.round(original*ink);
      }
      cx.putImageData(img,0,0);
      return await new Promise(resolve=>cv.toBlob(result=>resolve(result||blob),'image/png'));
    }
-   async function teamPreview(path,img){
-     let src=teamPreviewCache.get(path);
+   async function teamPreview(path,img,color='black'){
+     const cacheKey=path+'|'+color;
+     let src=teamPreviewCache.get(cacheKey);
      if(!src){
        const response=await fetch(imageUrl(path));
        if(!response.ok)throw Error('Logo unavailable');
-       const converted=await blackOnlyTeamLogo(await response.blob());
-       src=URL.createObjectURL(converted);teamPreviewCache.set(path,src);
+       const converted=await blackOnlyTeamLogo(await response.blob(),color);
+       src=URL.createObjectURL(converted);teamPreviewCache.set(cacheKey,src);
      }
      if(img.isConnected)img.src=src;
    }
@@ -134,12 +136,21 @@
          button.setAttribute('aria-label','Add '+item.name+' from '+groupName+' to your button');
          const picture=document.createElement('img');
          picture.src=imageUrl(item.path);picture.alt='';picture.loading='lazy';
-         if(item.category==='Robotics Teams')teamPreview(item.path,picture).catch(()=>{});
+         if(item.category==='Robotics Teams')teamPreview(item.path,picture,'black').catch(()=>{});
          picture.addEventListener('error',()=>{picture.hidden=true;button.classList.add('studio-logo-broken')});
          const label=document.createElement('span');label.textContent=item.name;
          const detail=document.createElement('small');
-         detail.textContent=groupName;
-         button.append(picture,label,detail);grid.append(button)
+         detail.textContent=item.category==='Robotics Teams'?'Black logo · transparent background':groupName;
+         button.append(picture,label,detail);
+         if(item.category==='Robotics Teams'){
+           const wrap=document.createElement('div');wrap.className='team-logo-choice';
+           const colorLabel=document.createElement('label');colorLabel.textContent='Logo color';
+           const picker=document.createElement('select');picker.setAttribute('aria-label',item.name+' logo color');
+           picker.className='team-logo-color';picker.dataset.path=item.path;
+           [['black','Black'],['orange','Orange'],['white','White']].forEach(([value,name])=>{const opt=document.createElement('option');opt.value=value;opt.textContent=name;picker.append(opt)});
+           picker.addEventListener('change',()=>{detail.textContent=picker.selectedOptions[0].text+' logo · transparent background';picture.hidden=false;teamPreview(item.path,picture,picker.value).catch(()=>{})});
+           colorLabel.append(picker);wrap.append(button,colorLabel);grid.append(wrap);
+         }else grid.append(button)
        }
        group.append(grid);groupsContainer.append(group)
      }
@@ -180,9 +191,10 @@
        let blob=await response.blob();
        if(!blob.size||blob.size>8*1024*1024)throw Error('Image is empty or larger than 8 MB');
        if(entry.category==='School Logos')blob=await cleanSchoolBackground(blob);
-       if(entry.category==='Robotics Teams')blob=await blackOnlyTeamLogo(blob);
+       const color=entry.category==='Robotics Teams'?(card.closest('.team-logo-choice')?.querySelector('.team-logo-color')?.value||'black'):'black';
+       if(entry.category==='Robotics Teams')blob=await blackOnlyTeamLogo(blob,color);
        // Let the existing file-import pipeline validate, normalize, and create an editable layer.
-       const file=new File([blob],entry.name.replace(/[^a-zA-Z0-9 _-]/g,'').slice(0,55)+'.'+(entry.category!=='FIRST Logos'?'png':entry.path.split('.').pop().toLowerCase()),{type:entry.category!=='FIRST Logos'?'image/png':mimetype(entry.path)});
+       const file=new File([blob],(entry.name+(entry.category==='Robotics Teams'?' '+color:'' )).replace(/[^a-zA-Z0-9 _-]/g,'').slice(0,55)+'.'+(entry.category!=='FIRST Logos'?'png':entry.path.split('.').pop().toLowerCase()),{type:entry.category!=='FIRST Logos'?'image/png':mimetype(entry.path)});
        addImages([file]);
        results.textContent='Added '+entry.name+'. Drag the image to position it.';
      }catch(err){
