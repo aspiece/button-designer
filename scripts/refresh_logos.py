@@ -58,9 +58,28 @@ for key,url in SOURCE.items():
    return (("rgb" in s)*15+("full-color" in s or "full_color" in s)*15+("vertical" in s or "vert" in s)*5+("horizontal" in s or "horiz" in s)*2-("reverse" in s)*20-("small" in s)*2-("thumbnail" in s)*9)
   names.sort(key=rank,reverse=True)
   if not names: print("No approved PNG in",key);continue
-  chosen=names[0]
-  data=z.read(chosen)
-  img=Image.open(BytesIO(data));img.verify()
-  (out/(key+".png")).write_bytes(data)
-  print("Imported official",key,chosen)
+  # Save all distinct layouts in FIRST's original supplied PNG format.
+  # Do not edit, recolor, resize or trim official image content.
+  variants={"vertical":None,"horizontal":None,"one-color":None}
+  for filename in names:
+   lower=filename.lower()
+   if "vert" in lower and variants["vertical"] is None: variants["vertical"]=filename
+   if ("horiz" in lower or "horizontal" in lower) and variants["horizontal"] is None: variants["horizontal"]=filename
+   if ("onecolor" in lower or "one-color" in lower or "blackwhite" in lower or "black_white" in lower) and variants["one-color"] is None: variants["one-color"]=filename
+  variants["default"]=names[0]
+  for suffix,filename in variants.items():
+   if filename is None:continue
+   data=z.read(filename)
+   img=Image.open(BytesIO(data));img.verify()
+   target=key+".png" if suffix=="default" else key+"-"+suffix+".png"
+   (out/target).write_bytes(data)
+   print("Imported official",target,filename)
+  if key=="first-elements":
+   for label,words in {"icon":["icon"],"wordmark":["wordmark"],"acronym":["acronym"]}.items():
+    matches=[n for n in names if any(w in n.lower() for w in words)]
+    if matches:
+     file=matches[0]
+     data=z.read(file);Image.open(BytesIO(data)).verify()
+     (out/("first-"+label+".png")).write_bytes(data)
+     print("Imported supporting element",label,file)
  except Exception as e: print("Official FIRST import unavailable:",key,str(e))
