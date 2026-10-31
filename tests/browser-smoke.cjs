@@ -38,13 +38,24 @@ for(const [finished,cut] of Object.entries(sizePairs)){
 await page.selectOption('#finishedSize','2.25');
 assert.equal(await page.inputValue('#cutSize'),'2.625','Returning to standard size restores default paper diameter');
 
-assert.equal(await page.locator('.studio-logo-card').count(),10,'Ten named Fenton logo thumbnails');
+await page.waitForFunction(()=>document.querySelectorAll('.studio-logo-card').length>=14,null,{timeout:12000});
+assert.equal(await page.locator('.studio-logo-card').count(),14,'All unique approved GitHub images load from catalog');
+assert.equal(await page.locator('.studio-logo-group').count(),2,'Only non-empty image categories are shown');
+assert.equal(await page.locator('#uxLogoResults').textContent(),'14 of 14 approved images shown','Gallery provides accurate count');
 assert.equal(await page.locator('#uxBeginner').getAttribute('aria-pressed'),'true','Beginner mode is default');
 assert.equal(await page.locator('#advancedTools').isVisible(),false,'Advanced settings are initially hidden');
 await page.locator('#uxLogoSearch').fill('31558');
 assert.equal(await page.locator('.studio-logo-card:visible').count(),1,'Search filters logos by number');
 await page.locator('#uxLogoSearch').fill('');
-assert.equal(await page.locator('.studio-logo-card:visible').count(),10,'Clearing search restores logos');
+assert.equal(await page.locator('.studio-logo-card:visible').count(),14,'Clearing search restores catalog');
+await page.selectOption('#uxLogoCategory','Robotics Teams');
+assert.equal(await page.locator('.studio-logo-card:visible').count(),10,'Robotics Teams filter');
+await page.selectOption('#uxLogoCategory','Custom Artwork');
+assert.equal(await page.locator('.studio-logo-card:visible').count(),4,'Previously unlisted custom artwork appears automatically');
+await page.selectOption('#uxLogoCategory','School Logos');
+assert.equal(await page.locator('.studio-logo-card:visible').count(),0,'Empty category displays no graphics');
+assert.equal(await page.locator('#uxLogoEmpty').isVisible(),true,'Empty category state is visible');
+await page.selectOption('#uxLogoCategory','All');
 await page.click('#uxAdvanced');
 assert.equal(await page.locator('#advancedTools').isVisible(),true,'Advanced mode reveals settings');
 assert.equal(await page.locator('canvas#editorCanvas').isVisible(),true,'Canvas is visible');
@@ -110,7 +121,7 @@ assert.ok(xAfter>xBefore+.04,'Image can be dragged on the canvas');
 await page.click('#uxUndo');
 assert.ok(Math.abs((await page.evaluate(()=>layers[0].x))-xBefore)<.01,'Undo restores image position');
 // Phase 2: add a logo from its thumbnail, select via layers, and reorder.
-await page.locator('.studio-logo-card[data-logo="tiger-cubs-29168"]').click();
+await page.locator('.studio-logo-card[data-path="logos/tiger-cubs-29168.png"]').click();
 await page.waitForFunction(()=>window.ButtonStudioUX?.getState().layers.length===2,null,{timeout:12000});
 assert.equal(await page.locator('.studio-layer-select').count(),2,'Visual layer list shows both pictures');
 await page.locator('.studio-layer-select').last().click();
@@ -217,6 +228,12 @@ assert.ok(await general.evaluate(()=>!!localStorage.getItem('generalButtonStudio
 assert.equal(await general.evaluate(()=>localStorage.getItem('roboticsButtonDesign')),null,'General edition never overwrites Fenton browser save');
 assert.deepEqual(generalErrors,[],'No JavaScript errors in general edition');
 await general.close();
+// Select a non-legacy PNG from the generated catalog. It must use the same editable image pipeline.
+const initialLayers=await page.evaluate(()=>window.ButtonStudioUX.getState().layers.length);
+await page.locator('.studio-logo-card[data-path="logos/logo-2.png"]').click();
+await page.waitForFunction(count=>window.ButtonStudioUX.getState().layers.length===count+1,initialLayers,{timeout:12000});
+assert.equal(await page.locator('#uxLogoResults').textContent().then(v=>v.includes('Added Logo 2')),true,'New catalog artwork can be added and edited');
+assert.equal(await page.locator('.studio-layer-select').count(),initialLayers+1,'Added image appears in layers');
 await page.screenshot({path:path.join(__dirname,'browser-preview.png')});
 await page.setViewportSize({width:375,height:812});
 const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+4);

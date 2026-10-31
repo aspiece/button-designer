@@ -25,52 +25,100 @@
  });
  setMode(false);
  
- const groups=general?[]:[
-  ['Fenton numbered teams',[
-    ['tiger-paws-24471','Tiger Paws','24471'],['tiger-cubs-29168','Tiger Cubs','29168'],
-    ['tiger-kits-31558','Tiger Kits','31558'],['tiger-claws-31575','Tiger Claws','31575'],
-    ['tiger-eyes-31577','Tiger Eyes','31577'],['siberian-tigers-38050','Siberian Tigers','38050'],
-    ['bengal-tigers-52545','Bengal Tigers','52545']]],
-  ['Titanium Tigers teams',[
-    ['tungsten-tigers','Tungsten Tigers',''],['chromium-tigers','Chromium Tigers',''],
-    ['iridium-tigers','Iridium Tigers','']]]
- ];
  const library=document.createElement('section');library.className='studio-logo-library';
- library.setAttribute('aria-label',general?'Upload your own images':'Available Fenton robotics team logos');
- library.innerHTML=general?'<h3>Your artwork</h3><p>No preloaded team images. Upload a photo, logo, or illustration from your own device.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload an image</button>':'<h3>Team logos</h3><p>Choose a team logo to add it to your button.</p><label for="uxLogoSearch">Search teams</label><input type="search" id="uxLogoSearch" placeholder="Team name or number" autocomplete="off"><div id="uxLogoGroups"></div><p id="uxLogoEmpty" hidden>No teams found. Try another search.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload my own picture</button>';
+ library.setAttribute('aria-label',general?'Upload your own images':'Approved Fenton robotics image gallery');
+ library.innerHTML=general?
+  '<h3>Your artwork</h3><p>No preloaded team images. Upload a photo, logo, or illustration from your own device.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload an image</button>':
+  '<h3>Approved image library</h3><p>Choose a reusable image uploaded to GitHub. New approved artwork appears after the gallery updates.</p><label for="uxLogoSearch">Search approved images</label><input type="search" id="uxLogoSearch" placeholder="Search names, teams, or keywords" autocomplete="off"><label for="uxLogoCategory">Category</label><select id="uxLogoCategory"><option value="All">All images</option><option value="School Logos">School Logos</option><option value="Robotics Teams">Robotics Teams</option><option value="FIRST Logos">FIRST Logos</option><option value="Custom Artwork">Custom Artwork</option></select><div class="studio-logo-results" id="uxLogoResults" role="status" aria-live="polite">Loading approved images…</div><div id="uxLogoGroups"></div><p id="uxLogoEmpty" hidden>No images match these filters.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload my own picture</button>';
  left.insertBefore(library,quick);
- const groupsContainer=library.querySelector('#uxLogoGroups');
 
- if(!general)for(const [heading,items] of groups){
-  const group=document.createElement('div');group.className='studio-logo-group';
-  const title=document.createElement('h4');title.textContent=heading;group.append(title);
-  const grid=document.createElement('div');grid.className='studio-logo-grid';
-  for(const [id,name,number] of items){
-   const button=document.createElement('button');button.type='button';button.className='studio-logo-card';
-   button.dataset.logo=id;button.dataset.search=(name+' '+number).toLowerCase();
-   button.setAttribute('aria-label','Add '+name+(number?' team '+number:'')+' logo');
-   const picture=document.createElement('img');picture.src='logos/'+id+'.png';picture.alt='';picture.loading='lazy';
-   const text=document.createElement('span');text.textContent=name;
-   const numberLabel=document.createElement('small');numberLabel.textContent=number||'Robotics';
-   button.append(picture,text,numberLabel);grid.append(button)
-  }group.append(grid);groupsContainer.append(group)
- }
  if(!general){
- document.getElementById('uxLogoSearch').addEventListener('input',e=>{
-  const q=e.target.value.trim().toLowerCase();let total=0;
-  groupsContainer.querySelectorAll('.studio-logo-group').forEach(group=>{
-   let visible=0;
-   group.querySelectorAll('.studio-logo-card').forEach(card=>{
-    const match=card.dataset.search.includes(q);card.hidden=!match;if(match)visible++
-   });group.hidden=visible===0;total+=visible
-  });
-  document.getElementById('uxLogoEmpty').hidden=total!==0
- });
- groupsContainer.addEventListener('click',e=>{
-  const card=e.target.closest('button[data-logo]');if(!card)return;
-  if(api.getState().layers.length>=12){document.getElementById('message').textContent='Maximum 12 images. Remove one before adding another.';return}
-  api.addLogo(card.dataset.logo)
- });
+   const groupsContainer=document.getElementById('uxLogoGroups');
+   const search=document.getElementById('uxLogoSearch');
+   const select=document.getElementById('uxLogoCategory');
+   const results=document.getElementById('uxLogoResults');
+   const empty=document.getElementById('uxLogoEmpty');
+   const ORDER=['School Logos','Robotics Teams','FIRST Logos','Custom Artwork'];
+   let assets=[];
+   let busy=false;
+   function validPath(path){
+     if(typeof path!=='string'||!path.startsWith('logos/'))return false;
+     const parts=path.split('/');
+     return parts.length>=2&&!parts.some(p=>!p||p==='.'||p==='..'||p.includes('\\'))&&/\.(png|jpe?g|webp|avif)$/i.test(path);
+   }
+   const imageUrl=path=>path.split('/').map(encodeURIComponent).join('/');
+   const mimetype=path=>/\.png$/i.test(path)?'image/png':/\.jpe?g$/i.test(path)?'image/jpeg':/\.webp$/i.test(path)?'image/webp':'image/avif';
+   function showGallery(){
+     groupsContainer.replaceChildren();
+     const query=search.value.trim().toLowerCase(),category=select.value;
+     const filtered=assets.filter(item=>(category==='All'||item.category===category)&&
+      (item.name+' '+item.path+' '+item.tags.join(' ')).toLowerCase().includes(query));
+     for(const groupName of ORDER){
+       const items=filtered.filter(item=>item.category===groupName);
+       if(!items.length)continue;
+       const group=document.createElement('section');group.className='studio-logo-group';
+       group.dataset.category=groupName;
+       const title=document.createElement('h4');title.textContent=groupName+' ('+items.length+')';group.append(title);
+       const grid=document.createElement('div');grid.className='studio-logo-grid';
+       for(const item of items){
+         const button=document.createElement('button');button.type='button';button.className='studio-logo-card';
+         button.dataset.path=item.path;
+         button.setAttribute('aria-label','Add '+item.name+' from '+groupName+' to your button');
+         const picture=document.createElement('img');
+         picture.src=imageUrl(item.path);picture.alt='';picture.loading='lazy';
+         picture.addEventListener('error',()=>{picture.hidden=true;button.classList.add('studio-logo-broken')});
+         const label=document.createElement('span');label.textContent=item.name;
+         const detail=document.createElement('small');
+         detail.textContent=groupName;
+         button.append(picture,label,detail);grid.append(button)
+       }
+       group.append(grid);groupsContainer.append(group)
+     }
+     empty.hidden=filtered.length!==0;
+     results.textContent=filtered.length+' of '+assets.length+' approved image'+(assets.length===1?'':'s')+' shown';
+   }
+   async function loadGallery(){
+     results.textContent='Loading approved images…';
+     try{
+       const response=await fetch('logos/catalog.json',{cache:'no-store'});
+       if(!response.ok)throw Error('Catalog not available ('+response.status+')');
+       const manifest=await response.json();
+       if(manifest.version!==1||!Array.isArray(manifest.images))throw Error('Invalid gallery format');
+       const paths=new Set();
+       assets=manifest.images.filter(item=>{
+         if(!item||!validPath(item.path)||typeof item.name!=='string'||!item.name.trim()||!ORDER.includes(item.category)||paths.has(item.path))return false;
+         paths.add(item.path);return true
+       }).slice(0,300).map(item=>({
+         path:item.path,name:item.name.slice(0,100),category:item.category,
+         tags:Array.isArray(item.tags)?item.tags.filter(x=>typeof x==='string').slice(0,10):[]
+       }));
+       showGallery()
+     }catch(error){
+       results.textContent='Could not load the approved image gallery: '+error.message;
+       empty.hidden=true
+     }
+   }
+   search.addEventListener('input',showGallery);
+   select.addEventListener('change',showGallery);
+   groupsContainer.addEventListener('click',async e=>{
+     const card=e.target.closest('button[data-path]');if(!card||busy)return;
+     const entry=assets.find(x=>x.path===card.dataset.path);if(!entry||!validPath(entry.path))return;
+     if(api.getState().layers.length>=12){results.textContent='Maximum 12 image layers. Remove one first.';return}
+     busy=true;card.disabled=true;results.textContent='Adding '+entry.name+'…';
+     try{
+       const response=await fetch(imageUrl(entry.path),{cache:'force-cache'});
+       if(!response.ok)throw Error('Could not load image ('+response.status+')');
+       const blob=await response.blob();
+       if(!blob.size||blob.size>8*1024*1024)throw Error('Image is empty or larger than 8 MB');
+       // Let the existing file-import pipeline validate, normalize, and create an editable layer.
+       const file=new File([blob],entry.name.replace(/[^a-zA-Z0-9 _-]/g,'').slice(0,55)+'.'+entry.path.split('.').pop().toLowerCase(),{type:mimetype(entry.path)});
+       addImages([file]);
+       results.textContent='Added '+entry.name+'. Drag the image to position it.';
+     }catch(err){
+       results.textContent='Could not add '+entry.name+': '+err.message;
+     }finally{busy=false;card.disabled=false}
+   });
+   loadGallery()
  }
  document.getElementById('uxUpload').addEventListener('click',()=>document.getElementById('logo').click());
  
