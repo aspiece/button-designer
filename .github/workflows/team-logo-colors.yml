@@ -1,0 +1,27 @@
+name: Audit all robotics logo colors
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'phase2.js'
+      - 'phase2.css'
+      - 'index.html'
+      - 'logos/catalog.json'
+      - 'logos/**.png'
+      - 'tests/team-logo-colors.cjs'
+      - '.github/workflows/team-logo-colors.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  colors:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save playwright-core
+      - name: Audit 14 robotics logos in Black Orange White
+        run: node tests/team-logo-colors.cjs
