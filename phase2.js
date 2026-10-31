@@ -30,7 +30,8 @@
  library.innerHTML=general?
   '<h3>Your artwork</h3><p>No preloaded team images. Upload a photo, logo, or illustration from your own device.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload an image</button>':
   '<h3>Approved image library</h3><p>Choose a reusable image uploaded to GitHub. New approved artwork appears after the gallery updates.</p><label for="uxLogoSearch">Search approved images</label><input type="search" id="uxLogoSearch" placeholder="Search names, teams, or keywords" autocomplete="off"><label for="uxLogoCategory">Category</label><select id="uxLogoCategory"><option value="All">All images</option><option value="School Logos">School Logos</option><option value="Robotics Teams">Robotics Teams</option><option value="FIRST Logos">FIRST Logos</option><option value="Other Approved Images">Other Approved Images</option></select><div class="studio-logo-results" id="uxLogoResults" role="status" aria-live="polite">Loading approved images…</div><div id="uxLogoGroups"></div><p id="uxLogoEmpty" hidden>No images match these filters.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload my own picture</button>';
- left.insertBefore(library,quick);
+ const logoTab=!general?document.getElementById('logosTools')?.querySelector('.toolSectionBody'):null;
+ (logoTab||left).insertBefore(library,logoTab?logoTab.firstChild:quick);
 
  if(!general){
    const groupsContainer=document.getElementById('uxLogoGroups');
@@ -124,7 +125,7 @@
  
  const layersSection=document.createElement('section');layersSection.className='studio-layers';
  layersSection.innerHTML='<div class="studio-layers-head"><h3>Pictures on your button</h3><span id="uxLayerCount">0</span></div><p>Select a picture to move, resize, or change which one appears on top.</p><div class="studio-layer-list" id="uxLayersList"></div>';
- left.insertBefore(layersSection,advanced);
+ if(logoTab)logoTab.append(layersSection);else left.insertBefore(layersSection,advanced);
  const list=layersSection.querySelector('#uxLayersList');
  let lastSignature='';
  function refresh(){
