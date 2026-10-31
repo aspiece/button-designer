@@ -51,12 +51,12 @@
  }
  const title=previewPanel.querySelector('h2');if(title)title.textContent='2 · Design on the canvas';
  const tools=document.createElement('div');tools.className='studio-toolbar';
- tools.innerHTML='<button type="button" class="studio-tool" id="uxUndo" disabled title="Undo (Ctrl+Z)">↶ Undo</button><button type="button" class="studio-tool" id="uxRedo" disabled title="Redo (Ctrl+Y)">↷ Redo</button><span id="selectedName">Tap text or a picture to edit it</span>';
+ tools.innerHTML='<button type="button" class="studio-tool" id="uxUndo" disabled title="Undo (Ctrl+Z)">↶ Undo</button><button type="button" class="studio-tool" id="uxRedo" disabled title="Redo (Ctrl+Y)">↷ Redo</button><span id="selectedName">Tap a logo on the preview to move, resize or delete it</span>';
  previewPanel.insertBefore(tools,previewPanel.querySelector('.canvasWrap'));
  editor.tabIndex=0;editor.setAttribute('role','img');
  editor.setAttribute('aria-label','Editable circular button. Tap text or a logo to select and drag. Use the selected element controls to resize.');
  const help=document.createElement('p');help.className='studio-canvas-hint';
- help.textContent='Tap to select. Drag to move. Drag the orange handle to resize. Preview guides are not printed.';
+ help.textContent='Tap a logo to select it, drag to move, drag the lower-right handle to resize, or tap the red X to delete. Handles are never printed.';
  previewPanel.querySelector('.canvasWrap').after(help);
  const selectedLabel=$('selectedName'),undoBtn=$('uxUndo'),redoBtn=$('uxRedo');
  let selected=null,draggingObject=null,gesture=false,formFocus=false,restoring=false;
@@ -235,7 +235,19 @@
    if(near(p,hx,hy,24))return {...selected,mode:'resize'}
   }
   for(let i=layers.length-1;i>=0;i--){
-   const r=imageRect(i);if(r&&Math.abs(p.x-r.cx)<r.w/2+8&&Math.abs(p.y-r.cy)<r.h/2+8)return {kind:'image',index:i,mode:'move'}
+   const r=imageRect(i);
+   if(!r||Math.abs(p.x-r.cx)>r.w/2+8||Math.abs(p.y-r.cy)>r.h/2+8)continue;
+   // In transparent PNGs, empty padding should not obstruct logos beneath.
+   const layer=layers[i],u=(p.x-(r.cx-r.w/2))/r.w,v=(p.y-(r.cy-r.h/2))/r.h;
+   if(u>=0&&u<=1&&v>=0&&v<=1&&layer.im?.naturalWidth){
+    try{
+     const hitCanvas=document.createElement('canvas');hitCanvas.width=hitCanvas.height=1;
+     const hitCtx=hitCanvas.getContext('2d',{willReadFrequently:true});
+     hitCtx.drawImage(layer.im,Math.min(layer.im.naturalWidth-1,Math.floor(u*layer.im.naturalWidth)),Math.min(layer.im.naturalHeight-1,Math.floor(v*layer.im.naturalHeight)),1,1,0,0,1,1);
+     if(hitCtx.getImageData(0,0,1,1).data[3]<24)continue
+    }catch(err){/* Loaded art remains selectable if pixel inspection is blocked. */}
+   }
+   return {kind:'image',index:i,mode:'move'}
   }
   const mid=middleRect();if(mid&&Math.abs(p.x-mid.cx)<mid.w/2+10&&Math.abs(p.y-mid.cy)<mid.h/2+9)return {kind:'middle',mode:'move'};
   const {m,f}=metrics(),dx=p.x-m,dy=p.y-m,dist=Math.hypot(dx,dy);
@@ -314,8 +326,11 @@
   if(d.kind==='image'){
    const l=layers[d.index];if(!l)return;
    if(d.mode==='resize'){
-    const r=imageRect(d.index),distance=Math.hypot(p.x-r.cx,p.y-r.cy);
-    l.size=clamp(Math.round(distance*2/(d.f*1.25)*100),15,MAX_IMAGE_SIZE);
+    const originalWidth=d.origin.im.naturalWidth,originalHeight=d.origin.im.naturalHeight;
+    const ratio=originalWidth/originalHeight;
+    const distance=Math.max(Math.abs(p.x-(d.m+(d.origin.x-.5)*d.f*1.35))*2,
+                            Math.abs(p.y-(d.m+(d.origin.y-.5)*d.f*1.35))*2*(ratio>=1?ratio:1/ratio));
+    l.size=clamp(Math.round(distance/(d.f*1.25)*100),15,MAX_IMAGE_SIZE);
     $('logoSize').value=l.size
    }else{
     l.x=snapCenter(clamp(d.origin.x+dx/(d.f*1.35),.08,.92),'x');
