@@ -60,6 +60,28 @@
      const parts=path.split('/');
      return parts.length>=2&&!parts.some(p=>!p||p==='.'||p==='..'||p.includes('\\'))&&/\.(png|jpe?g|webp|avif)$/i.test(path);
    }
+   // Remove only white/near-white regions connected to image edges.
+   // This preserves enclosed white lettering and details inside logos.
+   async function cleanSchoolBackground(blob){
+     const bitmap=await createImageBitmap(blob);
+     const maxSide=1400,scale=Math.min(1,maxSide/Math.max(bitmap.width,bitmap.height));
+     const cv=document.createElement('canvas');
+     cv.width=Math.max(1,Math.round(bitmap.width*scale));cv.height=Math.max(1,Math.round(bitmap.height*scale));
+     const cx=cv.getContext('2d',{willReadFrequently:true});cx.drawImage(bitmap,0,0,cv.width,cv.height);bitmap.close?.();
+     const w=cv.width,h=cv.height,pixels=cx.getImageData(0,0,w,h),d=pixels.data;
+     const checked=new Uint8Array(w*h),stack=[];
+     const candidate=i=>{const k=i*4;return d[k+3]>0&&d[k]>235&&d[k+1]>235&&d[k+2]>235};
+     function seed(i){if(!checked[i]&&candidate(i)){checked[i]=1;stack.push(i)}}
+     for(let x=0;x<w;x++){seed(x);seed((h-1)*w+x)}
+     for(let y=0;y<h;y++){seed(y*w);seed(y*w+w-1)}
+     while(stack.length){
+       const i=stack.pop(),k=i*4;d[k+3]=0;
+       const x=i%w,y=(i/w)|0;
+       if(x>0)seed(i-1);if(x<w-1)seed(i+1);if(y>0)seed(i-w);if(y<h-1)seed(i+w);
+     }
+     cx.putImageData(pixels,0,0);
+     return new Promise(resolve=>cv.toBlob(out=>resolve(out||blob),'image/png'));
+   }
    const imageUrl=path=>path.split('/').map(encodeURIComponent).join('/');
    const mimetype=path=>/\.png$/i.test(path)?'image/png':/\.jpe?g$/i.test(path)?'image/jpeg':/\.webp$/i.test(path)?'image/webp':'image/avif';
    function showGallery(){
@@ -122,10 +144,11 @@
      try{
        const response=await fetch(imageUrl(entry.path),{cache:'force-cache'});
        if(!response.ok)throw Error('Could not load image ('+response.status+')');
-       const blob=await response.blob();
+       let blob=await response.blob();
        if(!blob.size||blob.size>8*1024*1024)throw Error('Image is empty or larger than 8 MB');
+       if(entry.category==='School Logos')blob=await cleanSchoolBackground(blob);
        // Let the existing file-import pipeline validate, normalize, and create an editable layer.
-       const file=new File([blob],entry.name.replace(/[^a-zA-Z0-9 _-]/g,'').slice(0,55)+'.'+entry.path.split('.').pop().toLowerCase(),{type:mimetype(entry.path)});
+       const file=new File([blob],entry.name.replace(/[^a-zA-Z0-9 _-]/g,'').slice(0,55)+'.'+(entry.category==='School Logos'?'png':entry.path.split('.').pop().toLowerCase()),{type:entry.category==='School Logos'?'image/png':mimetype(entry.path)});
        addImages([file]);
        results.textContent='Added '+entry.name+'. Drag the image to position it.';
      }catch(err){
