@@ -4,7 +4,7 @@
  const general=window.ButtonStudioEdition==='general';
  const api=window.ButtonStudioUX;
  if(!api)return;
- const left=document.querySelector('.app > section.panel:first-child');
+ const left=document.querySelector('#designTools, .app > section.panel');
  const gallery=left?.querySelector('.template-section');
  const quick=left?.querySelector('#quickPanel');
  const advanced=left?.querySelector('#advancedTools');
