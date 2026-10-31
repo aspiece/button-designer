@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "categories": [
+    "School Logos",
+    "Robotics Teams",
+    "FIRST Logos",
+    "Custom Artwork"
+  ],
+  "images": [
+    {
+      "path": "logos/bengal-tigers-52545.png",
+      "name": "Bengal Tigers 52545",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/chromium-tigers.png",
+      "name": "Chromium Tigers",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/iridium-tigers.png",
+      "name": "Iridium Tigers",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/siberian-tigers-38050.png",
+      "name": "Siberian Tigers 38050",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/tiger-claws-31575.png",
+      "name": "Tiger Claws 31575",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/tiger-cubs-29168.png",
+      "name": "Tiger Cubs 29168",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/tiger-eyes-31577.png",
+      "name": "Tiger Eyes 31577",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/tiger-kits-31558.png",
+      "name": "Tiger Kits 31558",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/tiger-paws-24471.png",
+      "name": "Tiger Paws 24471",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/tungsten-tigers.png",
+      "name": "Tungsten Tigers",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/9f5b9b_d5ce1468b7e14070aed7f4b27ef524a1~mv2.avif",
+      "name": "9f5b9b D5ce1468b7e14070aed7f4b27ef524a1~Mv2",
+      "category": "Custom Artwork",
+      "tags": []
+    },
+    {
+      "path": "logos/logo-2.png",
+      "name": "Logo 2",
+      "category": "Custom Artwork",
+      "tags": []
+    },
+    {
+      "path": "logos/logo-3.png",
+      "name": "Logo 3",
+      "category": "Custom Artwork",
+      "tags": []
+    },
+    {
+      "path": "logos/logo-4.png",
+      "name": "Logo 4",
+      "category": "Custom Artwork",
+      "tags": []
+    }
+  ]
+}
