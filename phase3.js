@@ -2,14 +2,14 @@
 (() => {
 'use strict';
 const general=window.ButtonStudioEdition==='general';
-const panel=document.querySelector('.right');
+const panel=document.getElementById('printTools')||document.querySelector('.right');
 if(!panel||!window.HTMLDialogElement)return;
 const openButton=document.createElement('button');
 openButton.id='openPrintStudio';openButton.type='button';
 openButton.className='btn primary full';openButton.textContent='Preview, print & combine buttons';
 const intro=document.createElement('p');intro.className='hint';
 intro.textContent='Open the print workspace for single designs or a whole team. Everything prints at actual size.';
-panel.querySelector('h2')?.after(intro,openButton);
+const heading=panel.querySelector('h2');if(heading)heading.after(intro,openButton);else panel.prepend(intro,openButton);
 const legacy=document.createElement('details');legacy.id='legacyPrint';
 const legacySummary=document.createElement('summary');legacySummary.textContent='Quick print controls (advanced)';
 const movable=[...panel.children].filter(el=>el!==panel.querySelector('h2')&&el!==intro&&el!==openButton);
