@@ -2,6 +2,13 @@
 
 A browser-based multi-size round button designer for Fenton Robotics students. [Launch the designer](https://aspiece.github.io/button-designer/).
 
+## Two Button Studio editions
+
+- **Fenton Robotics edition:** https://aspiece.github.io/button-designer/ — has Fenton colors, preloaded team logos, and the approved shared team-design library.
+- **General edition:** https://aspiece.github.io/button-designer/studio/ — neutral templates, no Fenton images or team library, and a separate local save. The general page uses the same underlying editing, cropping, sizing and PDF code.
+
+Both URLs currently live in this GitHub Pages repository. Creating a truly separate `aspiece/button-studio` repository requires a one-time GitHub repo creation step that is not available through the connected GitHub tools. See [General edition setup](studio/README.md).
+
 ## Features
 
 - Six editable starting templates: **Fenton Paw**, **Tiger**, **Titanium Tigers**, **Blank**, **Orange**, and **Black**.
