@@ -52,7 +52,7 @@
    const select=document.getElementById('uxLogoCategory');
    const results=document.getElementById('uxLogoResults');
    const empty=document.getElementById('uxLogoEmpty');
-   const ORDER=['School Logos','Robotics Teams','FIRST Logos'];
+   const ORDER=['Robotics Teams','FIRST Logos','School Logos'];
    let assets=[];
    let busy=false;
    function validPath(path){
