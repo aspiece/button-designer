@@ -1,58 +1,120 @@
 {
   "version": 1,
   "categories": [
-    "School Logos",
     "Robotics Teams",
-    "FIRST Logos"
+    "FIRST Logos",
+    "School Logos"
   ],
   "images": [
     {
       "path": "logos/school-logos/28dcb04d-3845-42ee-9e9b-5005e15915ac.jpeg",
-      "name": "28Dcb04D 3845 42Ee 9E9B 5005E15915Ac",
+      "name": "Fenton Area Public Schools – Tigers",
       "category": "School Logos",
-      "tags": []
+      "tags": [
+        "Fenton",
+        "School",
+        "Fenton",
+        "Area",
+        "Public",
+        "Schools",
+        "Tigers"
+      ]
     },
     {
       "path": "logos/school-logos/e1d2a38d-2143-4107-9e18-c8b2f4986951.jpeg",
-      "name": "E1D2A38D 2143 4107 9E18 C8B2F4986951",
+      "name": "State Road Elementary – Tigers",
       "category": "School Logos",
-      "tags": []
+      "tags": [
+        "Fenton",
+        "School",
+        "State",
+        "Road",
+        "Elementary",
+        "Tigers"
+      ]
     },
     {
       "path": "logos/school-logos/images (2).jpeg",
-      "name": "Images",
+      "name": "Fenton Tigers – Paw with Script",
       "category": "School Logos",
-      "tags": []
+      "tags": [
+        "Fenton",
+        "School",
+        "Fenton",
+        "Tigers",
+        "Paw",
+        "with",
+        "Script"
+      ]
     },
     {
       "path": "logos/school-logos/images.jpeg",
-      "name": "Images",
+      "name": "Fenton Tigers – Roaring Tiger Head",
       "category": "School Logos",
-      "tags": []
+      "tags": [
+        "Fenton",
+        "School",
+        "Fenton",
+        "Tigers",
+        "Roaring",
+        "Tiger",
+        "Head"
+      ]
     },
     {
       "path": "logos/school-logos/large_7acbcc92-8566-4045-a126-21a31307561d.png",
-      "name": "Large 7Acbcc92 8566 4045 A126 21A31307561D",
+      "name": "Fenton High School – Orange F Crest",
       "category": "School Logos",
-      "tags": []
+      "tags": [
+        "Fenton",
+        "School",
+        "Fenton",
+        "High",
+        "School",
+        "Orange",
+        "F",
+        "Crest"
+      ]
     },
     {
       "path": "logos/school-logos/logo_Nr-web.png",
-      "name": "Logo Nr Web",
+      "name": "North Road Elementary – Tigers",
       "category": "School Logos",
-      "tags": []
+      "tags": [
+        "Fenton",
+        "School",
+        "North",
+        "Road",
+        "Elementary",
+        "Tigers"
+      ]
     },
     {
       "path": "logos/school-logos/logo_template_300.png",
-      "name": "Logo Template 300",
+      "name": "School Logo – Unidentified (Review)",
       "category": "School Logos",
-      "tags": []
+      "tags": [
+        "Fenton",
+        "School",
+        "School",
+        "Logo",
+        "Unidentified",
+        "(Review)"
+      ]
     },
     {
       "path": "logos/school-logos/SE-Logo_medium.png",
-      "name": "Se Logo Medium",
+      "name": "Fenton Tigers – Stylized Tiger Head",
       "category": "School Logos",
-      "tags": []
+      "tags": [
+        "Fenton",
+        "School",
+        "Fenton",
+        "Tigers",
+        "Stylized",
+        "Tiger",
+        "Head"
+      ]
     },
     {
       "path": "logos/bengal-tigers-52545 (1).png",
@@ -152,9 +214,12 @@
     },
     {
       "path": "logos/9f5b9b_d5ce1468b7e14070aed7f4b27ef524a1~mv2.avif",
-      "name": "9F5B9B D5Ce1468B7E14070Aed7F4B27Ef524A1~Mv2",
+      "name": "School Image – Unidentified (Review)",
       "category": "School Logos",
-      "tags": []
+      "tags": [
+        "School",
+        "Review needed"
+      ]
     },
     {
       "path": "logos/FIRST Logos/2026-27/biobuzz.png",
