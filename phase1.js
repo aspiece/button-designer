@@ -145,11 +145,11 @@
    else body+='<p>Drag the text itself to move it. Drag its orange corner handle to resize.</p><div class="quick-actions"><button type="button" data-quick="centerMiddle">Center text</button><button type="button" data-quick="clearText">Remove text</button></div>';
   }else if(kind==='image'){
    const l=layers[selected.index];if(!l){selected=null;refreshContext();return}
-   body+='<p>'+l.name.replace(/</g,'&lt;')+'</p>'+quickInput('quickImageSize','Picture size ('+l.size+'%)','range',l.size,15,100);
-   body+='<div class="quick-actions"><button type="button" data-quick="centerImage">Center</button><button type="button" data-quick="cropImage">Crop</button><button type="button" data-quick="forwardImage">Bring forward</button><button type="button" data-quick="backImage">Send backward</button><button type="button" class="danger" data-quick="deleteImage">Remove image</button></div>';
+   body+='<p>'+l.name.replace(/</g,'&lt;')+'</p>'+quickInput('quickImageSize','Picture size ('+l.size+'%)','range',l.size,15,MAX_IMAGE_SIZE);
+   body+='<p>Use the slider or orange corner handle to enlarge the image across the button. Artwork outside the cut circle is trimmed.</p><div class="quick-actions"><button type="button" data-quick="centerImage">Center</button><button type="button" data-quick="cropImage">Crop</button><button type="button" data-quick="forwardImage">Bring forward</button><button type="button" data-quick="backImage">Send backward</button><button type="button" class="danger" data-quick="deleteImage">Remove image</button></div>';
   }else if(kind==='mark'){
    body+='<div class="quick-field"><label for="quickMark">Center logo</label><select id="quickMark"><option value="none">Blank</option><option value="f">'+(general?'Letter F':'Fenton F')+'</option><option value="paw">'+(general?'Paw symbol':'Tiger Paw')+'</option><option value="t">'+(general?'Letter T':'Titanium T')+'</option></select></div>';
-   body+=quickInput('quickMarkSize','Logo size ('+$('centerSize').value+'%)','range',$('centerSize').value,15,95);
+   body+=quickInput('quickMarkSize','Logo size ('+$('centerSize').value+'%)','range',$('centerSize').value,15,MAX_CENTER_MARK_SIZE);
    body+='<p>Drag the logo to move it. Use the orange handle to resize.</p><div class="quick-actions"><button type="button" data-quick="centerMark">Center logo</button></div>';
   }else{
    body+='<div class="quick-field"><label for="quickBackground">Background color</label><input id="quickBackground" type="color" value="'+$('bgColor').value+'"></div>';
@@ -213,7 +213,7 @@
  }
  function markRect(){
   const {m,f}=metrics(),size=+$('centerSize').value;
-  const z=f*Math.min($('centerText').value.trim()?42:size,size)/100;
+  const z=f*size/100;
   return {cx:m+(uxMark.x-.5)*f*1.35,cy:m+(uxMark.y-.5)*f*1.35-($('centerText').value.trim()?f*.12:0),w:z*1.9,h:z*1.9}
  }
  function getRect(){if(!selected)return null;if(selected.kind==='image')return imageRect(selected.index);if(selected.kind==='middle')return middleRect();if(selected.kind==='mark')return markRect();return null}
@@ -294,7 +294,7 @@
    const l=layers[d.index];if(!l)return;
    if(d.mode==='resize'){
     const r=imageRect(d.index),distance=Math.hypot(p.x-r.cx,p.y-r.cy);
-    l.size=clamp(Math.round(distance*2/(d.f*1.25)*100),15,100);
+    l.size=clamp(Math.round(distance*2/(d.f*1.25)*100),15,MAX_IMAGE_SIZE);
     $('logoSize').value=l.size
    }else{
     l.x=snapCenter(clamp(d.origin.x+dx/(d.f*1.35),.08,.92),'x');
@@ -307,7 +307,7 @@
     uxText.middle.y=snapCenter(clamp(d.origin.y+dy/(d.f*1.35),.17,.9),'y')
    }
   }else if(d.kind==='mark'){
-   if(d.mode==='resize'){$('centerSize').value=clamp(Math.round(Math.hypot(p.x-(d.m+(uxMark.x-.5)*d.f*1.35),p.y-(d.m+(uxMark.y-.5)*d.f*1.35))/(d.f*.75)*100),15,95)}
+   if(d.mode==='resize'){$('centerSize').value=clamp(Math.round(Math.hypot(p.x-(d.m+(uxMark.x-.5)*d.f*1.35),p.y-(d.m+(uxMark.y-.5)*d.f*1.35))/(d.f*.75)*100),15,MAX_CENTER_MARK_SIZE)}
    else{
     uxMark.x=snapCenter(clamp(d.origin.x+dx/(d.f*1.35),.15,.85),'x');
     uxMark.y=snapCenter(clamp(d.origin.y+dy/(d.f*1.35),.15,.85),'y')

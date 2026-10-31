@@ -78,7 +78,7 @@ function safeWarnings(){
   const far=Math.hypot(Math.abs(x)+w/2,Math.abs(y)+h/2)/f;
   if(far>safe)errors.push('Picture '+(i+1)+' may overlap the border or wrap onto the back. Reduce its size or move it inward.')
  }
- if($('centerLogoChoice').value!=='none'&&+$('centerSize').value>=88&&!$('centerText').value.trim())errors.push('The center graphic is large. Check its clearance from the text and border.');
+ if($('centerLogoChoice').value!=='none'&&+$('centerSize').value>=90)errors.push('The center graphic is enlarged. Check the border, text clearance and the cut line.');
  if($('headline').value.length>23||$('subline').value.length>23)errors.push('Long curved text may print small. Shorter text is easier to read on a '+selectedSize()+'-inch button.');
  if(+cutInput.value<=selectedSize())errors.push('Cut diameter is not larger than the finished button. Check the paper-wrap requirement.');
  return errors
@@ -175,7 +175,7 @@ async function prepare(raw){
   if(typeof l.data!=='string'||!/^data:image\/(png|jpeg|webp|avif);base64,/.test(l.data)||l.data.length>12000000)throw Error('Unsupported or oversized embedded artwork');
   const im=await decode(l.data);
   if(im.naturalWidth*im.naturalHeight>25000000)throw Error('Embedded image is too large');
-  preparedLayers.push({im,data:l.data,x:Math.max(0,Math.min(1,Number(l.x)||.5)),y:Math.max(0,Math.min(1,Number(l.y)||.5)),size:Math.max(15,Math.min(100,Number(l.size)||52)),name:String(l.name||'Image').slice(0,60)})
+  preparedLayers.push({im,data:l.data,x:Math.max(0,Math.min(1,Number(l.x)||.5)),y:Math.max(0,Math.min(1,Number(l.y)||.5)),size:Math.max(15,Math.min(MAX_IMAGE_SIZE,Number(l.size)||52)),name:String(l.name||'Image').slice(0,60)})
  }
  const safeValues={};
  for(const id of tracked){const el=$(id);safeValues[id]=el.type==='checkbox'?el.checked:el.value}

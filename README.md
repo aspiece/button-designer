@@ -28,6 +28,7 @@ The editor now starts with **six picture-based template cards**. Choose a design
 - **Center text:** edit, drag, resize, center, or remove it.
 - **Center graphic:** change F, paw, T, or blank; drag or resize it.
 - **Uploaded/team images:** tap one to select it, drag to move, drag the orange corner handle to resize, crop, change layer order, or remove it.
+- **Larger center artwork:** image layers now enlarge up to **180%** (enough to cover the button face), and built-in center symbols up to **125%**. Use the image selection slider or drag the orange corner handle. Larger sizes are preserved in editable projects and classroom print imports. Artwork extending past the cut circle is clipped when printed, and Print Studio can warn about border overlap.
 - **Background:** change background and border colors.
 - **Undo / Redo:** buttons beside the canvas (Ctrl/Cmd+Z, Ctrl/Cmd+Y when not typing in a field). Up to 35 committed design changes are retained during this session.
 

@@ -34,6 +34,11 @@ vm.runInContext(script+'\nthis.appTest={themes,changeTheme,drawButton,drawSheet,
 const api=sandbox.appTest;
 const names=['paw','tiger','titanium','blank','orange','black'];
 assert.deepEqual(Object.keys(api.themes),names,'Six template names');
+assert.match(html,/id="logoSize" min="15" max="180"/,'Uploaded-image size reaches 180%');
+assert.match(html,/id="centerSize" min="15" max="125"/,'Center logo size reaches 125%');
+assert.match(script,/const MAX_IMAGE_SIZE=180,MAX_CENTER_MARK_SIZE=125/,'Shared resize limits defined');
+assert.match(script,/size:clamp\(Number\(item.size\)\|\|52,15,MAX_IMAGE_SIZE\)/,'Project restore keeps enlarged image sizes');
+
 for(const name of names){nodes.get('theme').value=name;api.changeTheme();api.drawButton(ctx,800,{cut:3});assert.ok(nodes.get('bgColor').value.startsWith('#'),name+' background');}
 assert.equal(api.sheetLayout(2.625).count,9,'Default 2.25-inch button yields nine 2.625-inch cuts per US Letter');
 assert.equal(api.sheetLayout(1.313).count,35,'One-inch buttons fit 35 per page');
