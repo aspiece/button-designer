@@ -16,7 +16,7 @@ class ImageCatalogTests(unittest.TestCase):
                 "school-logos/fenton-logo.png": b"sample-1",
                 "robotics-teams/tiger-paws.png": b"sample-2",
                 "first-logos/fll-logo.jpg": b"sample-3",
-                "custom-artwork/rocket.webp": b"sample-4",
+                "first/season/rocket.webp": b"sample-4",
                 "new-event-button.avif": b"sample-5",
                 "robotics-teams/tiger-paws (1).png": b"sample-2",
                 "notes.txt": b"Not an image",
@@ -32,8 +32,8 @@ class ImageCatalogTests(unittest.TestCase):
             self.assertEqual(by_path["logos/school-logos/fenton-logo.png"]["category"], "School Logos")
             self.assertEqual(by_path["logos/robotics-teams/tiger-paws.png"]["category"], "Robotics Teams")
             self.assertEqual(by_path["logos/first-logos/fll-logo.jpg"]["category"], "FIRST Logos")
-            self.assertEqual(by_path["logos/custom-artwork/rocket.webp"]["category"], "Custom Artwork")
-            self.assertEqual(by_path["logos/new-event-button.avif"]["category"], "Custom Artwork")
+            self.assertEqual(by_path["logos/first/season/rocket.webp"]["category"], "FIRST Logos")
+            self.assertEqual(by_path["logos/new-event-button.avif"]["category"], "School Logos")
             self.assertNotIn("logos/robotics-teams/tiger-paws (1).png", by_path)
             # Metadata is optional and overrides folder-derived categories and display name.
             (root / "gallery-metadata.json").write_text(json.dumps({"assets": {
@@ -46,6 +46,21 @@ class ImageCatalogTests(unittest.TestCase):
             self.assertEqual(edited["logos/new-event-button.avif"]["name"], "School Rally Button")
             self.assertEqual(edited["logos/new-event-button.avif"]["category"], "School Logos")
             self.assertIn("spirit", edited["logos/new-event-button.avif"]["tags"])
+            # Curated metadata must survive a rebuild and support excluded duplicates.
+            (root / "gallery-metadata.json").write_text(json.dumps({"assets": {
+                "logos/first/season/rocket.webp": {
+                    "name": "FIRST CANOPY Season",
+                    "category": "FIRST Logos",
+                    "tags": ["CANOPY", "2026-27"]
+                },
+                "logos/robotics-teams/tiger-paws (1).png": {"exclude": True},
+                "logos/new-event-button.avif": {"exclude": True}
+            }}))
+            rebuilt = {item["path"]: item for item in make_catalog(root)["images"]}
+            self.assertEqual(rebuilt["logos/first/season/rocket.webp"]["name"], "FIRST CANOPY Season")
+            self.assertNotIn("logos/new-event-button.avif", rebuilt)
+            self.assertNotIn("logos/robotics-teams/tiger-paws (1).png", rebuilt)
+
 
     def test_reject_invalid_categories_and_oversized_files(self):
         with tempfile.TemporaryDirectory() as directory:
