@@ -1,6 +1,6 @@
 # Button Studio — General Edition
 
-**General edition URL:** https://aspiece.github.io/button-designer/studio/
+**General edition URL:** https://fentonbuttons.geneseelearninglab.com/studio/
 
 The general edition is a **separate GitHub Pages URL under the existing Fenton Robotics repository**. It is not yet a separate GitHub repository.
 
