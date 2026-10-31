@@ -41,3 +41,11 @@ header{box-shadow:0 2px 12px #00000019}
 @media(max-width:760px){.app{display:flex;flex-direction:column;padding:12px}.previewPanel{order:1}.app>section.panel:first-child{order:2}.right{order:3}.canvasWrap{max-width:520px}.template-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.template-card{min-height:105px;padding:6px 3px}.template-thumb{width:min(64px,100%);height:auto;aspect-ratio:1}}
 @media(max-width:420px){.template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.studio-toolbar{gap:5px}.studio-tool{padding:8px}}
 @media(prefers-reduced-motion:reduce){.template-card{transition:none}}
+
+/* Canvas-level image editing controls for mouse, touch and keyboard. */
+.canvas-image-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin:0 auto 12px;padding:10px;border:1px solid #e4b88b;background:#fff7ed;border-radius:12px;max-width:535px}
+.canvas-image-actions[hidden]{display:none!important}
+.canvas-image-actions span{font-size:12px;font-weight:750;color:#67421f;margin-right:4px}
+.canvas-image-actions button{cursor:pointer;border:1px solid #bcc8db;background:#fff;padding:9px 12px;border-radius:8px;color:#172235;font-weight:700;min-height:40px}
+.canvas-image-actions button.danger{border-color:#d32929;color:#aa2020}
+.canvas-image-actions button:focus-visible{outline:3px solid #e66d08;outline-offset:2px}
