@@ -3,209 +3,10 @@
   "categories": [
     "School Logos",
     "Robotics Teams",
-    "FIRST Logos"
+    "FIRST Logos",
+    "Custom Artwork"
   ],
   "images": [
-    {
-      "path": "logos/first/first.png",
-      "name": "FIRST",
-      "category": "FIRST Logos",
-      "tags": [
-        "FIRST",
-        "Official"
-      ]
-    },
-    {
-      "path": "logos/FIRST Logos/2026-27/canopy.png",
-      "name": "FIRST CANOPY 2026–27",
-      "category": "FIRST Logos",
-      "tags": [
-        "FIRST",
-        "Current Season",
-        "2026-27",
-        "CANOPY"
-      ]
-    },
-    {
-      "path": "logos/first/fll.png",
-      "name": "FIRST LEGO League",
-      "category": "FIRST Logos",
-      "tags": [
-        "FIRST",
-        "Official"
-      ]
-    },
-    {
-      "path": "logos/FIRST Logos/2026-27/bioglow.png",
-      "name": "FIRST LEGO League BIOGLOW 2026–27",
-      "category": "FIRST Logos",
-      "tags": [
-        "FIRST",
-        "Current Season",
-        "2026-27",
-        "BIOGLOW"
-      ]
-    },
-    {
-      "path": "logos/first/fll-challenge.png",
-      "name": "FIRST LEGO League Challenge",
-      "category": "FIRST Logos",
-      "tags": [
-        "FIRST",
-        "Official"
-      ]
-    },
-    {
-      "path": "logos/first/fll-discover.png",
-      "name": "FIRST LEGO League Discover",
-      "category": "FIRST Logos",
-      "tags": [
-        "FIRST",
-        "Official"
-      ]
-    },
-    {
-      "path": "logos/first/fll-explore.png",
-      "name": "FIRST LEGO League Explore",
-      "category": "FIRST Logos",
-      "tags": [
-        "FIRST",
-        "Official"
-      ]
-    },
-    {
-      "path": "logos/first/frc.png",
-      "name": "FIRST Robotics Competition",
-      "category": "FIRST Logos",
-      "tags": [
-        "FIRST",
-        "Official"
-      ]
-    },
-    {
-      "path": "logos/FIRST Logos/2026-27/biocore.png",
-      "name": "FIRST Robotics Competition BIOCORE 2026–27",
-      "category": "FIRST Logos",
-      "tags": [
-        "FIRST",
-        "Current Season",
-        "2026-27",
-        "BIOCORE"
-      ]
-    },
-    {
-      "path": "logos/first/ftc.png",
-      "name": "FIRST Tech Challenge",
-      "category": "FIRST Logos",
-      "tags": [
-        "FIRST",
-        "Official"
-      ]
-    },
-    {
-      "path": "logos/FIRST Logos/2026-27/biobuzz.png",
-      "name": "FIRST Tech Challenge BIOBUZZ 2026–27",
-      "category": "FIRST Logos",
-      "tags": [
-        "FIRST",
-        "Current Season",
-        "2026-27",
-        "BIOBUZZ"
-      ]
-    },
-    {
-      "path": "logos/bengal-tigers-52545 (1).png",
-      "name": "Bengal Tigers 52545",
-      "category": "Robotics Teams",
-      "tags": []
-    },
-    {
-      "path": "logos/bengal-tigers-52545.png",
-      "name": "Bengal Tigers 52545",
-      "category": "Robotics Teams",
-      "tags": []
-    },
-    {
-      "path": "logos/chromium-tigers.png",
-      "name": "Chromium Tigers",
-      "category": "Robotics Teams",
-      "tags": []
-    },
-    {
-      "path": "logos/logo-3.png",
-      "name": "Chromium Tigers alternate",
-      "category": "Robotics Teams",
-      "tags": [
-        "Tigers",
-        "Alternate mark"
-      ]
-    },
-    {
-      "path": "logos/iridium-tigers.png",
-      "name": "Iridium Tigers",
-      "category": "Robotics Teams",
-      "tags": []
-    },
-    {
-      "path": "logos/logo-4.png",
-      "name": "Iridium Tigers alternate",
-      "category": "Robotics Teams",
-      "tags": [
-        "Tigers",
-        "Alternate mark"
-      ]
-    },
-    {
-      "path": "logos/siberian-tigers-38050.png",
-      "name": "Siberian Tigers 38050",
-      "category": "Robotics Teams",
-      "tags": []
-    },
-    {
-      "path": "logos/tiger-claws-31575.png",
-      "name": "Tiger Claws 31575",
-      "category": "Robotics Teams",
-      "tags": []
-    },
-    {
-      "path": "logos/tiger-cubs-29168.png",
-      "name": "Tiger Cubs 29168",
-      "category": "Robotics Teams",
-      "tags": []
-    },
-    {
-      "path": "logos/tiger-eyes-31577.png",
-      "name": "Tiger Eyes 31577",
-      "category": "Robotics Teams",
-      "tags": []
-    },
-    {
-      "path": "logos/tiger-kits-31558.png",
-      "name": "Tiger Kits 31558",
-      "category": "Robotics Teams",
-      "tags": []
-    },
-    {
-      "path": "logos/tiger-paws-24471.png",
-      "name": "Tiger Paws 24471",
-      "category": "Robotics Teams",
-      "tags": []
-    },
-    {
-      "path": "logos/tungsten-tigers.png",
-      "name": "Tungsten Tigers",
-      "category": "Robotics Teams",
-      "tags": []
-    },
-    {
-      "path": "logos/logo-2.png",
-      "name": "Tungsten Tigers alternate",
-      "category": "Robotics Teams",
-      "tags": [
-        "Tigers",
-        "Alternate mark"
-      ]
-    },
     {
       "path": "logos/school-logos/28dcb04d-3845-42ee-9e9b-5005e15915ac.jpeg",
       "name": "28Dcb04D 3845 42Ee 9E9B 5005E15915Ac",
@@ -255,12 +56,166 @@
       "tags": []
     },
     {
+      "path": "logos/bengal-tigers-52545 (1).png",
+      "name": "Bengal Tigers 52545",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/bengal-tigers-52545.png",
+      "name": "Bengal Tigers 52545",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/chromium-tigers.png",
+      "name": "Chromium Tigers",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/iridium-tigers.png",
+      "name": "Iridium Tigers",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/siberian-tigers-38050.png",
+      "name": "Siberian Tigers 38050",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/tiger-claws-31575.png",
+      "name": "Tiger Claws 31575",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/tiger-cubs-29168.png",
+      "name": "Tiger Cubs 29168",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/tiger-eyes-31577.png",
+      "name": "Tiger Eyes 31577",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/tiger-kits-31558.png",
+      "name": "Tiger Kits 31558",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/tiger-paws-24471.png",
+      "name": "Tiger Paws 24471",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/titanium-tigers.png",
+      "name": "Titanium Tigers",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/tungsten-tigers.png",
+      "name": "Tungsten Tigers",
+      "category": "Robotics Teams",
+      "tags": []
+    },
+    {
+      "path": "logos/first/fll-challenge.png",
+      "name": "Fll Challenge",
+      "category": "FIRST Logos",
+      "tags": []
+    },
+    {
+      "path": "logos/first/fll-discover.png",
+      "name": "Fll Discover",
+      "category": "FIRST Logos",
+      "tags": []
+    },
+    {
+      "path": "logos/first/fll-explore.png",
+      "name": "Fll Explore",
+      "category": "FIRST Logos",
+      "tags": []
+    },
+    {
       "path": "logos/9f5b9b_d5ce1468b7e14070aed7f4b27ef524a1~mv2.avif",
-      "name": "Unidentified school logo (review needed)",
-      "category": "School Logos",
-      "tags": [
-        "Review needed"
-      ]
+      "name": "9F5B9B D5Ce1468B7E14070Aed7F4B27Ef524A1~Mv2",
+      "category": "Custom Artwork",
+      "tags": []
+    },
+    {
+      "path": "logos/FIRST Logos/2026-27/biobuzz.png",
+      "name": "Biobuzz",
+      "category": "Custom Artwork",
+      "tags": []
+    },
+    {
+      "path": "logos/FIRST Logos/2026-27/biocore.png",
+      "name": "Biocore",
+      "category": "Custom Artwork",
+      "tags": []
+    },
+    {
+      "path": "logos/FIRST Logos/2026-27/bioglow.png",
+      "name": "Bioglow",
+      "category": "Custom Artwork",
+      "tags": []
+    },
+    {
+      "path": "logos/FIRST Logos/2026-27/canopy.png",
+      "name": "Canopy",
+      "category": "Custom Artwork",
+      "tags": []
+    },
+    {
+      "path": "logos/first/first.png",
+      "name": "First",
+      "category": "Custom Artwork",
+      "tags": []
+    },
+    {
+      "path": "logos/first/fll.png",
+      "name": "Fll",
+      "category": "Custom Artwork",
+      "tags": []
+    },
+    {
+      "path": "logos/first/frc.png",
+      "name": "Frc",
+      "category": "Custom Artwork",
+      "tags": []
+    },
+    {
+      "path": "logos/first/ftc.png",
+      "name": "Ftc",
+      "category": "Custom Artwork",
+      "tags": []
+    },
+    {
+      "path": "logos/logo-2.png",
+      "name": "Logo 2",
+      "category": "Custom Artwork",
+      "tags": []
+    },
+    {
+      "path": "logos/logo-3.png",
+      "name": "Logo 3",
+      "category": "Custom Artwork",
+      "tags": []
+    },
+    {
+      "path": "logos/logo-4.png",
+      "name": "Logo 4",
+      "category": "Custom Artwork",
+      "tags": []
     }
   ]
 }
