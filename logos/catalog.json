@@ -3,8 +3,7 @@
   "categories": [
     "School Logos",
     "Robotics Teams",
-    "FIRST Logos",
-    "Other Approved Images"
+    "FIRST Logos"
   ],
   "images": [
     {
@@ -150,9 +149,11 @@
     },
     {
       "path": "logos/9f5b9b_d5ce1468b7e14070aed7f4b27ef524a1~mv2.avif",
-      "name": "9F5B9B D5Ce1468B7E14070Aed7F4B27Ef524A1~Mv2",
-      "category": "Other Approved Images",
-      "tags": []
+      "name": "Unidentified school logo (review needed)",
+      "category": "School Logos",
+      "tags": [
+        "Review needed"
+      ]
     },
     {
       "path": "logos/first/first.png",
@@ -192,21 +193,30 @@
     },
     {
       "path": "logos/logo-2.png",
-      "name": "Logo 2",
-      "category": "Other Approved Images",
-      "tags": []
+      "name": "Tungsten Tigers alternate",
+      "category": "Robotics Teams",
+      "tags": [
+        "Tigers",
+        "Alternate mark"
+      ]
     },
     {
       "path": "logos/logo-3.png",
-      "name": "Logo 3",
-      "category": "Other Approved Images",
-      "tags": []
+      "name": "Chromium Tigers alternate",
+      "category": "Robotics Teams",
+      "tags": [
+        "Tigers",
+        "Alternate mark"
+      ]
     },
     {
       "path": "logos/logo-4.png",
-      "name": "Logo 4",
-      "category": "Other Approved Images",
-      "tags": []
+      "name": "Iridium Tigers alternate",
+      "category": "Robotics Teams",
+      "tags": [
+        "Tigers",
+        "Alternate mark"
+      ]
     }
   ]
 }
