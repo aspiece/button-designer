@@ -19,32 +19,32 @@
  existing.forEach(n=>advanced.append(n));
  left.append(gallery,quick,advanced);
  const sizes=document.getElementById('buttonSizeControl');if(sizes)left.insertBefore(sizes,gallery);
- const thumbs=general?{
- paw:['#edf3fa','#17375e',''],tiger:['#102a43','#ffffff',''],titanium:['#ffffff','#1b3f57','T'],blank:['#ffffff','#111111',''],orange:['#f58220','#111111',''],black:['#111111','#ffffff','']
- }:{
- paw:['#f58220','#111111','paw'],tiger:['#111111','#f58220','paw'],
- titanium:['#111111','#ffffff','T'],blank:['#ffffff','#111111',''],orange:['#f58220','#111111',''],black:['#111111','#ffffff','']
- };
  const templates=general?[
- ['paw','Classic','Clean and bright'],['tiger','Modern','Dark blue'],['titanium','Badge','Custom emblem'],
- ['blank','Blank','Start fresh'],['orange','Color Pop','Bright color'],['black','Dark','Black canvas']
+ ['paw','Classic','Clean and bright'],['tiger','Modern','Dark blue'],['titanium','Badge','Custom emblem'],['blank','Blank','Start fresh'],['orange','Color Pop','Bright color'],['black','Dark','Black canvas']
  ]:[
- ['paw','Tiger Paw','Orange & black'],['tiger','Tiger Spirit','Black & orange'],
- ['titanium','Titanium Tigers','Black & white'],['blank','Blank','White canvas'],
- ['orange','Orange','Solid background'],['black','Black','Solid background']
+ ['orange','Orange Solid','Fenton colors'],['black','Black Solid','Bold dark'],['whiteAccent','White & Orange','Clean rings'],['orangeRing','Orange + Black Ring','Team style'],
+ ['blackRing','Black + Orange Ring','Team style'],['split','Orange / Black Split','Two-tone'],['titanium','Titanium Dark','Silver accent'],
+ ['stripes','Tiger Stripes','Pattern'],['pawPattern','Paw Pattern','Pattern'],['hex','Hex Tech','Pattern'],['burst','Radial Burst','Pattern'],
+ ['blank','Clean White','Minimal'],['darkMinimal','Dark Minimal','Minimal'],['lightMinimal','Blank Light','Minimal']
  ];
- function thumb(bg,fg,mark){
-  let figure=mark==='paw'?'<circle cx="30" cy="32" r="7"/><circle cx="45" cy="21" r="7"/><circle cx="62" cy="21" r="7"/><circle cx="77" cy="32" r="7"/><path d="M31 73 Q20 51 45 48 Q54 53 59 48 Q84 51 77 73 Q65 83 54 76 Q43 83 31 73Z"/>':
-    mark==='T'?'<text x="54" y="74" font-size="57" font-family="Arial" font-weight="900" text-anchor="middle">T</text>':'';
-  return '<span class="template-thumb"><svg viewBox="0 0 108 108" aria-hidden="true"><circle cx="54" cy="54" r="53" fill="'+bg+'"/><circle cx="54" cy="54" r="45" fill="none" stroke="'+fg+'" stroke-width="3"/><g fill="'+fg+'">'+figure+'</g></svg></span>';
+ const palette={
+ orange:['#f58220','#111111'],black:['#111111','#f58220'],whiteAccent:['#ffffff','#f58220'],orangeRing:['#f58220','#111111'],blackRing:['#111111','#f58220'],split:['#f58220','#111111'],titanium:['#23262b','#a6acb6'],stripes:['#f58220','#111111'],pawPattern:['#f58220','#111111'],hex:['#101923','#f58220'],burst:['#111111','#f58220'],blank:['#ffffff','#ededed'],darkMinimal:['#151515','#555555'],lightMinimal:['#f6f6f6','#ededed']
+ };
+ function thumb(name){
+  const colors=palette[name]||['#eee','#444'];const [bg,fg]=colors;
+  let art='';
+  if(name==='split')art='<path d="M90 0 L108 0 L108 108 L0 108Z" fill="'+fg+'"/>';
+  if(name==='stripes')art=Array.from({length:8},(_,i)=>'<path d="M'+(-30+i*20)+' 0 l11 0 l-48 108 l-11 0Z" fill="'+fg+'"/>').join('');
+  if(name==='pawPattern')art=Array.from({length:6},(_,i)=>{let x=24+i%3*28,y=32+Math.floor(i/3)*45;return '<g fill="'+fg+'" opacity=".35"><ellipse cx="'+x+'" cy="'+y+'" rx="7" ry="5"/><circle cx="'+(x-7)+'" cy="'+(y-8)+'" r="2.5"/><circle cx="'+x+'" cy="'+(y-11)+'" r="2.5"/><circle cx="'+(x+7)+'" cy="'+(y-8)+'" r="2.5"/></g>'}).join('');
+  if(name==='hex')art=Array.from({length:12},(_,i)=>{let x=i%4*30-5,y=Math.floor(i/4)*34-4;return '<path d="M'+x+' '+(y-12)+' l12 7 v14 l-12 7 l-12 -7 v-14 Z" fill="none" stroke="'+fg+'" opacity=".55" stroke-width="2"/>'}).join('');
+  if(name==='burst')art=Array.from({length:18},(_,i)=>{const a=i*Math.PI/9;return '<path d="M54 54 L'+(54+62*Math.cos(a))+' '+(54+62*Math.sin(a))+' A62 62 0 0 1 '+(54+62*Math.cos(a+.12))+' '+(54+62*Math.sin(a+.12))+' Z" fill="'+fg+'" opacity=".7"/>'}).join('');
+  const border=['whiteAccent','orangeRing','blackRing','titanium'].includes(name)?'<circle cx="54" cy="54" r="43" fill="none" stroke="'+fg+'" stroke-width="3"/><circle cx="54" cy="54" r="38" fill="none" stroke="'+fg+'" stroke-width="1.5"/>':'';
+  return '<span class="template-thumb"><svg viewBox="0 0 108 108" aria-hidden="true"><defs><clipPath id="thumbCircle'+name+'"><circle cx="54" cy="54" r="52"/></clipPath></defs><g clip-path="url(#thumbCircle'+name+')"><circle cx="54" cy="54" r="52" fill="'+bg+'"/>'+art+border+'</g></svg></span>';
  }
  const grid=gallery.querySelector('#templateGrid');
  templates.forEach(item=>{
-  const b=document.createElement('button');b.type='button';b.className='template-card';b.dataset.template=item[0];
-  b.setAttribute('aria-pressed','false');
-  const t=thumb(...thumbs[item[0]]);
-  b.innerHTML=t+'<span>'+item[1]+'</span><small>'+item[2]+'</small>';
-  grid.append(b)
+  const b=document.createElement('button');b.type='button';b.className='template-card';b.dataset.template=item[0];b.setAttribute('aria-pressed','false');
+  b.innerHTML=thumb(item[0])+'<span>'+item[1]+'</span><small>'+item[2]+'</small>';grid.append(b)
  });
  function syncGallery(){
   grid.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.template===$('theme').value)))
