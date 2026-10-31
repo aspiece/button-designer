@@ -34,3 +34,13 @@
 #advancedTools[hidden]{display:none!important}
 @media(max-width:760px){.studio-logo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.studio-logo-card{min-height:108px}}
 @media(max-width:430px){.studio-logo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Generated image gallery: filters, result status and resilient thumbnails */
+.studio-logo-library #uxLogoCategory{width:100%;margin-bottom:9px;padding:10px;background:#fff;border:1px solid #ccd6e4;border-radius:8px;font-size:13px}
+.studio-logo-library #uxLogoSearch{margin-bottom:10px}
+.studio-logo-results{font-size:11px;color:#49647f;margin:2px 0 12px;min-height:17px}
+.studio-logo-card img[hidden]{display:none}
+.studio-logo-card.studio-logo-broken::before{content:"Image unavailable";font-size:10px;display:grid;place-items:center;min-height:60px;color:#925a2e}
+.studio-logo-card:disabled{cursor:wait;opacity:.65}
+#uxLogoEmpty{padding:12px;background:#fff8ee;color:#794e20;border-radius:8px;font-size:12px}
+.studio-logo-group h4{border-bottom:1px solid #edf0f4;padding-bottom:5px}
