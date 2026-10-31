@@ -118,69 +118,162 @@
     },
     {
       "path": "logos/bengal-tigers-52545.png",
-      "name": "Bengal Tigers 52545",
+      "name": "Bengal Tigers · 52545",
       "category": "Robotics Teams",
-      "tags": []
+      "tags": [
+        "Fenton Robotics",
+        "Black",
+        "Orange",
+        "White",
+        "Bengal",
+        "Tigers",
+        "",
+        "52545"
+      ]
     },
     {
       "path": "logos/chromium-tigers.png",
       "name": "Chromium Tigers",
       "category": "Robotics Teams",
-      "tags": []
+      "tags": [
+        "Fenton Robotics",
+        "Black",
+        "Orange",
+        "White",
+        "Chromium",
+        "Tigers"
+      ]
     },
     {
       "path": "logos/iridium-tigers.png",
       "name": "Iridium Tigers",
       "category": "Robotics Teams",
-      "tags": []
+      "tags": [
+        "Fenton Robotics",
+        "Black",
+        "Orange",
+        "White",
+        "Iridium",
+        "Tigers"
+      ]
     },
     {
       "path": "logos/siberian-tigers-38050.png",
-      "name": "Siberian Tigers 38050",
+      "name": "Siberian Tigers · 38050",
       "category": "Robotics Teams",
-      "tags": []
+      "tags": [
+        "Fenton Robotics",
+        "Black",
+        "Orange",
+        "White",
+        "Siberian",
+        "Tigers",
+        "",
+        "38050"
+      ]
     },
     {
       "path": "logos/tiger-claws-31575.png",
-      "name": "Tiger Claws 31575",
+      "name": "Tiger Claws · 31575",
       "category": "Robotics Teams",
-      "tags": []
+      "tags": [
+        "Fenton Robotics",
+        "Black",
+        "Orange",
+        "White",
+        "Tiger",
+        "Claws",
+        "",
+        "31575"
+      ]
     },
     {
       "path": "logos/tiger-cubs-29168.png",
-      "name": "Tiger Cubs 29168",
+      "name": "Tiger Cubs · 29168",
       "category": "Robotics Teams",
-      "tags": []
+      "tags": [
+        "Fenton Robotics",
+        "Black",
+        "Orange",
+        "White",
+        "Tiger",
+        "Cubs",
+        "",
+        "29168"
+      ]
     },
     {
       "path": "logos/tiger-eyes-31577.png",
-      "name": "Tiger Eyes 31577",
+      "name": "Tiger Eyes · 31577",
       "category": "Robotics Teams",
-      "tags": []
+      "tags": [
+        "Fenton Robotics",
+        "Black",
+        "Orange",
+        "White",
+        "Tiger",
+        "Eyes",
+        "",
+        "31577"
+      ]
     },
     {
       "path": "logos/tiger-kits-31558.png",
-      "name": "Tiger Kits 31558",
+      "name": "Tiger Kits · 31558",
       "category": "Robotics Teams",
-      "tags": []
+      "tags": [
+        "Fenton Robotics",
+        "Black",
+        "Orange",
+        "White",
+        "Tiger",
+        "Kits",
+        "",
+        "31558"
+      ]
     },
     {
       "path": "logos/tiger-paws-24471.png",
-      "name": "Tiger Paws 24471",
+      "name": "Tiger Paws · 24471",
       "category": "Robotics Teams",
-      "tags": []
+      "tags": [
+        "Fenton Robotics",
+        "Black",
+        "Orange",
+        "White",
+        "Tiger",
+        "Paws",
+        "",
+        "24471"
+      ]
     },
     {
       "path": "logos/titanium-tigers.png",
-      "name": "Titanium Tigers",
+      "name": "Titanium Tigers · 5114",
       "category": "Robotics Teams",
-      "tags": []
+      "tags": [
+        "Fenton Robotics",
+        "Black",
+        "Orange",
+        "White",
+        "Titanium",
+        "Tigers",
+        "",
+        "5114"
+      ]
     },
     {
       "path": "logos/tungsten-tigers.png",
       "name": "Tungsten Tigers",
       "category": "Robotics Teams",
-      "tags": []
+      "tags": [
+        "Fenton Robotics",
+        "Black",
+        "Orange",
+        "White",
+        "Tungsten",
+        "Tigers"
+      ]
     },
     {
       "path": "logos/first/fll-challenge.png",
@@ -289,21 +382,48 @@
     },
     {
       "path": "logos/logo-2.png",
-      "name": "Logo 2",
+      "name": "Tungsten Tigers – Alternate",
       "category": "Robotics Teams",
-      "tags": []
+      "tags": [
+        "Fenton Robotics",
+        "Black",
+        "Orange",
+        "White",
+        "Tungsten",
+        "Tigers",
+        "",
+        "Alternate"
+      ]
     },
     {
       "path": "logos/logo-3.png",
-      "name": "Logo 3",
+      "name": "Chromium Tigers – Alternate",
       "category": "Robotics Teams",
-      "tags": []
+      "tags": [
+        "Fenton Robotics",
+        "Black",
+        "Orange",
+        "White",
+        "Chromium",
+        "Tigers",
+        "",
+        "Alternate"
+      ]
     },
     {
       "path": "logos/logo-4.png",
-      "name": "Logo 4",
+      "name": "Iridium Tigers – Alternate",
       "category": "Robotics Teams",
-      "tags": []
+      "tags": [
+        "Fenton Robotics",
+        "Black",
+        "Orange",
+        "White",
+        "Iridium",
+        "Tigers",
+        "",
+        "Alternate"
+      ]
     }
   ]
 }
