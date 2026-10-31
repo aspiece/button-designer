@@ -328,8 +328,8 @@
    if(d.mode==='resize'){
     const originalWidth=d.origin.im.naturalWidth,originalHeight=d.origin.im.naturalHeight;
     const ratio=originalWidth/originalHeight;
-    const distance=Math.max(Math.abs(p.x-(d.m+(d.origin.x-.5)*d.f*1.35))*2,
-                            Math.abs(p.y-(d.m+(d.origin.y-.5)*d.f*1.35))*2*(ratio>=1?ratio:1/ratio));
+    const distance=Math.max(Math.abs(p.x-(d.m+(d.origin.x-.5)*d.f*1.35))*2/(ratio>=1?1:ratio),
+                            Math.abs(p.y-(d.m+(d.origin.y-.5)*d.f*1.35))*2*(ratio>=1?ratio:1));
     l.size=clamp(Math.round(distance/(d.f*1.25)*100),15,MAX_IMAGE_SIZE);
     $('logoSize').value=l.size
    }else{
