@@ -188,7 +188,7 @@ await page.click('#psClose');
 const general=await ctx.newPage();
 const generalErrors=[],generalLogoRequests=[];
 general.on('pageerror',err=>generalErrors.push(err.message));
-general.on('request',req=>{if(/\\/logos\\/|\\/designs\\/catalog\\.json|apptegy/i.test(req.url()))generalLogoRequests.push(req.url())});
+general.on('request',req=>{const u=req.url();if(u.includes('/logos/')||u.includes('/designs/catalog.json')||u.includes('apptegy'))generalLogoRequests.push(u)});
 await general.goto('http://127.0.0.1:8765/studio/',{waitUntil:'networkidle'});
 assert.equal(await general.title(),'Button Studio | Custom Button Designer');
 assert.equal(await general.inputValue('#theme'),'blank','General edition starts on a blank canvas');
