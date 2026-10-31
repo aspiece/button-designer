@@ -237,16 +237,8 @@
   for(let i=layers.length-1;i>=0;i--){
    const r=imageRect(i);
    if(!r||Math.abs(p.x-r.cx)>r.w/2+8||Math.abs(p.y-r.cy)>r.h/2+8)continue;
-   // In transparent PNGs, empty padding should not obstruct logos beneath.
-   const layer=layers[i],u=(p.x-(r.cx-r.w/2))/r.w,v=(p.y-(r.cy-r.h/2))/r.h;
-   if(u>=0&&u<=1&&v>=0&&v<=1&&layer.im?.naturalWidth){
-    try{
-     const hitCanvas=document.createElement('canvas');hitCanvas.width=hitCanvas.height=1;
-     const hitCtx=hitCanvas.getContext('2d',{willReadFrequently:true});
-     hitCtx.drawImage(layer.im,Math.min(layer.im.naturalWidth-1,Math.floor(u*layer.im.naturalWidth)),Math.min(layer.im.naturalHeight-1,Math.floor(v*layer.im.naturalHeight)),1,1,0,0,1,1);
-     if(hitCtx.getImageData(0,0,1,1).data[3]<24)continue
-    }catch(err){/* Loaded art remains selectable if pixel inspection is blocked. */}
-   }
+   // Bounding-box selection is reliable for thin, hollow or transparent logos.
+   // Selection handles remain outside the printed artwork.
    return {kind:'image',index:i,mode:'move'}
   }
   const mid=middleRect();if(mid&&Math.abs(p.x-mid.cx)<mid.w/2+10&&Math.abs(p.y-mid.cy)<mid.h/2+9)return {kind:'middle',mode:'move'};
@@ -407,7 +399,20 @@
  });
  // Keep image selection and undo snapshots current when images finish loading asynchronously.
  const oldSync=syncLayerUI;
- syncLayerUI=function(){oldSync();if(selected?.kind==='image'&&selected.index>=layers.length){selected=null;refreshContext()}if(!gesture&&!restoring&&!formFocus)commit();notifyPhase2()};
+ let knownImageCount=layers.length;
+ syncLayerUI=function(){
+  oldSync();
+  const grew=layers.length>knownImageCount;
+  knownImageCount=layers.length;
+  if(selected?.kind==='image'&&selected.index>=layers.length){selected=null;refreshContext()}
+  if(grew&&selectedLayer>=0&&layers[selectedLayer]){
+   // Adding a logo immediately exposes its drag/resize/delete handles.
+   selected={kind:'image',index:selectedLayer};
+   refreshContext();
+  }
+  if(!gesture&&!restoring&&!formFocus)commit();notifyPhase2();
+  if(grew)render();
+ };
  const phase2Listeners=new Set();
  function notifyPhase2(){for(const cb of phase2Listeners){try{cb()}catch(e){console.error('Phase2 UI update error',e)}}}
  const priorRender=render;
