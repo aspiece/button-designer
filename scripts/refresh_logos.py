@@ -38,6 +38,8 @@ for name in TEAM:
 # Choose the FIRST-supplied full color RGB PNG, keeping its intrinsic clear space.
 SOURCE={
  "first":"https://www.firstinspires.org/hubfs/logo-library/first/first-logo-all-formats.zip",
+ "first-alumni":"https://www.firstinspires.org/hubfs/logo-library/first/first-alumni-logo-all-formats.zip",
+ "first-elements":"https://www.firstinspires.org/hubfs/logo-library/first/SeparateElements.zip",
  "fll":"https://www.firstinspires.org/hubfs/logo-library/fll/firstlegoleague-logo-all-formats.zip",
  "fll-challenge":"https://www.firstinspires.org/hubfs/logo-library/fll/firstlegoleaguechallenge-lockup-all-formats.zip",
  "fll-explore":"https://www.firstinspires.org/hubfs/logo-library/fll/firstlegoleagueexplore-lockup-all-formats.zip",
