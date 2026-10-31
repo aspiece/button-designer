@@ -1,6 +1,7 @@
 /* Phase 2: Visual team logo library, layered artwork, and beginner/advanced mode. */
 (() => {
  'use strict';
+ const general=window.ButtonStudioEdition==='general';
  const api=window.ButtonStudioUX;
  if(!api)return;
  const left=document.querySelector('.app > section.panel:first-child');
@@ -24,7 +25,7 @@
  });
  setMode(false);
  
- const groups=[
+ const groups=general?[]:[
   ['Fenton numbered teams',[
     ['tiger-paws-24471','Tiger Paws','24471'],['tiger-cubs-29168','Tiger Cubs','29168'],
     ['tiger-kits-31558','Tiger Kits','31558'],['tiger-claws-31575','Tiger Claws','31575'],
@@ -35,11 +36,12 @@
     ['iridium-tigers','Iridium Tigers','']]]
  ];
  const library=document.createElement('section');library.className='studio-logo-library';
- library.setAttribute('aria-label','Available Fenton robotics team logos');
- library.innerHTML='<h3>Team logos</h3><p>Choose a team logo to add it to your button.</p><label for="uxLogoSearch">Search teams</label><input type="search" id="uxLogoSearch" placeholder="Team name or number" autocomplete="off"><div id="uxLogoGroups"></div><p id="uxLogoEmpty" hidden>No teams found. Try another search.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload my own picture</button>';
+ library.setAttribute('aria-label',general?'Upload your own images':'Available Fenton robotics team logos');
+ library.innerHTML=general?'<h3>Your artwork</h3><p>No preloaded team images. Upload a photo, logo, or illustration from your own device.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload an image</button>':'<h3>Team logos</h3><p>Choose a team logo to add it to your button.</p><label for="uxLogoSearch">Search teams</label><input type="search" id="uxLogoSearch" placeholder="Team name or number" autocomplete="off"><div id="uxLogoGroups"></div><p id="uxLogoEmpty" hidden>No teams found. Try another search.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload my own picture</button>';
  left.insertBefore(library,quick);
  const groupsContainer=library.querySelector('#uxLogoGroups');
- for(const [heading,items] of groups){
+
+ if(!general)for(const [heading,items] of groups){
   const group=document.createElement('div');group.className='studio-logo-group';
   const title=document.createElement('h4');title.textContent=heading;group.append(title);
   const grid=document.createElement('div');grid.className='studio-logo-grid';
@@ -53,6 +55,7 @@
    button.append(picture,text,numberLabel);grid.append(button)
   }group.append(grid);groupsContainer.append(group)
  }
+ if(!general){
  document.getElementById('uxLogoSearch').addEventListener('input',e=>{
   const q=e.target.value.trim().toLowerCase();let total=0;
   groupsContainer.querySelectorAll('.studio-logo-group').forEach(group=>{
@@ -68,6 +71,7 @@
   if(api.getState().layers.length>=12){document.getElementById('message').textContent='Maximum 12 images. Remove one before adding another.';return}
   api.addLogo(card.dataset.logo)
  });
+ }
  document.getElementById('uxUpload').addEventListener('click',()=>document.getElementById('logo').click());
  
  const layersSection=document.createElement('section');layersSection.className='studio-layers';

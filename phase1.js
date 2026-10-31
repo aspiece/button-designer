@@ -1,6 +1,7 @@
 /* Phase 1: Student-friendly, direct-manipulation editor. No external dependencies. */
 (() => {
  'use strict';
+ const general=window.ButtonStudioEdition==='general';
  const left=document.querySelector('.app > section.panel:first-child');
  const previewPanel=document.querySelector('.previewPanel');
  if(!left||!previewPanel||!window.HTMLCanvasElement)return;
@@ -18,11 +19,16 @@
  existing.forEach(n=>advanced.append(n));
  left.append(gallery,quick,advanced);
  const sizes=document.getElementById('buttonSizeControl');if(sizes)left.insertBefore(sizes,gallery);
- const thumbs={
+ const thumbs=general?{
+ paw:['#edf3fa','#17375e',''],tiger:['#102a43','#ffffff',''],titanium:['#ffffff','#1b3f57','T'],blank:['#ffffff','#111111',''],orange:['#f58220','#111111',''],black:['#111111','#ffffff','']
+ }:{
  paw:['#f58220','#111111','paw'],tiger:['#111111','#f58220','paw'],
  titanium:['#111111','#ffffff','T'],blank:['#ffffff','#111111',''],orange:['#f58220','#111111',''],black:['#111111','#ffffff','']
  };
- const templates=[
+ const templates=general?[
+ ['paw','Classic','Clean and bright'],['tiger','Modern','Dark blue'],['titanium','Badge','Custom emblem'],
+ ['blank','Blank','Start fresh'],['orange','Color Pop','Bright color'],['black','Dark','Black canvas']
+ ]:[
  ['paw','Tiger Paw','Orange & black'],['tiger','Tiger Spirit','Black & orange'],
  ['titanium','Titanium Tigers','Black & white'],['blank','Blank','White canvas'],
  ['orange','Orange','Solid background'],['black','Black','Solid background']
@@ -142,7 +148,7 @@
    body+='<p>'+l.name.replace(/</g,'&lt;')+'</p>'+quickInput('quickImageSize','Picture size ('+l.size+'%)','range',l.size,15,100);
    body+='<div class="quick-actions"><button type="button" data-quick="centerImage">Center</button><button type="button" data-quick="cropImage">Crop</button><button type="button" data-quick="forwardImage">Bring forward</button><button type="button" data-quick="backImage">Send backward</button><button type="button" class="danger" data-quick="deleteImage">Remove image</button></div>';
   }else if(kind==='mark'){
-   body+='<div class="quick-field"><label for="quickMark">Center logo</label><select id="quickMark"><option value="none">Blank</option><option value="f">Fenton F</option><option value="paw">Tiger Paw</option><option value="t">Titanium T</option></select></div>';
+   body+='<div class="quick-field"><label for="quickMark">Center logo</label><select id="quickMark"><option value="none">Blank</option><option value="f">'+(general?'Letter F':'Fenton F')+'</option><option value="paw">'+(general?'Paw symbol':'Tiger Paw')+'</option><option value="t">'+(general?'Letter T':'Titanium T')+'</option></select></div>';
    body+=quickInput('quickMarkSize','Logo size ('+$('centerSize').value+'%)','range',$('centerSize').value,15,95);
    body+='<p>Drag the logo to move it. Use the orange handle to resize.</p><div class="quick-actions"><button type="button" data-quick="centerMark">Center logo</button></div>';
   }else{

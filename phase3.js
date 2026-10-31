@@ -1,6 +1,7 @@
 /* Phase 3: print-only workspace, safe area guidance, portable classroom batch sheets. */
 (() => {
 'use strict';
+const general=window.ButtonStudioEdition==='general';
 const panel=document.querySelector('.right');
 if(!panel||!window.HTMLDialogElement)return;
 const openButton=document.createElement('button');
@@ -239,7 +240,7 @@ async function exportPdf(mixed){
    jpegs.push(jpegFromCanvas(c))
   }
   const blob=pdfFromJpegs(jpegs),url=URL.createObjectURL(blob);
-  downloadUrl(url,mixed?'fenton-classroom-button-sheet.pdf':'fenton-button-print-sheet.pdf');
+  downloadUrl(url,mixed?(general?'button-studio-mixed-sheet.pdf':'fenton-classroom-button-sheet.pdf'):(general?'button-studio-print-sheet.pdf':'fenton-button-print-sheet.pdf'));
   setTimeout(()=>URL.revokeObjectURL(url),30000);
   note('PDF created: '+num+' buttons, '+pages+' page(s). Print at Actual Size / 100%.');
  }catch(err){note('Could not create PDF: '+err.message)}
@@ -290,7 +291,7 @@ openButton.onclick=open;
 const toolbar=document.querySelector('.studio-toolbar');
 if(toolbar){const b=document.createElement('button');b.type='button';b.className='studio-tool';b.textContent='🖨 Print Studio';b.onclick=open;toolbar.append(b)}
 // Autosave is local only. Do not clobber a previous saved session until the student acts.
-const AUTOSAVE_KEY='fentonButtonAutosaveV3';
+const AUTOSAVE_KEY=general?'generalButtonStudioAutosaveV3':'fentonButtonAutosaveV3';
 let previous=null,autosaveReady=false,timer=null,reportedFull=false;
 try{previous=localStorage.getItem(AUTOSAVE_KEY)}catch{}
 if(previous){
