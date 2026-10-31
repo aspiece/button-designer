@@ -47,7 +47,7 @@ SOURCE={
  "ftc":"https://www.firstinspires.org/hubfs/logo-library/ftc/firsttechchallenge-logo-all-formats.zip",
  "frc":"https://www.firstinspires.org/hubfs/logo-library/frc/firstroboticscompetition-logo-all-formats.zip",
 }
-out=LOGOS/"first";out.mkdir(parents=True,exist_ok=True)
+out=LOGOS/"FIRST Logos";out.mkdir(parents=True,exist_ok=True)
 for key,url in SOURCE.items():
  try:
   response=requests.get(url,timeout=55);response.raise_for_status()
