@@ -64,6 +64,14 @@ Three reusable examples are included: Fenton Paw Classic, Titanium Tigers Badge,
 
 **Privacy:** The repository and its shared assets are public. Do not upload student names, photographs, or other identifying details without the school's approval. Saving a project in the student browser is local; clicking Download does **not** publish it to the repo. See [the designs folder instructions](designs/README.md).
 
+## Automatically updated Fenton image gallery
+
+The Fenton edition has a **searchable approved image gallery** built from files in `logos/`. Images automatically appear under **School Logos**, **Robotics Teams**, **FIRST Logos**, or **Custom Artwork**. The first catalog includes 14 unique approved images. Selecting a thumbnail adds it through the normal editable image-layer workflow, so images can be moved, resized, cropped and included in saved designs.
+
+**To add permanent images:** A teacher/maintainer opens [the Fenton logos folder](logos/README.md), chooses the appropriate category folder, uploads the approved PNG/JPEG/WebP/AVIF files through GitHub, and commits. The [automatic gallery publishing workflow](.github/workflows/publish-image-gallery.yml) rebuilds `logos/catalog.json` and republishes the updated GitHub Pages site. New uploads require no app-code edits.
+
+The general-purpose edition at `/studio/` neither loads the approved-image catalog nor preloads any Fenton artwork; students can still upload their own local images there.
+
 ## Student workflow
 
 1. Open the designer and select a starting template.
