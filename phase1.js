@@ -2,7 +2,7 @@
 (() => {
  'use strict';
  const general=window.ButtonStudioEdition==='general';
- const left=document.querySelector('.app > section.panel:first-child');
+ const left=document.querySelector('#designTools, .app > section.panel');
  const previewPanel=document.querySelector('.previewPanel');
  if(!left||!previewPanel||!window.HTMLCanvasElement)return;
  const heading=left.querySelector('h2');
