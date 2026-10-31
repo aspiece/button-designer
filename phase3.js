@@ -10,10 +10,14 @@ openButton.className='btn primary full';openButton.textContent='Preview, print &
 const intro=document.createElement('p');intro.className='hint';
 intro.textContent='Open the print workspace for single designs or a whole team. Everything prints at actual size.';
 const heading=panel.querySelector('h2');if(heading)heading.after(intro,openButton);else panel.prepend(intro,openButton);
-const legacy=document.createElement('details');legacy.id='legacyPrint';
-const legacySummary=document.createElement('summary');legacySummary.textContent='Quick print controls (advanced)';
-const movable=[...panel.children].filter(el=>el!==panel.querySelector('h2')&&el!==intro&&el!==openButton);
-legacy.append(legacySummary,...movable);panel.append(legacy);
+if(general){
+ const legacy=document.createElement('details');legacy.id='legacyPrint';
+ const legacySummary=document.createElement('summary');legacySummary.textContent='Quick print controls (advanced)';
+ const movable=[...panel.children].filter(el=>el!==panel.querySelector('h2')&&el!==intro&&el!==openButton);
+ legacy.append(legacySummary,...movable);panel.append(legacy);
+}
+// Fenton Print tab keeps the sheet preview, paper cut size, copies,
+// guide option, download action, and checklist visible without a disclosure.
 
 const dialog=document.createElement('dialog');dialog.id='printWorkspace';
 dialog.setAttribute('aria-labelledby','printStudioTitle');
