@@ -130,6 +130,24 @@ const priorNames=await page.evaluate(()=>window.ButtonStudioUX.getState().layers
 await page.locator('.studio-layer-row').last().locator('button[data-action="forward"]').click();
 const newNames=await page.evaluate(()=>window.ButtonStudioUX.getState().layers.map(l=>l.name).join('|'));
 assert.notEqual(newNames,priorNames,'Layer order changes');
+assert.equal(await page.locator('#logoSize').getAttribute('max'),'180','Image slider allows up to 180 percent');
+await page.locator('.studio-layer-select').first().click();
+assert.equal(await page.locator('#quickImageSize').getAttribute('max'),'180','Context slider supports enlarged images');
+await page.locator('#quickImageSize').evaluate(el=>{el.value='175';el.dispatchEvent(new Event('input',{bubbles:true}))});
+assert.equal(await page.evaluate(()=>layers[selectedLayer].size),175,'Center uploaded image grows beyond previous 100 percent limit');
+assert.equal(await page.inputValue('#logoSize'),'175','Advanced and context image sliders stay synchronized');
+const [bigProject]=await Promise.all([page.waitForEvent('download'),page.click('#exportProject')]);
+const bigJson=JSON.parse(fs.readFileSync(await bigProject.path(),'utf8'));
+assert.ok(bigJson.layers.some(layer=>layer.size===175),'Editable JSON retains enlarged picture size');
+await page.evaluate(project=>restoreProject(project),bigJson);
+await page.waitForFunction(()=>layers.length===2&&layers.every(l=>l.im.complete));
+assert.ok(await page.evaluate(()=>layers.some(l=>l.size===175)),'Reopening project preserves enlarged image size');
+await page.click('#uxAdvanced');
+assert.equal(await page.locator('#centerSize').getAttribute('max'),'125','Built-in center logo slider supports 125 percent');
+await page.selectOption('#centerLogoChoice','paw');
+await page.locator('#centerSize').evaluate(el=>{el.value='120';el.dispatchEvent(new Event('input',{bubbles:true}))});
+assert.equal(await page.inputValue('#centerSize'),'120','Built-in mark can grow past 95 percent');
+
 // Phase 3 printing workflow: dedicated dialog, safe-area warning and mixed batch PDF.
 await page.click('#openPrintStudio');
 assert.equal(await page.inputValue('#psSize'),await page.inputValue('#finishedSize'),'Print Studio and editor use the same finished diameter');
@@ -152,6 +170,7 @@ const [singlePrint]=await Promise.all([page.waitForEvent('download'),page.click(
 const singleBytes=fs.readFileSync(await singlePrint.path());
 assert.equal(singleBytes.subarray(0,8).toString('ascii'),'%PDF-1.4','Print Studio single PDF header');
 assert.equal(await page.locator('#psPage').textContent(),'Page 1 of 1','Twelve 2.5-inch circles on one page');
+assert.equal(await page.locator('#psWarnings').textContent().then(t=>t.includes('overlap')||t.includes('border')),true,'Print preview warns about enlarged center artwork');
 await page.click('#psMixedTab');
 await page.click('#psAddCurrent');
 await page.waitForFunction(()=>document.querySelectorAll('.ps-queue-row').length===1);
