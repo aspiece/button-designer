@@ -1,10 +1,10 @@
 {
-  "id": "/button-designer/studio/",
+  "id": "./studio/",
   "name": "Button Studio - General Edition",
   "short_name": "Button Studio",
   "description": "Design and print custom pin-back buttons.",
-  "start_url": "/button-designer/studio/",
-  "scope": "/button-designer/studio/",
+  "start_url": "./studio/",
+  "scope": "./studio/",
   "display": "standalone",
   "background_color": "#f1f5fa",
   "theme_color": "#171717",
