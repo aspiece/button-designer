@@ -82,6 +82,38 @@
      cx.putImageData(pixels,0,0);
      return new Promise(resolve=>cv.toBlob(out=>resolve(out||blob),'image/png'));
    }
+   // Team logos are displayed and inserted as black-only artwork on transparent pixels.
+   // The source PNGs remain unchanged in the repo for future revisions.
+   const teamPreviewCache=new Map();
+   async function blackOnlyTeamLogo(blob){
+     const bitmap=await createImageBitmap(blob),cv=document.createElement('canvas');
+     const scale=Math.min(1,1400/Math.max(bitmap.width,bitmap.height));
+     cv.width=Math.max(1,Math.round(bitmap.width*scale));cv.height=Math.max(1,Math.round(bitmap.height*scale));
+     const cx=cv.getContext('2d',{willReadFrequently:true});cx.drawImage(bitmap,0,0,cv.width,cv.height);bitmap.close?.();
+     const img=cx.getImageData(0,0,cv.width,cv.height),data=img.data;
+     for(let i=0;i<data.length;i+=4){
+       const r=data[i],g=data[i+1],b=data[i+2],original=data[i+3];
+       // Keep dark strokes, including antialiased dark-gray edges.
+       // Orange, white and other fill colors become transparent.
+       const orange=r>g*1.20&&g>b*1.12&&r>105;
+       const neutral=Math.max(r,g,b)-Math.min(r,g,b)<42;
+       const darkness=Math.max(0,Math.min(1,(180-(r*.299+g*.587+b*.114))/115));
+       const ink=orange?0:(neutral?darkness:(Math.max(r,g,b)<110?darkness:0));
+       data[i]=data[i+1]=data[i+2]=0;data[i+3]=Math.round(original*ink);
+     }
+     cx.putImageData(img,0,0);
+     return await new Promise(resolve=>cv.toBlob(result=>resolve(result||blob),'image/png'));
+   }
+   async function teamPreview(path,img){
+     let src=teamPreviewCache.get(path);
+     if(!src){
+       const response=await fetch(imageUrl(path));
+       if(!response.ok)throw Error('Logo unavailable');
+       const converted=await blackOnlyTeamLogo(await response.blob());
+       src=URL.createObjectURL(converted);teamPreviewCache.set(path,src);
+     }
+     if(img.isConnected)img.src=src;
+   }
    const imageUrl=path=>path.split('/').map(encodeURIComponent).join('/');
    const mimetype=path=>/\.png$/i.test(path)?'image/png':/\.jpe?g$/i.test(path)?'image/jpeg':/\.webp$/i.test(path)?'image/webp':'image/avif';
    function showGallery(){
@@ -102,6 +134,7 @@
          button.setAttribute('aria-label','Add '+item.name+' from '+groupName+' to your button');
          const picture=document.createElement('img');
          picture.src=imageUrl(item.path);picture.alt='';picture.loading='lazy';
+         if(item.category==='Robotics Teams')teamPreview(item.path,picture).catch(()=>{});
          picture.addEventListener('error',()=>{picture.hidden=true;button.classList.add('studio-logo-broken')});
          const label=document.createElement('span');label.textContent=item.name;
          const detail=document.createElement('small');
@@ -147,8 +180,9 @@
        let blob=await response.blob();
        if(!blob.size||blob.size>8*1024*1024)throw Error('Image is empty or larger than 8 MB');
        if(entry.category==='School Logos')blob=await cleanSchoolBackground(blob);
+       if(entry.category==='Robotics Teams')blob=await blackOnlyTeamLogo(blob);
        // Let the existing file-import pipeline validate, normalize, and create an editable layer.
-       const file=new File([blob],entry.name.replace(/[^a-zA-Z0-9 _-]/g,'').slice(0,55)+'.'+(entry.category==='School Logos'?'png':entry.path.split('.').pop().toLowerCase()),{type:entry.category==='School Logos'?'image/png':mimetype(entry.path)});
+       const file=new File([blob],entry.name.replace(/[^a-zA-Z0-9 _-]/g,'').slice(0,55)+'.'+(entry.category!=='FIRST Logos'?'png':entry.path.split('.').pop().toLowerCase()),{type:entry.category!=='FIRST Logos'?'image/png':mimetype(entry.path)});
        addImages([file]);
        results.textContent='Added '+entry.name+'. Drag the image to position it.';
      }catch(err){
