@@ -219,8 +219,15 @@
  function getRect(){if(!selected)return null;if(selected.kind==='image')return imageRect(selected.index);if(selected.kind==='middle')return middleRect();if(selected.kind==='mark')return markRect();return null}
  function point(e){const r=editor.getBoundingClientRect(),scale=editor.width/r.width;return{x:(e.clientX-r.left)*scale,y:(e.clientY-r.top)*scale}}
  function near(p,x,y,r=18){return Math.hypot(p.x-x,p.y-y)<r}
+ function deleteSelectedImage(){
+  if(!selected||selected.kind!=='image'||!layers[selected.index])return;
+  commit();layers.splice(selected.index,1);selectedLayer=layers.length-1;
+  image=layers[selectedLayer]?.im||null;imageData=layers[selectedLayer]?.data||'';
+  syncLayerUI();newSelection(null);commit();render();
+ }
  function getHit(p){
   const rect=getRect();
+  if(selected?.kind==='image'&&rect&&near(p,rect.cx+rect.w/2,rect.cy-rect.h/2,25))return {...selected,mode:'delete'};
   if(rect&&near(p,rect.cx+rect.w/2,rect.cy+rect.h/2,22))return {...selected,mode:'resize'};
   if(selected&&(selected.kind==='top'||selected.kind==='bottom')){
    const {m,f}=metrics(),v=uxText[selected.kind],angle=.52+v.angle;
@@ -260,13 +267,26 @@
   let hx,hy;
   if(r){hx=r.cx+r.w/2;hy=r.cy+r.h/2}
   else{const d=uxText[selected.kind],ang=.52+d.angle;hx=m+Math.sin(ang)*f*d.radius;hy=m+(selected.kind==='top'?-1:1)*Math.cos(ang)*f*d.radius}
-  ctx.beginPath();ctx.arc(hx,hy,10,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(hx,hy,12,0,Math.PI*2);ctx.fill();
   ctx.strokeStyle='#e66d08';ctx.lineWidth=4;ctx.stroke();
+  if(selected.kind==='image'&&r){
+   const x=r.cx+r.w/2,y=r.cy-r.h/2;
+   ctx.setLineDash([]);ctx.fillStyle='#d32929';ctx.beginPath();ctx.arc(x,y,15,0,Math.PI*2);ctx.fill();
+   ctx.strokeStyle='#ffffff';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x-5,y-5);ctx.lineTo(x+5,y+5);ctx.moveTo(x+5,y-5);ctx.lineTo(x-5,y+5);ctx.stroke();
+  }
   ctx.restore()
  }
+ const canvasWrap=editor.closest('.canvasWrap');
+ const imageActions=document.createElement('div');imageActions.className='canvas-image-actions';imageActions.hidden=true;
+ imageActions.innerHTML='<span>Selected image</span><button type="button" data-img-action="smaller" aria-label="Make image smaller">− Smaller</button><button type="button" data-img-action="larger" aria-label="Make image larger">+ Larger</button><button type="button" data-img-action="delete" class="danger" aria-label="Delete selected image">✕ Delete</button>';
+ canvasWrap?.insertAdjacentElement('afterend',imageActions);
+ imageActions.addEventListener('click',e=>{const btn=e.target.closest('button[data-img-action]');if(!btn||selected?.kind!=='image')return;
+  if(btn.dataset.imgAction==='delete'){deleteSelectedImage();return}
+  const l=layers[selected.index];if(!l)return;commit();l.size=clamp(l.size+(btn.dataset.imgAction==='larger'?8:-8),15,MAX_IMAGE_SIZE);$('logoSize').value=l.size;render();refreshContext();
+ });
  const oldRender=render;
  render=function(){
-  oldRender();drawOverlay();
+  oldRender();drawOverlay();if(imageActions)imageActions.hidden=!(selected?.kind==='image'&&layers[selected.index]);
   if(!gesture&&!formFocus&&!restoring)commit();
   syncGallery()
  };
@@ -278,6 +298,7 @@
  editor.addEventListener('pointerdown',e=>{
   const p=point(e),hit=getHit(p);
   if(!hit){newSelection(null);return}
+  if(hit.mode==='delete'){deleteSelectedImage();e.preventDefault();return}
   if(hit.kind==='background'){newSelection('background');return}
   newSelection(hit.kind,hit.index);
   const {m,f}=metrics(),origin=hit.kind==='image'?{...layers[hit.index]}:
