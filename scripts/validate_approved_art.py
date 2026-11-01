@@ -19,7 +19,7 @@ PATH_RE = re.compile(r"^approved-art/images/[a-z0-9-]+\.(svg|png|jpe?g|webp)$")
 ID_RE = re.compile(r"^[a-z0-9-]{2,60}$")
 SVG_ELEMENTS = {"svg", "g", "path", "circle", "ellipse", "rect", "line", "polyline", "polygon"}
 SVG_ATTRIBUTES = {
-    "viewBox", "width", "height", "role", "fill", "stroke", "stroke-width",
+    "viewBox", "width", "height", "role", "fill", "fill-rule", "stroke", "stroke-width",
     "stroke-linecap", "stroke-linejoin", "stroke-opacity", "fill-opacity",
     "opacity", "d", "cx", "cy", "r", "rx", "ry", "x", "y",
     "x1", "y1", "x2", "y2", "points", "transform",

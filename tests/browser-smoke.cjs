@@ -124,7 +124,7 @@ async function main(){
   assert.equal(await page.locator('#saveProject').isVisible(),false,'Save actions are not shown in Logos');
   assert.ok(await page.locator('#logosTools .studio-logo-library').evaluate(el=>el.compareDocumentPosition(document.querySelector('#uxLogoGroups'))===16||el.contains(document.querySelector('#uxLogoGroups'))),'Gallery entries stay inside Logos tab');
   // A single searchable gallery presents logos and reviewed public art as categories.
-  assert.equal(publicArt.images.length,18,'Starter public art includes 18 reviewed illustrations');
+  assert.equal(publicArt.images.length,20,'Gallery includes 18 starter illustrations and two coach-approved Fenton tiger mascots');
   assert.equal(await page.locator('#uxLogoSearch').count(),1,'One gallery search box');
   assert.equal(await page.locator('#uxLogoCategory').count(),1,'One gallery category dropdown');
   assert.equal(await page.locator('#approvedArtSearch, #approvedArtCategory, .studio-approved-art').count(),0,'No duplicate public-art panel');
@@ -133,10 +133,17 @@ async function main(){
   assert.equal(await page.locator('.studio-tiger-shortcuts').count(),1,'One prominent tiger artwork shortcut group');
   await page.locator('[data-tiger-shortcut="pictures"]').click();
   assert.equal(await page.inputValue('#uxLogoSearch'),'tiger','Tiger pictures search is set automatically');
-  assert.equal(await page.inputValue('#uxLogoCategory'),'School Logos','Tiger pictures filter chooses school artwork');
-  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),2,'Tiger pictures show two approved tiger illustrations');
+  assert.equal(await page.inputValue('#uxLogoCategory'),'All','Tiger pictures includes both school logos and curated mascot art');
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),4,'Tiger pictures shows both existing school illustrations and two new mascot designs');
   assert.equal(await page.locator('.studio-logo-card[data-path="logos/school-logos/images.jpeg"]').count(),1,'Roaring tiger illustration is immediately findable');
   assert.equal(await page.locator('.studio-logo-card[data-path="logos/school-logos/SE-Logo_medium.png"]').count(),1,'Tiger head illustration is immediately findable');
+  assert.equal(await page.locator('.studio-logo-card[data-path="approved-art/images/fenton-tiger-roar.svg"]').count(),1,'New roaring Fenton mascot is immediately findable');
+  assert.equal(await page.locator('.studio-logo-card[data-path="approved-art/images/fenton-tiger-flame.svg"]').count(),1,'New flame-stripe Fenton mascot is immediately findable');
+  for(const id of ['fenton-tiger-roar','fenton-tiger-flame']){
+    const img=page.locator(`.studio-logo-card[data-path="approved-art/images/${id}.svg"] img`);
+    await img.evaluate(async element=>{if(!element.complete)await new Promise((resolve,reject)=>{element.addEventListener('load',resolve,{once:true});element.addEventListener('error',reject,{once:true});})});
+    assert.ok(await img.evaluate(el=>el.naturalWidth>100),id+' is a real visible image, not an empty placeholder');
+  }
   assert.equal(await page.locator('[data-tiger-shortcut="pictures"]').getAttribute('aria-pressed'),'true','Tiger pictures shortcut announces selection');
   await page.locator('[data-tiger-shortcut="teams"]').click();
   assert.equal(await page.inputValue('#uxLogoCategory'),'Robotics Teams','Team shortcut switches to robotics logos');
@@ -145,10 +152,10 @@ async function main(){
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),totalGalleryImages,'All images restores the complete gallery');
   await page.locator('[data-tiger-shortcut="pictures"]').click();
   await page.locator('#uxLogoSearch').fill('microscope');
-  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),0,'Manual search clears tiger-only filter');
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),1,'Manual search clears tiger-only filter and finds the microscope');
   await page.locator('[data-tiger-shortcut="all"]').click();
   await page.selectOption('#uxLogoCategory','Public Images');
-  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),18,'Public Images filter shows only reviewed art');
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),20,'Public Images filter shows all 20 reviewed illustrations');
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-group').count(),1,'Public Images has one grouped section');
   await page.locator('#uxLogoSearch').fill('Science');
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),3,'Public art topic remains searchable within shared gallery');
@@ -164,7 +171,7 @@ async function main(){
   assert.equal(await page.locator('#propertiesPanel #quickImageSize').count(),1,'Selected public artwork is editable in the new properties panel');
   assert.equal(await page.locator('#propertiesPanel .studio-layer-row').count(),1,'Image layer appears in right-hand layer manager');
 
-  assert.equal(await page.locator('#uxLogoGroups .public-art-choice').count(),18,'Each curated SVG has a color picker');
+  assert.equal(await page.locator('#uxLogoGroups .public-art-choice').count(),20,'Each curated SVG including two Fenton mascots has a color picker');
   const robot=page.locator('.public-art-choice').filter({has:page.locator('button[data-path="approved-art/images/robot.svg"]')});
   assert.deepEqual(await robot.locator('.public-art-color option').allTextContents(),['Original','Black','Orange','White'],'Public art offers original + the three team colors');
   // Pixel-level verification: same tint is visible in card preview, editable layer and PDF source.
@@ -229,6 +236,26 @@ async function main(){
   assert.equal(await page.evaluate(()=>layers.length),beforeTiger+1,'Tiger head artwork imports onto the button');
   assert.ok((await page.evaluate(()=>layers.at(-1).name)).includes('Tiger Head'),'Imported tiger is labeled clearly');
   assert.equal(await page.locator('#propertiesPanel #quickImageSize').count(),1,'Tiger is editable through existing image size controls');
+
+  // Verify the two newly approved vector designs can be recolored and imported
+  // without losing transparency, or affecting Print Studio's raster pipeline.
+  for(const id of ['fenton-tiger-roar','fenton-tiger-flame']){
+    await page.locator('[data-tiger-shortcut="pictures"]').click();
+    const selector=`.studio-logo-card[data-path="approved-art/images/${id}.svg"]`;
+    const choice=page.locator('.public-art-choice').filter({has:page.locator(selector)});
+    assert.equal(await choice.locator('.public-art-color').count(),1,id+' includes recolor control');
+    await choice.locator('.public-art-color').selectOption('orange');
+    await page.waitForFunction(id=>{
+      const img=document.querySelector(`.studio-logo-card[data-path="approved-art/images/${id}.svg"] img`);
+      return !!img&&img.dataset.requestedColor==='orange'&&img.complete&&img.naturalWidth>0&&img.src.startsWith('blob:');
+    },id,{timeout:15000});
+    const previous=await page.evaluate(()=>layers.length);
+    await page.locator(selector).click();
+    await page.waitForFunction(old=>layers.length>old||document.getElementById('uxLogoResults').textContent.startsWith('Could not add'),previous,{timeout:15000});
+    assert.equal(await page.evaluate(()=>layers.length),previous+1,id+' imports onto the editable button');
+    assert.ok((await page.evaluate(()=>layers.at(-1).data)).startsWith('data:image/png'),id+' is converted to printable PNG pixels');
+    assert.ok((await page.evaluate(()=>layers.at(-1).name)).includes('orange'),id+' keeps its selected orange variant');
+  }
 
   await page.locator('#tab-print').click();
   assert.equal(await page.locator('#legacyPrint').count(),0,'Fenton print tools are directly visible');

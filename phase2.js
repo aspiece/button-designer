@@ -69,9 +69,12 @@
    const PUBLIC_CATEGORIES=new Set(['Robotics','Science','Nature','Sports','School','Seasonal']);
    let assets=[];
    let busy=false;
+   // Tiger pictures are explicit teacher-curated school and mascot illustrations.
    const TIGER_PICTURES=new Set([
     'logos/school-logos/images.jpeg',
-    'logos/school-logos/SE-Logo_medium.png'
+    'logos/school-logos/SE-Logo_medium.png',
+    'approved-art/images/fenton-tiger-roar.svg',
+    'approved-art/images/fenton-tiger-flame.svg'
    ]);
    let tigerPicturesOnly=false;
    const tigerShortcuts=library.querySelector('.studio-tiger-shortcuts');
@@ -343,7 +346,7 @@
    tigerShortcuts?.addEventListener('click',event=>{
     const button=event.target.closest('[data-tiger-shortcut]');if(!button)return;
     const type=button.dataset.tigerShortcut;
-    if(type==='pictures'){select.value='School Logos';search.value='tiger';tigerPicturesOnly=true}
+    if(type==='pictures'){select.value='All';search.value='tiger';tigerPicturesOnly=true}
     else if(type==='teams'){select.value='Robotics Teams';search.value='tiger';tigerPicturesOnly=false}
     else if(type==='all'){select.value='All';search.value='';tigerPicturesOnly=false}
     else return;
