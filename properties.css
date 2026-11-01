@@ -46,7 +46,8 @@
  #propertiesPanel{width:100%}
 }
 @media(max-width:700px){
- #previewWorkspace{order:1;width:100%;gap:10px}
+ .app>.editor-tabs{order:-2}
+ .app>#previewWorkspace{order:-1;width:100%;gap:10px}
  #previewWorkspace>.previewPanel{padding:9px 10px;margin-bottom:0}
  #previewWorkspace>.previewPanel>.canvasWrap{padding:6px;width:min(100%,max(150px,calc(100svh - 235px)))}
  #propertiesPanel{width:100%;padding:12px;margin-bottom:10px}
