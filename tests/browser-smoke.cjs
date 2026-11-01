@@ -203,6 +203,36 @@ async function main(){
     assert.equal(await phone.locator('#uxUndo').count(),1,'Undo is kept on mobile');
     assert.equal(await phone.locator('#tab-logos').isVisible(),true,'Gallery tab is accessible on mobile');
   }
+  // The same preview-first behavior applies beyond phone sizes: tablets,
+  // compact laptops, wide desktops and short browser windows.
+  for(const [width,height] of [[701,500],[768,600],[930,650],[1024,600],[1280,720],[1440,800],[1920,1080]]){
+    await phone.setViewportSize({width,height});
+    await phone.goto('http://127.0.0.1:8765/',{waitUntil:'networkidle'});
+    const m=await phone.evaluate(()=>{
+      const rect=selector=>{const r=document.querySelector(selector).getBoundingClientRect();return {top:r.top,bottom:r.bottom,width:r.width}};
+      return {header:rect('header'),tabs:rect('.editor-tabs'),heading:rect('.previewPanel h2'),
+        canvas:rect('#editorCanvas'),tools:rect('.studio-toolbar'),
+        docWidth:document.documentElement.scrollWidth,viewWidth:innerWidth,viewHeight:innerHeight};
+    });
+    assert.ok(m.canvas.width>=140,`Canvas is large enough at ${width}×${height}: ${JSON.stringify(m)}`);
+    assert.ok(m.canvas.bottom<=m.viewHeight-8,`Button preview entirely visible at ${width}×${height}: ${JSON.stringify(m)}`);
+    assert.ok(m.tools.top>=m.canvas.bottom,`Undo/Redo follows button preview at ${width}×${height}`);
+    assert.ok(m.canvas.top>=m.heading.bottom,`Heading is above canvas at ${width}×${height}`);
+    assert.ok(m.header.bottom<m.tabs.top,`Header remains clear of tab bar at ${width}×${height}`);
+    assert.ok(m.docWidth<=m.viewWidth,`No horizontal scrolling at ${width}×${height}: ${JSON.stringify(m)}`);
+  }
+  for(const [width,height] of [[1024,600],[1440,800]]){
+    await phone.setViewportSize({width,height});
+    await phone.goto('http://127.0.0.1:8765/studio/',{waitUntil:'networkidle'});
+    const m=await phone.evaluate(()=>({
+      canvasBottom:document.querySelector('#editorCanvas').getBoundingClientRect().bottom,
+      toolbarTop:document.querySelector('.studio-toolbar').getBoundingClientRect().top,
+      viewportHeight:innerHeight,viewWidth:innerWidth,docWidth:document.documentElement.scrollWidth
+    }));
+    assert.ok(m.canvasBottom<=m.viewportHeight-8,`General edition preview fits ${width}×${height}: ${JSON.stringify(m)}`);
+    assert.ok(m.toolbarTop>=m.canvasBottom,`General edition toolbar follows preview at ${width}×${height}`);
+    assert.ok(m.docWidth<=m.viewWidth,`General edition has no horizontal overflow at ${width}×${height}`);
+  }
   await phone.setViewportSize({width:360,height:640});
   await phone.goto('http://127.0.0.1:8765/studio/',{waitUntil:'networkidle'});
   const generalPhone=await phone.evaluate(()=>({
