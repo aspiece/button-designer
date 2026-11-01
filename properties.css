@@ -27,12 +27,21 @@
 #propertiesPanel .design-warnings{margin:5px 0 8px}
 .properties-check-status{font-size:12px;line-height:1.4;margin:5px 0;color:#305b46}
 .properties-check-status[data-attention="true"]{color:#925a16;font-weight:700}
-#propertiesPrintAction>.btn{width:100%;min-height:44px}
-#propertiesPrintAction>.hint{font-size:11px;line-height:1.4;margin:7px 0}
-#propertiesSaveMenu{border:1px solid #d9e2ec;border-radius:10px;padding:0;margin:10px 0 0}
-#propertiesSaveMenu>summary{padding:11px;cursor:pointer;color:#31445e}
-#propertiesSaveMenu .top-tools{display:grid;grid-template-columns:1fr;gap:6px;padding:10px}
-#propertiesSaveMenu .top-tools .btn{width:100%;text-align:center;justify-content:center}
+/* All save/export and print actions are intentionally confined to the Print tab. */
+#printPrimaryActions{margin:0 0 16px;padding:0 0 14px;border-bottom:1px solid #e5eaf0}
+#printPrimaryActions>h3{font-size:14px;color:#26384f;margin:0 0 10px}
+#printStudioAction>#openPrintStudio{width:100%;margin:0 0 4px;min-height:46px}
+#printStudioAction>.hint{font-size:12px;line-height:1.45;margin:4px 0 12px}
+#printSaveMenu{border:1px solid #d9e2ec;border-radius:10px;margin:10px 0 0;background:#fff}
+#printSaveMenu>summary{padding:12px;cursor:pointer;color:#31445e;font-weight:750}
+#printSaveMenu .top-tools{display:grid;grid-template-columns:1fr;gap:7px;padding:10px}
+#printSaveMenu .top-tools .btn{width:100%;text-align:center;justify-content:center;min-height:40px}
+#printSaveMenu:focus-within,#printSaveMenu>summary:focus-visible{outline:2px solid #317fc7;outline-offset:2px}
+/* When students choose Logos, the searchable gallery leads immediately. */
+body[data-editor-tab="logos"] #logosTools .studio-logo-library{
+ margin-top:0;padding-top:0;border-top:0;
+}
+#logosTools .studio-logo-library,#printPrimaryActions{scroll-margin-top:75px}
 #propertiesPanel input,#propertiesPanel select{max-width:100%}
 @media(min-width:1120px){
  .app{grid-template-columns:minmax(255px,320px) minmax(315px,1fr) minmax(265px,310px);column-gap:14px}

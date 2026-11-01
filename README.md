@@ -85,7 +85,7 @@ The general-purpose edition at `/studio/` neither loads the approved-image catal
 
 ## Three-column laptop editor
 
-On laptops and desktops (1120px or wider), the Fenton Button Designer now uses **Create (left) → Preview (center) → Properties & Layers (right)**. The right panel reuses the existing context-sensitive editor for selected text, images, and background; it also includes selectable text/background layers, the existing reorderable image list, live design warnings, Save & Export, and the actual Print Studio entry point. Existing controls are moved rather than copied; printed sizes and data stay unchanged. On tablets and phones, the Properties panel stacks beneath the live preview, before the main tools. The General Edition remains unchanged.
+On laptops and desktops (1120px or wider), the Fenton Button Designer now uses **Create (left) → Preview (center) → Properties & Layers (right)**. The right panel reuses the existing context-sensitive editor for selected text, images, and background; it also includes selectable text/background layers, the existing reorderable image list, and live design warnings. **Save & Export and Print Studio now live exclusively inside the Print tab**, with the original functional controls moved rather than duplicated. Selecting **Logos** goes straight to the searchable Image Library, including on small screens where the page scrolls directly to the gallery. Switching to **Print** reveals the print action first, followed by a collapsible Save & Export group and the existing production controls. Printed sizes and design data stay unchanged. On tablets and phones, the Properties panel stacks beneath the live preview, before the main tools. The General Edition remains unchanged.
 
 ## Student workflow
 
