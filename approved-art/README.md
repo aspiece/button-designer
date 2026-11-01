@@ -1,6 +1,6 @@
 # Teacher-reviewed public-use art
 
-This is a **static, allowlisted collection** shown to students in the Fenton edition. The student app never searches Openverse, Wikimedia, or another live external image service. Search and filters operate **only** on `catalog.json`, and images are loaded only from files under `approved-art/images/`. The general edition is unchanged.
+This is a **static, allowlisted collection** shown to students in the Fenton edition. The student app never searches Openverse, Wikimedia, or another live external image service. The **Public Images** category sits inside the existing Image Library, sharing its search box and category dropdown with Robotics Teams, FIRST Logos and School Logos. The app uses `approved-art/catalog.json` as an explicit allowlist and loads public images only from `approved-art/images/`. The general edition is unchanged.
 
 ## Included starter illustrations
 
