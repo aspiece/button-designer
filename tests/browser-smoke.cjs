@@ -285,7 +285,8 @@ async function main(){
     assert.equal(await phone.locator('#tab-logos').isVisible(),true,'Gallery tab is accessible on mobile');
     if(width===360){
       await phone.locator('#mobileEditButton').click();
-      assert.ok(await phone.locator('#propertiesPanel').isVisible(),'Edit action opens the existing editing panel');
+      const drawerDebug=await phone.evaluate(()=>{const p=document.getElementById('propertiesPanel'),css=getComputedStyle(p),r=p.getBoundingClientRect();return {state:p.dataset.drawerOpen,view:p.dataset.mobileView,inert:p.inert,visible:css.visibility,display:css.display,transform:css.transform,left:r.left,top:r.top,width:r.width,height:r.height,body:document.body.className,matched:matchMedia('(max-width:1119px)').matches,overlay:document.getElementById('propertiesBackdrop').hidden}});
+      assert.ok(await phone.locator('#propertiesPanel').isVisible(),'Edit action opens the existing editing panel: '+JSON.stringify(drawerDebug));
       assert.equal(await phone.locator('#propertiesPanel').getAttribute('role'),'dialog','Mobile panel is an accessible dialog');
       assert.equal(await phone.locator('#propertiesPanel').getAttribute('aria-modal'),'true','Mobile drawer is modal');
       assert.ok(await phone.locator('#propertiesEditor').isVisible(),'Edit opens selected-item properties');
