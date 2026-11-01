@@ -257,7 +257,7 @@ function updateCounters(){
   const {m,f}=metrics(),dx=p.x-m,dy=p.y-m,dist=Math.hypot(dx,dy);
   if(dist<=f*.9&&dist>=f*.57&&p.y<m&&$('headline').value.trim())return {kind:'top',mode:'move'};
   if(dist<=f*.9&&dist>=f*.57&&p.y>m&&$('subline').value.trim())return {kind:'bottom',mode:'move'};
-  const mark=markRect();if(general&&$('centerLogoChoice')?.value!=='none'&&Math.abs(p.x-mark.cx)<mark.w/2+9&&Math.abs(p.y-mark.cy)<mark.h/2+9)return {kind:'mark',mode:'move'};
+  const mark=general?markRect():null;if(general&&$('centerLogoChoice')?.value!=='none'&&Math.abs(p.x-mark.cx)<mark.w/2+9&&Math.abs(p.y-mark.cy)<mark.h/2+9)return {kind:'mark',mode:'move'};
   if(dist<f)return {kind:'background',mode:'none'};
   return null
  }
