@@ -182,6 +182,15 @@
       ]
     },
     {
+      "path": "logos/first/first.png",
+      "name": "FIRST – Official Logo",
+      "category": "FIRST Logos",
+      "tags": [
+        "FIRST",
+        "Official"
+      ]
+    },
+    {
       "path": "logos/FIRST Logos/2026-27/canopy.png",
       "name": "FIRST CANOPY – 2026–27 Season",
       "category": "FIRST Logos",
@@ -191,6 +200,16 @@
         "CANOPY",
         "Current Season",
         "CANOPY"
+      ]
+    },
+    {
+      "path": "logos/first/fll.png",
+      "name": "FIRST LEGO League – Official Logo",
+      "category": "FIRST Logos",
+      "tags": [
+        "FIRST",
+        "Official",
+        "LEGO League"
       ]
     },
     {
@@ -238,13 +257,12 @@
       ]
     },
     {
-      "path": "logos/first/fll.png",
-      "name": "FIRST LEGO League – Official Logo",
+      "path": "logos/first/frc.png",
+      "name": "FIRST Robotics Competition – Official Logo",
       "category": "FIRST Logos",
       "tags": [
         "FIRST",
-        "Official",
-        "LEGO League"
+        "Official"
       ]
     },
     {
@@ -260,8 +278,8 @@
       ]
     },
     {
-      "path": "logos/first/frc.png",
-      "name": "FIRST Robotics Competition – Official Logo",
+      "path": "logos/first/ftc.png",
+      "name": "FIRST Tech Challenge – Official Logo",
       "category": "FIRST Logos",
       "tags": [
         "FIRST",
@@ -281,24 +299,6 @@
       ]
     },
     {
-      "path": "logos/first/ftc.png",
-      "name": "FIRST Tech Challenge – Official Logo",
-      "category": "FIRST Logos",
-      "tags": [
-        "FIRST",
-        "Official"
-      ]
-    },
-    {
-      "path": "logos/first/first.png",
-      "name": "FIRST – Official Logo",
-      "category": "FIRST Logos",
-      "tags": [
-        "FIRST",
-        "Official"
-      ]
-    },
-    {
       "path": "logos/school-logos/28dcb04d-3845-42ee-9e9b-5005e15915ac.jpeg",
       "name": "Fenton Area Public Schools – Tigers District Emblem",
       "category": "School Logos",
@@ -310,9 +310,18 @@
     },
     {
       "path": "logos/school-logos/fenton-bengal-tiger-head.png",
-      "name": "Fenton Bengal Tiger Head",
+      "name": "Fenton Bengal Tigers – Roaring Head",
       "category": "School Logos",
-      "tags": []
+      "tags": [
+        "Fenton",
+        "Bengal",
+        "Tigers",
+        "tiger head",
+        "roaring",
+        "mascot",
+        "orange",
+        "school"
+      ]
     },
     {
       "path": "logos/school-logos/large_7acbcc92-8566-4045-a126-21a31307561d.png",
@@ -325,16 +334,36 @@
       ]
     },
     {
-      "path": "logos/school-logos/fenton-paw-f.png",
-      "name": "Fenton Paw F",
+      "path": "logos/school-logos/fenton-siberian-tiger-head.png",
+      "name": "Fenton Siberian Tigers – Roaring Head",
       "category": "School Logos",
-      "tags": []
+      "tags": [
+        "Fenton",
+        "Siberian",
+        "Tigers",
+        "tiger head",
+        "roaring",
+        "mascot",
+        "white",
+        "orange",
+        "school"
+      ]
     },
     {
-      "path": "logos/school-logos/fenton-siberian-tiger-head.png",
-      "name": "Fenton Siberian Tiger Head",
+      "path": "logos/school-logos/fenton-paw-f.png",
+      "name": "Fenton Tigers – Orange F Paw Emblem",
       "category": "School Logos",
-      "tags": []
+      "tags": [
+        "Fenton",
+        "Tigers",
+        "F logo",
+        "paw",
+        "paw emblem",
+        "letter F",
+        "orange",
+        "school",
+        "emblem"
+      ]
     },
     {
       "path": "logos/school-logos/images (2).jpeg",
