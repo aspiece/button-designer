@@ -62,3 +62,32 @@ header{box-shadow:0 2px 12px #00000019}
 #selectedName{flex-basis:100%;font-weight:750;color:#243c59}
 .design-warnings{font-size:12px;text-align:left;line-height:1.5;color:#714512;background:#fff6e5;border-radius:8px;min-height:0;margin-top:10px}
 .design-warnings:not(:empty){padding:9px;border:1px solid #e9c98d}
+
+/* Compact mobile header and preview-first canvas: the button stays above the fold.
+   Editing controls remain accessible immediately below the preview. */
+@media(max-width:700px){
+ body>header{padding:8px 11px;gap:6px 9px}
+ body>header b{font-size:16px;letter-spacing:-.3px}
+ body>header small{display:none}
+ body>header .edition-nav{gap:5px}
+ body>header .edition-link{font-size:11px}
+ body>header .btn{padding:7px 9px;min-height:34px;font-size:11px}
+ body>header .install-app-btn{min-height:34px}
+ .app{padding:6px 8px 12px}
+ .editor-tabs{padding:3px 0 6px;gap:5px}
+ .editor-tabs button{min-height:42px;padding:8px 4px}
+ .app>.previewPanel{display:flex;flex-direction:column;align-items:stretch;padding:9px 10px;margin-bottom:10px}
+ .previewPanel>h2{order:-2;font-size:14px;margin:0 0 5px}
+ .previewPanel>.canvasWrap{
+  order:-1;
+  width:min(100%,max(150px,calc(100svh - 235px)));
+  max-width:535px;
+  padding:6px;
+  margin:0 auto 6px;
+ }
+ .previewPanel #editorCanvas{width:100%;max-width:none;height:auto}
+ .previewPanel .studio-toolbar{margin:5px 0 8px}
+ .previewPanel #historyFeedback:empty{display:none}
+ .previewPanel #selectedName{font-size:11px}
+ .previewPanel .studio-canvas-hint{margin:6px 0 9px}
+}
