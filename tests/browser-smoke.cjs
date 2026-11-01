@@ -5,7 +5,7 @@ const path=require('node:path');
 const http=require('node:http');
 const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
-const mime={'.html':'text/html; charset=utf-8','.js':'application/javascript','.css':'text/css','.png':'image/png','.json':'application/json','.avif':'image/avif'};
+const mime={'.html':'text/html; charset=utf-8','.js':'application/javascript','.css':'text/css','.png':'image/png','.json':'application/json','.avif':'image/avif','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{
  let pathname;try{pathname=decodeURIComponent(new URL(req.url,'http://127.0.0.1').pathname)}catch{res.writeHead(400).end();return}
  const file=path.resolve(root,'.'+pathname,pathname.endsWith('/')?'index.html':'');
