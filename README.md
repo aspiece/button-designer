@@ -83,6 +83,10 @@ The Fenton edition combines the automatically generated `logos/catalog.json` and
 
 The general-purpose edition at `/studio/` neither loads the approved-image catalog nor preloads any Fenton artwork; students can still upload their own local images there.
 
+## Three-column laptop editor
+
+On laptops and desktops (1120px or wider), the Fenton Button Designer now uses **Create (left) → Preview (center) → Properties & Layers (right)**. The right panel reuses the existing context-sensitive editor for selected text, images, and background; it also includes selectable text/background layers, the existing reorderable image list, live design warnings, Save & Export, and the actual Print Studio entry point. Existing controls are moved rather than copied; printed sizes and data stay unchanged. On tablets and phones, the Properties panel stacks beneath the live preview, before the main tools. The General Edition remains unchanged.
+
 ## Student workflow
 
 1. Open the designer and select a starting template.
