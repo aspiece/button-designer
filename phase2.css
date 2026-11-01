@@ -72,3 +72,20 @@
 .public-art-choice .studio-logo-card img{background:#f4f7f8;transition:background-color .16s ease}
 .public-art-choice[data-art-color="white"] .studio-logo-card img,.public-art-choice[data-art-color="orange"] .studio-logo-card img{background:#263244}
 .public-art-choice[data-art-color="black"] .studio-logo-card img{background:#f9d7a6}
+
+/* One-tap, teacher-curated tiger artwork discovery for button-making groups. */
+.studio-tiger-shortcuts{
+ display:flex;align-items:stretch;flex-wrap:wrap;gap:6px;
+ padding:9px;margin:0 0 12px;border:1px solid #f4d2a7;
+ background:#fff8ef;border-radius:10px;
+}
+.studio-tiger-shortcuts>span{flex-basis:100%;font-size:12px;font-weight:800;color:#63441d}
+.studio-tiger-shortcuts button{
+ font:inherit;font-size:12px;font-weight:750;min-height:39px;
+ border:1px solid #c8d5e2;border-radius:8px;background:#fff;
+ color:#253e58;padding:7px 10px;cursor:pointer;
+}
+.studio-tiger-shortcuts button[aria-pressed="true"]{
+ background:#f58220;color:#171717;border-color:#b35a13;
+}
+.studio-tiger-shortcuts button:focus-visible{outline:3px solid #317fc7;outline-offset:2px}
