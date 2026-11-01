@@ -77,6 +77,10 @@ def validate(root: Path = ROOT) -> int:
             raise ValueError(f"{path}: category is not allowlisted")
         if item.get("license") not in {"cc0", "pdm"}:
             raise ValueError(f"{path}: license must be independently verified CC0 or PDM")
+        if "recolorable" in item and not isinstance(item["recolorable"], bool):
+            raise ValueError(f"{path}: recolorable must be a Boolean")
+        if item.get("recolorable") and not path.endswith(".svg"):
+            raise ValueError(f"{path}: recoloring is only approved for reviewed transparent SVG art")
         if not isinstance(item.get("creator"), str) or not item["creator"].strip():
             raise ValueError(f"{path}: creator required")
         if not isinstance(item.get("source"), str) or not item["source"].strip():
