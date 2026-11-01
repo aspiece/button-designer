@@ -411,7 +411,7 @@ function updateCounters(){
   ...layers.map((_,index)=>({kind:'image',index}))];
  editor.addEventListener('keydown',e=>{
   if(e.key==='Enter'||e.key==='['||e.key===']'){
-   e.preventDefault();const available=keyboardLayers(),at=available.findIndex(item=>item.kind===selected?.kind&&item.index===selected?.index);
+   e.preventDefault();const available=keyboardLayers(),at=available.findIndex(item=>item.kind===selected?.kind&&(item.index??null)===(selected?.index??null));
    const direction=e.key==='['?-1:1,next=available[(at+direction+available.length)%available.length];newSelection(next.kind,next.index);return
   }
   if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;
