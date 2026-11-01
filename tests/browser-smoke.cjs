@@ -355,6 +355,10 @@ async function main(){
       assert.ok(await phone.locator('#mobileEditButton').isVisible(),'Tablet has on-demand editing controls');
       assert.equal(await phone.locator('#propertiesPanel').isVisible(),false,'Tablet properties do not consume preview space when closed');
       await phone.locator('#mobileLayersButton').click();
+      await phone.waitForFunction(()=>{
+        const rect=document.getElementById('propertiesPanel').getBoundingClientRect();
+        return rect.right<=innerWidth+1&&rect.width<innerWidth;
+      },null,{timeout:3000});
       const tabletDrawer=await phone.evaluate(()=>({
         edge:document.getElementById('propertiesPanel').getBoundingClientRect().right,
         width:document.getElementById('propertiesPanel').getBoundingClientRect().width,
