@@ -1,0 +1,61 @@
+/* Fenton Button Designer: three-column workspace and contextual editor. */
+#previewWorkspace{grid-column:2;grid-row:2;min-width:0;display:flex;flex-direction:column;gap:12px}
+#previewWorkspace>.previewPanel{position:static;min-width:0;width:100%;display:flex;flex-direction:column;align-items:stretch;padding:12px 14px}
+#previewWorkspace>.previewPanel>h2{order:-2;font-size:14px;margin:0 0 6px}
+#previewWorkspace>.previewPanel>.canvasWrap{order:-1;width:min(100%,535px,max(140px,calc(100svh - 235px)));padding:8px;margin:0 auto 7px}
+#previewWorkspace>.previewPanel #editorCanvas{width:100%;max-width:none;height:auto}
+#previewWorkspace>.previewPanel .studio-toolbar{margin:5px 0 8px}
+#previewWorkspace>.previewPanel #historyFeedback:empty{display:none}
+#previewWorkspace>.previewPanel .studio-canvas-hint{margin:6px 0 9px}
+#propertiesPanel{min-width:0;padding:14px;position:static}
+#propertiesPanel>h2{margin:0 0 12px;font-size:16px}
+.properties-section{border-top:1px solid #e5eaf0;padding-top:12px;margin-top:12px}
+.properties-section>h3{font-size:13px;color:#26384f;margin:0 0 8px}
+.properties-help{font-size:11px;line-height:1.35;color:#64748b;margin:0 0 8px}
+#propertiesPanel .quick-panel{margin:0;min-height:0;padding:11px;border-radius:10px}
+#propertiesPanel .quick-panel h3{font-size:13px;margin:0 0 7px}
+#propertiesPanel .quick-panel .quick-actions{gap:5px}
+#propertiesPanel .quick-panel .quick-actions button{padding:8px 9px;min-height:36px}
+#propertiesPanel .quick-panel input:not([type="checkbox"]),#propertiesPanel .quick-panel select{min-height:38px}
+.properties-text-layers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.properties-text-layers button{background:#f7f9fc;border:1px solid #d8e0e9;color:#30435a;font:650 12px inherit;font-family:inherit;font-size:12px;border-radius:8px;min-height:36px;cursor:pointer}
+.properties-text-layers button[aria-pressed="true"]{background:#fff1e3;border-color:#f58220;color:#73410b}
+.properties-text-layers button:focus-visible{outline:3px solid #317fc7;outline-offset:2px}
+#propertiesPanel .studio-layers{margin:10px 0 0;border-top:1px solid #edf0f5;padding-top:10px}
+#propertiesPanel .studio-layers p{margin:4px 0 8px}
+#propertiesPanel .studio-layer-list{max-height:220px;overflow:auto}
+#propertiesPanel .design-warnings{margin:5px 0 8px}
+.properties-check-status{font-size:12px;line-height:1.4;margin:5px 0;color:#305b46}
+.properties-check-status[data-attention="true"]{color:#925a16;font-weight:700}
+#propertiesPrintAction>.btn{width:100%;min-height:44px}
+#propertiesPrintAction>.hint{font-size:11px;line-height:1.4;margin:7px 0}
+#propertiesSaveMenu{border:1px solid #d9e2ec;border-radius:10px;padding:0;margin:10px 0 0}
+#propertiesSaveMenu>summary{padding:11px;cursor:pointer;color:#31445e}
+#propertiesSaveMenu .top-tools{display:grid;grid-template-columns:1fr;gap:6px;padding:10px}
+#propertiesSaveMenu .top-tools .btn{width:100%;text-align:center;justify-content:center}
+#propertiesPanel input,#propertiesPanel select{max-width:100%}
+@media(min-width:1120px){
+ .app{grid-template-columns:minmax(255px,320px) minmax(315px,1fr) minmax(265px,310px);column-gap:14px}
+ .editor-tabs{grid-column:1/-1}
+ #previewWorkspace{display:contents}
+ #previewWorkspace>.previewPanel{grid-column:2;grid-row:2;position:sticky;top:70px}
+ #propertiesPanel{grid-column:3;grid-row:2;align-self:start;position:sticky;top:70px;max-height:calc(100svh - 80px);overflow:auto;overscroll-behavior:contain}
+}
+/* The original mobile rule gives .previewPanel order:1. In this wrapper,
+   explicitly keep the canvas ahead of the new properties panel. */
+@media(max-width:1119px){
+ #previewWorkspace>.previewPanel{order:-1}
+ #previewWorkspace>#propertiesPanel{order:0}
+}
+@media(min-width:701px) and (max-width:1119px){
+ #previewWorkspace{grid-column:2;grid-row:2;align-self:start}
+ #propertiesPanel{width:100%}
+}
+@media(max-width:700px){
+ .app>.editor-tabs{order:-2}
+ .app>#previewWorkspace{order:-1;width:100%;gap:10px}
+ #previewWorkspace>.previewPanel{padding:9px 10px;margin-bottom:0}
+ #previewWorkspace>.previewPanel>.canvasWrap{padding:6px;width:min(100%,max(150px,calc(100svh - 235px)))}
+ #propertiesPanel{width:100%;padding:12px;margin-bottom:10px}
+ .app>section#designTools,.app>aside#sideTools{order:2}
+}
