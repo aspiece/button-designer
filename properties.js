@@ -10,8 +10,8 @@
   return source;
  };
  move('quickPanel','propertiesEditorContent');
- move('uxLayersList','propertiesImageLayers');
- // Move the entire image-layer list section so its title, count, and ordering work together.
+ // Move the entire image-layer section, including its live list, as one node.
+ // The editor retains the list reference for asynchronous image updates.
  const layerSection=document.querySelector('.studio-layers');
  if(layerSection)document.getElementById('propertiesImageLayers').replaceChildren(layerSection);
  const warnings=move('designWarnings','propertiesWarnings');
