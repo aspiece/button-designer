@@ -41,47 +41,37 @@ async function main(){
   await page.waitForFunction(count=>document.querySelectorAll('#uxLogoGroups .studio-logo-card').length===count,totalGalleryImages,{timeout:20000});
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),totalGalleryImages,'Single gallery loads team and approved public images');
 
-  // Unlike the former redesign, the restored Titanium geometry is directly
-  // traced from the actual 215 × 220 team image, with conservative clipped
-  // stroke extensions and no retyped letters or newly designed gear teeth.
-  const titaniumSvg=fs.readFileSync(path.join(root,'logos/titanium-tigers.svg'),'utf8');
-  assert.ok(titaniumSvg.includes('viewBox="0 0 255 260"'),'Restored Titanium vector retains original proportions and transparent 20px margins');
-  assert.ok(titaniumSvg.includes('width="1020" height="1040"'),'Titanium SVG renders above print resolution');
-  assert.equal((titaniumSvg.match(/<text\\b/g)||[]).length,0,'All original lettering is traced as shapes rather than replaced by a font');
-  assert.ok(titaniumSvg.includes('fill-rule="evenodd"'),'Original gear and letter cutouts remain transparent');
-  assert.equal(gallery.images.filter(item=>item.path.includes('titanium-tigers.')).length,1,'Only the new Titanium SVG is offered in the gallery');
-  assert.equal(gallery.images.find(item=>item.path.includes('titanium-tigers.')).path,'logos/titanium-tigers.svg','No old 215px image remains in the gallery');
+  // Verify the newly approved image itself: transparent vector shapes, centered
+  // gear, letterforms, team number and dots (without the baked-in white backdrop).
+  const titaniumSvg=fs.readFileSync(path.join(root,'logos/titanium-tigers-approved.svg'),'utf8');
+  assert.ok(titaniumSvg.includes('viewBox="0 0 1350 1350"'),'Approved Titanium master keeps its source shape and transparent print margin');
+  assert.ok(titaniumSvg.includes('width="1350" height="1350"'),'Approved Titanium artwork has print-ready source resolution');
+  assert.ok(titaniumSvg.includes('fill-rule="evenodd"'),'Approved logo keeps correct transparent letter counters and gear details');
+  assert.equal((titaniumSvg.match(/<text\\b/g)||[]).length,0,'Approved lettering is traced rather than substituted at runtime');
+  assert.equal(gallery.images.filter(item=>/titanium-tigers/.test(item.path)).length,1,'Gallery has only one active Titanium logo, not archived duplicates');
+  assert.equal(gallery.images.find(item=>/titanium-tigers/.test(item.path)).path,'logos/titanium-tigers-approved.svg','Gallery uses the exact coach-approved logo');
   const titaniumPage=await context.newPage(),titaniumErrors=[];
   titaniumPage.on('pageerror',e=>titaniumErrors.push(e.message));
   await titaniumPage.goto('http://127.0.0.1:8765/',{waitUntil:'networkidle'});
-  const titaniumFidelity=await titaniumPage.evaluate(async()=>{
-    const load=async src=>{const img=new Image();img.src=src;await img.decode();return img};
-    const original=await load('logos/titanium-tigers.png'),restored=await load('logos/titanium-tigers.svg');
-    const a=document.createElement('canvas'),b=document.createElement('canvas');
-    a.width=215;a.height=220;b.width=255;b.height=260;
-    a.getContext('2d').drawImage(original,0,0,215,220);
-    b.getContext('2d').drawImage(restored,0,0,255,260);
-    const left=a.getContext('2d',{willReadFrequently:true}).getImageData(0,0,215,220).data;
-    const right=b.getContext('2d',{willReadFrequently:true}).getImageData(20,20,215,220).data;
-    let intersection=0,union=0;
-    for(let i=3;i<left.length;i+=4){
-      const o=left[i]>127,r=right[i]>127;
-      if(o&&r)intersection++;
-      if(o||r)union++;
-    }
-    return {similarity:intersection/union,sourceWidth:original.naturalWidth,vectorWidth:restored.naturalWidth};
+  const titaniumShape=await titaniumPage.evaluate(async()=>{
+    const img=new Image();img.src='logos/titanium-tigers-approved.svg';await img.decode();
+    const cv=document.createElement('canvas');cv.width=img.naturalWidth;cv.height=img.naturalHeight;
+    const ctx=cv.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
+    const d=ctx.getImageData(0,0,cv.width,cv.height).data;
+    const alpha=(x,y)=>d[(y*cv.width+x)*4+3];
+    return {width:cv.width,height:cv.height,corner:alpha(0,0),center:alpha(675,675),bottom:alpha(675,1290)};
   });
-  assert.equal(titaniumFidelity.sourceWidth,215,'Audit compares against the actual original, not the rejected redesign');
-  assert.ok(titaniumFidelity.vectorWidth>=1000,'Restoration remains print-ready');
-  assert.ok(titaniumFidelity.similarity>0.985,'Restored logo must reproduce the original silhouette (gear, T, lettering, number, dots): '+JSON.stringify(titaniumFidelity));
+  assert.ok(titaniumShape.width>=1300&&titaniumShape.height>=1300,'Approved logo loads at print-ready resolution');
+  assert.equal(titaniumShape.corner,0,'Approved logo is truly transparent at its corners');
+  assert.equal(titaniumShape.center,0,'Approved split T has transparent negative space');
   await titaniumPage.locator('#tab-logos').click();
   await titaniumPage.locator('#uxLogoSearch').fill('Titanium');
-  const titaniumCard=titaniumPage.locator('.team-logo-choice').filter({has:titaniumPage.locator('button[data-path="logos/titanium-tigers.svg"]')});
+  const titaniumCard=titaniumPage.locator('.team-logo-choice').filter({has:titaniumPage.locator('button[data-path="logos/titanium-tigers-approved.svg"]')});
   assert.equal(await titaniumCard.count(),1,'Titanium Tigers appears exactly once in the Logos gallery');
   for(const [color,rgb] of Object.entries({black:[0,0,0],orange:[245,130,32],white:[255,255,255]})){
     await titaniumCard.locator('.team-logo-color').selectOption(color);
     await titaniumPage.waitForFunction(c=>{
-      const image=document.querySelector('.team-logo-choice button[data-path="logos/titanium-tigers.svg"] img');
+      const image=document.querySelector('.team-logo-choice button[data-path="logos/titanium-tigers-approved.svg"] img');
       return image?.dataset.requestedColor===c&&image.src.startsWith('blob:')&&image.complete&&image.naturalWidth>=1000;
     },color,{timeout:20000});
     const sample=await titaniumCard.locator('img').evaluate(img=>{
