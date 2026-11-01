@@ -85,17 +85,20 @@
      button.setAttribute('aria-pressed',String(button.dataset.tigerShortcut===active));
     });
    }
-   function validPath(path){
+   function validPath(path,category){
      if(typeof path!=='string'||!path.startsWith('logos/'))return false;
      const parts=path.split('/');
-     return parts.length>=2&&!parts.some(p=>!p||p==='.'||p==='..'||p.includes('\\'))&&/\.(png|jpe?g|webp|avif)$/i.test(path);
+     if(parts.length<2||parts.some(p=>!p||p==='.'||p==='..'||p.includes('\\')))return false;
+     // Only these three reviewed F-paw colorways are allowed as SVG school logos.
+     if(/\.svg$/i.test(path))return category==='School Logos'&&/^logos\/school-logos\/fenton-f-paw-for-(white|black|orange)-background\.svg$/.test(path);
+     return /\.(png|jpe?g|webp|avif)$/i.test(path);
    }
    // Public artwork is a separate allowlist; an arbitrary file or external URL cannot enter the gallery.
    function validPublicPath(path){
      return typeof path==='string'&&/^approved-art\/images\/[a-z0-9-]+\.(?:svg|png|jpe?g|webp)$/.test(path);
    }
    function validItemPath(item){
-     return item.category==='Public Images'?validPublicPath(item.path):validPath(item.path);
+     return item.category==='Public Images'?validPublicPath(item.path):validPath(item.path,item.category);
    }
    async function approvedPng(blob,color='original'){
      if(!blob.size||blob.size>8*1024*1024)throw Error('Artwork is empty or larger than 8 MB');
@@ -257,6 +260,15 @@
          const detail=document.createElement('small');
          detail.textContent=item.category==='Robotics Teams'?'Black logo · transparent background':
            item.category==='Public Images'?(item.subcategory+' · '+item.license.toUpperCase()+' · reviewed'):groupName;
+         // Show a real background preview without baking the background into the logo.
+         // All three SVGs remain transparent when placed on the button.
+         const pawBackground=item.path.match(/^logos\/school-logos\/fenton-f-paw-for-(white|black|orange)-background\.svg$/);
+         if(pawBackground){
+           button.classList.add('f-paw-scheme');
+           button.dataset.bestBackground=pawBackground[1];
+           detail.textContent='Best on '+pawBackground[1]+' buttons · transparent logo';
+           picture.alt='Fenton F Paw preview on '+pawBackground[1]+' background';
+         }
          button.append(picture,label,detail);
          if(item.category==='Robotics Teams'){
            const wrap=document.createElement('div');wrap.className='team-logo-choice';wrap.dataset.logoColor='black';
@@ -310,7 +322,7 @@
        if(manifest.version!==1||!Array.isArray(manifest.images))throw Error('Invalid team-logo catalog');
        const paths=new Set();
        logoAssets=manifest.images.filter(item=>{
-         if(!item||!validPath(item.path)||typeof item.name!=='string'||!item.name.trim()||
+         if(!item||!validPath(item.path,item.category)||typeof item.name!=='string'||!item.name.trim()||
             !ORDER.slice(0,3).includes(item.category)||paths.has(item.path))return false;
          paths.add(item.path);return true
        }).slice(0,300).map(item=>({
