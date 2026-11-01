@@ -41,17 +41,39 @@ async function main(){
   await page.waitForFunction(count=>document.querySelectorAll('#uxLogoGroups .studio-logo-card').length===count,totalGalleryImages,{timeout:20000});
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),totalGalleryImages,'Single gallery loads team and approved public images');
 
-  // The low-resolution cropped Titanium source is replaced in the actual gallery
-  // with one 1024-unit SVG vector master, not a separate low-res duplicate.
+  // Unlike the former redesign, the restored Titanium geometry is directly
+  // traced from the actual 215 × 220 team image, with conservative clipped
+  // stroke extensions and no retyped letters or newly designed gear teeth.
   const titaniumSvg=fs.readFileSync(path.join(root,'logos/titanium-tigers.svg'),'utf8');
-  assert.ok(titaniumSvg.includes('viewBox="0 0 1024 1024"'),'Titanium master is a full-size vector');
-  assert.ok(titaniumSvg.includes('TITANIUM')===false,'Vector letters are positioned individually around the gear');
-  assert.ok(titaniumSvg.includes('font-size="88"'),'5114 team number uses large print-readable type');
+  assert.ok(titaniumSvg.includes('viewBox="0 0 255 260"'),'Restored Titanium vector retains original proportions and transparent 20px margins');
+  assert.ok(titaniumSvg.includes('width="1020" height="1040"'),'Titanium SVG renders above print resolution');
+  assert.equal((titaniumSvg.match(/<text\\b/g)||[]).length,0,'All original lettering is traced as shapes rather than replaced by a font');
+  assert.ok(titaniumSvg.includes('fill-rule="evenodd"'),'Original gear and letter cutouts remain transparent');
   assert.equal(gallery.images.filter(item=>item.path.includes('titanium-tigers.')).length,1,'Only the new Titanium SVG is offered in the gallery');
   assert.equal(gallery.images.find(item=>item.path.includes('titanium-tigers.')).path,'logos/titanium-tigers.svg','No old 215px image remains in the gallery');
   const titaniumPage=await context.newPage(),titaniumErrors=[];
   titaniumPage.on('pageerror',e=>titaniumErrors.push(e.message));
   await titaniumPage.goto('http://127.0.0.1:8765/',{waitUntil:'networkidle'});
+  const titaniumFidelity=await titaniumPage.evaluate(async()=>{
+    const load=async src=>{const img=new Image();img.src=src;await img.decode();return img};
+    const original=await load('logos/titanium-tigers.png'),restored=await load('logos/titanium-tigers.svg');
+    const a=document.createElement('canvas'),b=document.createElement('canvas');
+    a.width=215;a.height=220;b.width=255;b.height=260;
+    a.getContext('2d').drawImage(original,0,0,215,220);
+    b.getContext('2d').drawImage(restored,0,0,255,260);
+    const left=a.getContext('2d',{willReadFrequently:true}).getImageData(0,0,215,220).data;
+    const right=b.getContext('2d',{willReadFrequently:true}).getImageData(20,20,215,220).data;
+    let intersection=0,union=0;
+    for(let i=3;i<left.length;i+=4){
+      const o=left[i]>127,r=right[i]>127;
+      if(o&&r)intersection++;
+      if(o||r)union++;
+    }
+    return {similarity:intersection/union,sourceWidth:original.naturalWidth,vectorWidth:restored.naturalWidth};
+  });
+  assert.equal(titaniumFidelity.sourceWidth,215,'Audit compares against the actual original, not the rejected redesign');
+  assert.ok(titaniumFidelity.vectorWidth>=1000,'Restoration remains print-ready');
+  assert.ok(titaniumFidelity.similarity>0.985,'Restored logo must reproduce the original silhouette (gear, T, lettering, number, dots): '+JSON.stringify(titaniumFidelity));
   await titaniumPage.locator('#tab-logos').click();
   await titaniumPage.locator('#uxLogoSearch').fill('Titanium');
   const titaniumCard=titaniumPage.locator('.team-logo-choice').filter({has:titaniumPage.locator('button[data-path="logos/titanium-tigers.svg"]')});
