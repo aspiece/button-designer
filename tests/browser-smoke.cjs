@@ -47,8 +47,16 @@ async function main(){
   assert.equal(await page.locator('#propertiesPanel #quickPanel').count(),1,'Selected-item editor moved to properties');
   assert.equal(await page.locator('#propertiesPanel .studio-layers').count(),1,'Existing layer manager moved to properties');
   assert.equal(await page.locator('#propertiesPanel #designWarnings').count(),1,'Actual design warnings moved to properties');
-  assert.equal(await page.locator('#propertiesPanel #openPrintStudio').count(),1,'Actual Print Studio button moved to properties');
-  assert.equal(await page.locator('#propertiesPanel #saveProject').count(),1,'Save control is in right column');
+  assert.equal(await page.locator('#propertiesPanel #openPrintStudio, #propertiesPanel #saveProject').count(),0,'No printing or saving controls clutter the properties panel');
+  assert.equal(await page.locator('#printTools #openPrintStudio').count(),1,'Actual Print Studio action belongs to Print tab');
+  assert.equal(await page.locator('#printTools #saveProject').count(),1,'Original Save control belongs to Print tab');
+  assert.equal(await page.locator('#printTools #exportProject').count(),1,'Editable project export belongs to Print tab');
+  assert.equal(await page.locator('#printTools #importProject').count(),1,'Editable project import belongs to Print tab');
+  assert.equal(await page.locator('#printTools #downloadPng').count(),1,'PNG download belongs to Print tab');
+  assert.equal(await page.locator('#printSaveMenu').count(),1,'Save & Export section belongs to Print tab');
+  assert.equal(await page.locator('#propertiesFinish, #propertiesSaveMenu, #propertiesPrintAction').count(),0,'Obsolete finish section is removed');
+  assert.equal(await page.locator('#openPrintStudio').isVisible(),false,'Print Studio is hidden while editing');
+  assert.equal(await page.locator('#saveProject').isVisible(),false,'Save actions are hidden while editing');
   const desktopLayout=await page.evaluate(()=>{
     const r=id=>document.querySelector(id).getBoundingClientRect();
     const left=r('#designTools'),center=r('.previewPanel'),right=r('#propertiesPanel');
@@ -63,7 +71,7 @@ async function main(){
   await page.locator('[data-prop-select="background"]').click();
   assert.equal(await page.locator('#quickBackground').count(),1,'Background color editor appears in properties');
   assert.equal(await page.locator('[data-prop-select="background"]').getAttribute('aria-pressed'),'true','Background selection visible');
-  assert.equal(await page.locator('#propertiesSaveMenu').count(),1,'Save/Export actions are in one disclosure');
+  assert.equal(await page.locator('#printSaveMenu').count(),1,'Save & Export actions use one Print-tab disclosure');
 
   await page.locator('#beginTopText').fill('FENTON ROBOTICS');
   await page.locator('#beginBottomText').fill('TIGER PRIDE');
@@ -102,6 +110,15 @@ async function main(){
   assert.ok((await page.locator('#designWarnings').textContent()).includes('Low text contrast'),'WCAG contrast warning appears in design preview');
 
   await page.click('#tab-logos');
+  await page.waitForFunction(()=>{
+    const gallery=document.querySelector('#logosTools .studio-logo-library');
+    const rect=gallery?.getBoundingClientRect();
+    return !!rect&&rect.top>=0&&rect.top<innerHeight/2;
+  },null,{timeout:5000});
+  assert.equal(await page.locator('#uxLogoSearch').isVisible(),true,'Logos tab opens directly to the searchable gallery');
+  assert.equal(await page.locator('#openPrintStudio').isVisible(),false,'Print Studio is not shown in Logos');
+  assert.equal(await page.locator('#saveProject').isVisible(),false,'Save actions are not shown in Logos');
+  assert.ok(await page.locator('#logosTools .studio-logo-library').evaluate(el=>el.compareDocumentPosition(document.querySelector('#uxLogoGroups'))===16||el.contains(document.querySelector('#uxLogoGroups'))),'Gallery entries stay inside Logos tab');
   // A single searchable gallery presents logos and reviewed public art as categories.
   assert.equal(publicArt.images.length,18,'Starter public art includes 18 reviewed illustrations');
   assert.equal(await page.locator('#uxLogoSearch').count(),1,'One gallery search box');
@@ -183,6 +200,16 @@ async function main(){
 
   await page.locator('#tab-print').click();
   assert.equal(await page.locator('#legacyPrint').count(),0,'Fenton print tools are directly visible');
+  assert.equal(await page.locator('#openPrintStudio').isVisible(),true,'Print Studio is the primary Print-tab action');
+  assert.equal(await page.locator('#printSaveMenu summary').isVisible(),true,'Save & Export is available in Print');
+  assert.equal(await page.locator('#uxLogoSearch').isVisible(),false,'Image gallery is hidden in Print tab');
+  await page.locator('#printSaveMenu summary').click();
+  assert.equal(await page.locator('#saveProject').isVisible(),true,'Save is available when Save & Export expands');
+  assert.equal(await page.locator('#exportProject').isVisible(),true,'Project export is available in Print');
+  const [editableProject]=await Promise.all([page.waitForEvent('download'),page.locator('#exportProject').click()]);
+  const saved=JSON.parse(fs.readFileSync(await editableProject.path(),'utf8'));
+  assert.ok(saved&&typeof saved==='object','Existing editable project export still downloads valid JSON');
+  await page.locator('#printSaveMenu summary').click();
   await page.selectOption('#copies','6');
   assert.ok((await page.locator('#sheetStatus').textContent()).includes('6 of 6 buttons shown'),'Legacy preview agrees with six-button selection');
   assert.deepEqual(await page.evaluate(()=>{const p=sheetDisplayLayout(selectedCut(),6);return [p.cols,p.rows]}),[2,3],'Six circles use full-height 2×3 grid');
@@ -243,6 +270,21 @@ async function main(){
 
     assert.equal(await phone.locator('#uxUndo').count(),1,'Undo is kept on mobile');
     assert.equal(await phone.locator('#tab-logos').isVisible(),true,'Gallery tab is accessible on mobile');
+    if(width===360){
+      await phone.locator('#tab-logos').click();
+      await phone.waitForFunction(()=>{
+        const box=document.querySelector('#logosTools .studio-logo-library')?.getBoundingClientRect();
+        return box&&box.top>=0&&box.top<150;
+      },null,{timeout:5000});
+      assert.equal(await phone.locator('#uxLogoSearch').isVisible(),true,'Mobile Logos jumps to the image search');
+      assert.equal(await phone.locator('#openPrintStudio').isVisible(),false,'Mobile Logos excludes Print Studio');
+      await phone.locator('#tab-print').click();
+      await phone.waitForFunction(()=>{
+        const box=document.querySelector('#printPrimaryActions')?.getBoundingClientRect();
+        return box&&box.top>=0&&box.top<150;
+      },null,{timeout:5000});
+      assert.equal(await phone.locator('#openPrintStudio').isVisible(),true,'Mobile Print jumps to printing actions');
+    }
   }
   // The same preview-first behavior applies beyond phone sizes: tablets,
   // compact laptops, wide desktops and short browser windows.
