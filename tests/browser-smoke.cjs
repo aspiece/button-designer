@@ -152,11 +152,19 @@ async function main(){
     assert.ok(await img.evaluate(el=>el.naturalWidth>100),id+' is a real visible image, not an empty placeholder');
   }
   assert.equal(await page.locator('[data-tiger-shortcut="pictures"]').getAttribute('aria-pressed'),'true','Tiger pictures shortcut announces selection');
-  await page.locator('#uxLogoSearch').fill('paw emblem');
-  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card[data-path="logos/school-logos/fenton-paw-f.png"]').count(),1,'Fenton F and paw is findable by name');
-  const paw=page.locator('.studio-logo-card[data-path="logos/school-logos/fenton-paw-f.png"] img');
-  await paw.evaluate(async el=>{if(!el.complete)await new Promise((resolve,reject)=>{el.addEventListener('load',resolve,{once:true});el.addEventListener('error',reject,{once:true});})});
-  assert.ok(await paw.evaluate(el=>el.naturalHeight>=600),'Fenton paw F logo is sharp at print resolution');
+  await page.locator('#uxLogoSearch').fill('F paw');
+  assert.equal(await page.locator('#uxLogoGroups .f-paw-scheme').count(),3,'The three background-ready F Paw choices appear in one search');
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card[data-path="logos/school-logos/fenton-paw-f.png"]').count(),0,'Old unlabelled F Paw is replaced by the three clear choices');
+  for(const background of ['white','black','orange']){
+    const card=page.locator(`.f-paw-scheme[data-best-background="${background}"]`);
+    assert.equal(await card.count(),1,background+' background gets one labeled F Paw option');
+    assert.ok((await card.innerText()).toLowerCase().includes(background+' background'),background+' recommendation is readable');
+    const img=card.locator('img');
+    await img.evaluate(async el=>{if(!el.complete)await new Promise((resolve,reject)=>{el.addEventListener('load',resolve,{once:true});el.addEventListener('error',reject,{once:true});})});
+    assert.ok(await img.evaluate(el=>el.naturalHeight>=500),background+' colorway renders as a sharp SVG');
+    const schemeBg=await img.evaluate(el=>getComputedStyle(el).backgroundColor);
+    assert.equal(schemeBg,{white:'rgb(255, 255, 255)',black:'rgb(16, 24, 32)',orange:'rgb(245, 130, 32)'}[background],background+' shows a representative gallery background');
+  }
   await page.locator('[data-tiger-shortcut="pictures"]').click();
   await page.locator('[data-tiger-shortcut="teams"]').click();
   assert.equal(await page.inputValue('#uxLogoCategory'),'Robotics Teams','Team shortcut switches to robotics logos');
@@ -273,8 +281,7 @@ async function main(){
   // New transparent local PNGs must add correctly through the existing school-logo import pipeline.
   for(const [file,label] of [
     ['fenton-bengal-tiger-head','Bengal'],
-    ['fenton-siberian-tiger-head','Siberian'],
-    ['fenton-paw-f','Paw']
+    ['fenton-siberian-tiger-head','Siberian']
   ]){
     await page.locator('[data-tiger-shortcut="all"]').click();
     const before=await page.evaluate(()=>layers.length);
@@ -285,6 +292,27 @@ async function main(){
     assert.ok((await page.evaluate(()=>layers.at(-1).data)).startsWith('data:image/png'),label+' image is a valid editable PNG');
     assert.ok((await page.evaluate(()=>layers.at(-1).name)).includes(label),label+' layer has a recognizable name');
   }
+  // Use a fresh button to validate all three scheme SVGs independently,
+  // without hitting the existing design's twelve-layer limit.
+  const variantsPage=await context.newPage();
+  const variantErrors=[];
+  variantsPage.on('pageerror',err=>variantErrors.push(err.message));
+  await variantsPage.goto('http://127.0.0.1:8765/',{waitUntil:'networkidle'});
+  await variantsPage.locator('#tab-logos').click();
+  await variantsPage.locator('#uxLogoSearch').fill('F paw');
+  for(const background of ['white','black','orange']){
+    const old=await variantsPage.evaluate(()=>window.ButtonStudioUX.getState().layers.length);
+    await variantsPage.locator(`.studio-logo-card[data-path="logos/school-logos/fenton-f-paw-for-${background}-background.svg"]`).click();
+    await variantsPage.waitForFunction(n=>window.ButtonStudioUX.getState().layers.length>n||
+      document.getElementById('uxLogoResults').textContent.startsWith('Could not add'),old,{timeout:15000});
+    const state=await variantsPage.evaluate(()=>window.ButtonStudioUX.getState());
+    assert.equal(state.layers.length,old+1,background+' F Paw adds a real image layer: '+await variantsPage.locator('#uxLogoResults').textContent());
+    assert.ok(state.layers.at(-1).data.startsWith('data:image/png'),background+' F Paw imports as printable PNG with transparency');
+    assert.ok(state.layers.at(-1).name.includes(background[0].toUpperCase()+background.slice(1)),background+' F Paw retains its clear name in the layers list');
+  }
+  assert.deepEqual(variantErrors,[],'All three vector F Paw colorways import without browser errors');
+  await variantsPage.close();
+
   await page.locator('#tab-print').click();
   assert.equal(await page.locator('#legacyPrint').count(),0,'Fenton print tools are directly visible');
   assert.equal(await page.locator('#openPrintStudio').isVisible(),true,'Print Studio is the primary Print-tab action');
