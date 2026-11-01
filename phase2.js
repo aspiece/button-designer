@@ -89,7 +89,7 @@
      if(typeof path!=='string'||!path.startsWith('logos/'))return false;
      const parts=path.split('/');
      if(parts.length<2||parts.some(p=>!p||p==='.'||p==='..'||p.includes('\\')))return false;
-     // Only these three reviewed F-paw colorways are allowed as SVG school logos.
+     // Accept only reviewed local SVG school art and the coach-approved Titanium team logo.
      if(/\.svg$/i.test(path))return (
        (category==='School Logos'&&/^logos\/school-logos\/fenton-f-paw-for-(white|black|orange)-background\.svg$/.test(path))||
        (category==='Robotics Teams'&&path==='logos/titanium-tigers-approved.svg'));
