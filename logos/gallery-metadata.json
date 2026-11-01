@@ -181,15 +181,7 @@
       ]
     },
     "logos/titanium-tigers.png": {
-      "name": "Titanium Tigers · 5114",
-      "category": "Robotics Teams",
-      "tags": [
-        "Fenton Robotics",
-        "Tigers",
-        "Black",
-        "Orange",
-        "White"
-      ]
+      "exclude": true
     },
     "logos/tungsten-tigers.png": {
       "name": "Tungsten Tigers",
@@ -425,6 +417,22 @@
         "letter F",
         "orange background",
         "white dark outline"
+      ]
+    },
+    "logos/titanium-tigers.svg": {
+      "name": "Titanium Tigers · 5114 – Clean Vector",
+      "category": "Robotics Teams",
+      "tags": [
+        "Fenton Robotics",
+        "Tigers",
+        "Titanium",
+        "5114",
+        "Black",
+        "Orange",
+        "White",
+        "Vector",
+        "Gear",
+        "T"
       ]
     }
   }
