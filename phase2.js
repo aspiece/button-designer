@@ -212,7 +212,9 @@
      return await new Promise((resolve,reject)=>cv.toBlob(out=>out?resolve(out):reject(Error('Could not render logo')),'image/png'));
    }
    async function teamPreview(path,img,color='black'){
-     img.dataset.requestedColor=color;
+     // Keep the last fully rendered image until its replacement is ready, but do
+     // not claim the new color has loaded while displaying a stale previous color.
+     img.dataset.pendingColor=color;
      const cacheKey=path+'|'+color;
      let pending=teamPreviewCache.get(cacheKey);
      if(!pending){
@@ -227,7 +229,10 @@
      }
      const src=await pending;
      // A slow request for Black must not overwrite a later Orange or White choice.
-     if(img.isConnected&&img.dataset.requestedColor===color)img.src=src;
+     if(img.isConnected&&img.dataset.pendingColor===color){
+       img.src=src;
+       img.dataset.requestedColor=color;
+     }
    }
    const imageUrl=path=>path.split('/').map(encodeURIComponent).join('/');
    const publicBlobCache=new Map(),publicPreviewCache=new Map();
