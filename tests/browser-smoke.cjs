@@ -59,11 +59,11 @@ async function main(){
     const ctx=cv.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
     const d=ctx.getImageData(0,0,cv.width,cv.height).data;
     const alpha=(x,y)=>d[(y*cv.width+x)*4+3];
-    return {width:cv.width,height:cv.height,corner:alpha(0,0),center:alpha(675,675),bottom:alpha(675,1290)};
+    return {width:cv.width,height:cv.height,corner:alpha(0,0),innerGap:alpha(900,675),bottom:alpha(675,1290)};
   });
   assert.ok(titaniumShape.width>=1300&&titaniumShape.height>=1300,'Approved logo loads at print-ready resolution');
   assert.equal(titaniumShape.corner,0,'Approved logo is truly transparent at its corners');
-  assert.equal(titaniumShape.center,0,'Approved split T has transparent negative space');
+  assert.equal(titaniumShape.innerGap,0,'Approved emblem has transparent negative space inside the gear');
   await titaniumPage.locator('#tab-logos').click();
   await titaniumPage.locator('#uxLogoSearch').fill('Titanium');
   const titaniumCard=titaniumPage.locator('.team-logo-choice').filter({has:titaniumPage.locator('button[data-path="logos/titanium-tigers-approved.svg"]')});
