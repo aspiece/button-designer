@@ -73,6 +73,7 @@ async function main(){
   await page.locator('#textColor').evaluate(el=>{el.value='#f58220';el.dispatchEvent(new Event('input',{bubbles:true}))});
   assert.ok((await page.locator('#designWarnings').textContent()).includes('Low text contrast'),'WCAG contrast warning appears in design preview');
 
+  await page.click('#tab-logos');
   // Student searches only an explicitly approved static same-origin catalog.
   const publicArt=JSON.parse(fs.readFileSync(path.join(root,'approved-art','catalog.json'),'utf8'));
   assert.equal(publicArt.images.length,18,'Starter public art includes 18 reviewed illustrations');
@@ -91,7 +92,6 @@ async function main(){
   assert.ok((await page.evaluate(()=>layers.at(-1).data)).startsWith('data:image/png'),'SVG public art is converted into editable PNG layer');
   assert.ok((await page.locator('#approvedArtStatus').textContent()).includes('Robot'),'Student receives insert feedback');
 
-  await page.click('#tab-logos');
   await page.locator('.studio-logo-card[data-path="logos/tiger-paws-24471.png"]').first().click();
   await page.waitForFunction(()=>window.ButtonStudioUX.getState().layers.length>0,null,{timeout:15000});
   const initialImageX=await page.evaluate(()=>layers[0].x);
