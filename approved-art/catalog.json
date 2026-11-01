@@ -1,0 +1,302 @@
+{
+  "version": 1,
+  "collection": "Teacher-curated public-use artwork",
+  "categories": [
+    "Robotics",
+    "Science",
+    "Nature",
+    "Sports",
+    "School",
+    "Seasonal"
+  ],
+  "images": [
+    {
+      "id": "robot",
+      "path": "approved-art/images/robot.svg",
+      "name": "Friendly Robot",
+      "category": "Robotics",
+      "tags": [
+        "robot",
+        "technology",
+        "computer"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "gear",
+      "path": "approved-art/images/gear.svg",
+      "name": "Engineering Gear",
+      "category": "Robotics",
+      "tags": [
+        "engineering",
+        "mechanics",
+        "machine"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "rocket",
+      "path": "approved-art/images/rocket.svg",
+      "name": "Space Rocket",
+      "category": "Science",
+      "tags": [
+        "space",
+        "rocket",
+        "launch"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "planet",
+      "path": "approved-art/images/planet.svg",
+      "name": "Ringed Planet",
+      "category": "Science",
+      "tags": [
+        "planet",
+        "astronomy",
+        "space"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "leaf",
+      "path": "approved-art/images/leaf.svg",
+      "name": "Green Leaf",
+      "category": "Nature",
+      "tags": [
+        "nature",
+        "plants",
+        "environment"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "butterfly",
+      "path": "approved-art/images/butterfly.svg",
+      "name": "Butterfly",
+      "category": "Nature",
+      "tags": [
+        "nature",
+        "insect",
+        "garden"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "fish",
+      "path": "approved-art/images/fish.svg",
+      "name": "Friendly Fish",
+      "category": "Nature",
+      "tags": [
+        "fish",
+        "lake",
+        "water"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "basketball",
+      "path": "approved-art/images/basketball.svg",
+      "name": "Basketball",
+      "category": "Sports",
+      "tags": [
+        "basketball",
+        "ball",
+        "sports"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "soccer",
+      "path": "approved-art/images/soccer.svg",
+      "name": "Soccer Ball",
+      "category": "Sports",
+      "tags": [
+        "soccer",
+        "football",
+        "ball"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "pencil",
+      "path": "approved-art/images/pencil.svg",
+      "name": "School Pencil",
+      "category": "School",
+      "tags": [
+        "pencil",
+        "writing",
+        "school"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "lightbulb",
+      "path": "approved-art/images/lightbulb.svg",
+      "name": "Bright Idea",
+      "category": "School",
+      "tags": [
+        "ideas",
+        "innovation",
+        "lightbulb"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "trophy",
+      "path": "approved-art/images/trophy.svg",
+      "name": "Golden Trophy",
+      "category": "Sports",
+      "tags": [
+        "winner",
+        "award",
+        "trophy"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "flower",
+      "path": "approved-art/images/flower.svg",
+      "name": "Flower",
+      "category": "Nature",
+      "tags": [
+        "flower",
+        "garden",
+        "spring"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "paw-print",
+      "path": "approved-art/images/paw-print.svg",
+      "name": "Paw Print",
+      "category": "Nature",
+      "tags": [
+        "paw",
+        "animal",
+        "tiger"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "star",
+      "path": "approved-art/images/star.svg",
+      "name": "Golden Star",
+      "category": "School",
+      "tags": [
+        "star",
+        "achievement",
+        "celebration"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "snowflake",
+      "path": "approved-art/images/snowflake.svg",
+      "name": "Snowflake",
+      "category": "Seasonal",
+      "tags": [
+        "snow",
+        "winter",
+        "weather"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "microscope",
+      "path": "approved-art/images/microscope.svg",
+      "name": "Microscope",
+      "category": "Science",
+      "tags": [
+        "lab",
+        "microscope",
+        "biology"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    },
+    {
+      "id": "heart",
+      "path": "approved-art/images/heart.svg",
+      "name": "Friendly Heart",
+      "category": "Seasonal",
+      "tags": [
+        "heart",
+        "kindness",
+        "valentine"
+      ],
+      "license": "cc0",
+      "source": "Original button-designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true
+    }
+  ]
+}
