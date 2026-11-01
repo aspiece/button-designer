@@ -182,15 +182,6 @@
       ]
     },
     {
-      "path": "logos/first/first.png",
-      "name": "FIRST – Official Logo",
-      "category": "FIRST Logos",
-      "tags": [
-        "FIRST",
-        "Official"
-      ]
-    },
-    {
       "path": "logos/FIRST Logos/2026-27/canopy.png",
       "name": "FIRST CANOPY – 2026–27 Season",
       "category": "FIRST Logos",
@@ -200,16 +191,6 @@
         "CANOPY",
         "Current Season",
         "CANOPY"
-      ]
-    },
-    {
-      "path": "logos/first/fll.png",
-      "name": "FIRST LEGO League – Official Logo",
-      "category": "FIRST Logos",
-      "tags": [
-        "FIRST",
-        "Official",
-        "LEGO League"
       ]
     },
     {
@@ -257,12 +238,13 @@
       ]
     },
     {
-      "path": "logos/first/frc.png",
-      "name": "FIRST Robotics Competition – Official Logo",
+      "path": "logos/first/fll.png",
+      "name": "FIRST LEGO League – Official Logo",
       "category": "FIRST Logos",
       "tags": [
         "FIRST",
-        "Official"
+        "Official",
+        "LEGO League"
       ]
     },
     {
@@ -278,8 +260,8 @@
       ]
     },
     {
-      "path": "logos/first/ftc.png",
-      "name": "FIRST Tech Challenge – Official Logo",
+      "path": "logos/first/frc.png",
+      "name": "FIRST Robotics Competition – Official Logo",
       "category": "FIRST Logos",
       "tags": [
         "FIRST",
@@ -296,6 +278,24 @@
         "CANOPY",
         "Current Season",
         "BIOBUZZ"
+      ]
+    },
+    {
+      "path": "logos/first/ftc.png",
+      "name": "FIRST Tech Challenge – Official Logo",
+      "category": "FIRST Logos",
+      "tags": [
+        "FIRST",
+        "Official"
+      ]
+    },
+    {
+      "path": "logos/first/first.png",
+      "name": "FIRST – Official Logo",
+      "category": "FIRST Logos",
+      "tags": [
+        "FIRST",
+        "Official"
       ]
     },
     {
