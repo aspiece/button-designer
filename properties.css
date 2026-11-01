@@ -68,3 +68,74 @@ body[data-editor-tab="logos"] #logosTools .studio-logo-library{
  #propertiesPanel{width:100%;padding:12px;margin-bottom:10px}
  .app>section#designTools,.app>aside#sideTools{order:2}
 }
+
+/* Responsive editor: only the preview and two actions occupy the narrow layout.
+   A single existing Properties & Layers panel becomes an on-demand drawer. */
+.properties-panel-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#propertiesPanel .properties-panel-heading h2{margin:0 0 12px;font-size:16px}
+.mobile-properties-actions,#propertiesClose{display:none}
+#propertiesBackdrop[hidden]{display:none!important}
+@media(max-width:1119px){
+ #previewWorkspace>.mobile-properties-actions{
+  display:flex;order:0;gap:8px;width:100%;margin:0;align-items:stretch;
+ }
+ .mobile-properties-actions button{
+  display:flex;align-items:center;justify-content:center;gap:6px;flex:1;
+  font:750 13px inherit;font-family:inherit;font-size:13px;min-width:0;min-height:46px;
+  padding:10px 8px;color:#233a55;cursor:pointer;background:#fff;
+  border:1px solid #bdcce0;border-radius:11px;
+ }
+ .mobile-properties-actions button[aria-expanded="true"]{
+  background:#fff2e3;border-color:#f58220;color:#64340c;
+ }
+ .mobile-properties-actions button:focus-visible,#propertiesClose:focus-visible{
+  outline:3px solid #317fc7;outline-offset:2px;
+ }
+ .mobile-properties-actions button span[aria-hidden="true"]{font-size:18px}
+ #propertiesBackdrop:not([hidden]){
+  position:fixed;inset:0;display:block;background:#1018279c;z-index:39;
+ }
+ #previewWorkspace>#propertiesPanel{
+  order:1;display:flex;flex-direction:column;gap:0;position:fixed;
+  z-index:40;width:min(440px,92vw);height:100svh;max-height:100svh;
+  top:0;right:0;left:auto;bottom:0;overflow-y:auto;overscroll-behavior:contain;
+  padding:14px 16px 24px;border-radius:16px 0 0 16px;
+  box-shadow:-14px 0 44px #10182745;
+  transform:translateX(105%);visibility:hidden;pointer-events:none;
+  transition:transform .18s ease,visibility .18s ease;
+ }
+ #previewWorkspace>#propertiesPanel[data-drawer-open="true"]{
+  transform:translateX(0);visibility:visible;pointer-events:auto;
+ }
+ #propertiesPanel .properties-panel-heading{
+  position:sticky;top:-14px;z-index:2;margin:-14px -16px 0;padding:14px 16px 10px;
+  background:#fff;border-bottom:1px solid #e4eaf1;
+ }
+ #propertiesPanel .properties-panel-heading h2{margin:0;font-size:16px}
+ #propertiesClose{
+  display:block;flex:0 0 44px;height:44px;min-width:44px;padding:0;
+  border:1px solid #c9d4e1;background:#f4f7fb;border-radius:10px;
+  font-size:18px;color:#253c56;cursor:pointer;
+ }
+ #propertiesPanel[data-mobile-view="edit"] #propertiesLayers{display:none}
+ #propertiesPanel[data-mobile-view="layers"] #propertiesEditor,
+ #propertiesPanel[data-mobile-view="layers"] #propertiesChecks{display:none}
+ body.properties-drawer-open{overflow:hidden}
+}
+@media(max-width:700px){
+ #previewWorkspace>.mobile-properties-actions{padding:0 2px 4px}
+ #previewWorkspace>#propertiesPanel{
+  top:auto;right:0;left:0;bottom:0;width:100%;height:auto;
+  max-height:min(70svh,650px);min-height:180px;
+  border-radius:18px 18px 0 0;padding:14px 14px 24px;
+  box-shadow:0 -12px 36px #10182742;transform:translateY(105%);
+  padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));
+ }
+ #previewWorkspace>#propertiesPanel[data-drawer-open="true"]{transform:translateY(0)}
+ #propertiesPanel .properties-panel-heading{
+  top:-14px;margin:-14px -14px 0;padding:14px 14px 10px;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ #previewWorkspace>#propertiesPanel{transition:none}
+}
