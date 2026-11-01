@@ -19,14 +19,14 @@ return ()=>{};
 class Node {
 constructor(id){this.id=id;this.value='';this.checked=false;this.disabled=false;this.style={};this.classList={add(){},remove(){}};
 this.width=id==='editorCanvas'?800:id==='sheetPreview'?680:800;this.height=id==='sheetPreview'?880:800;}
-getContext(){return ctx}addEventListener(){}appendChild(){}remove(){}click(){}setCustomValidity(){}
+getContext(){return ctx}addEventListener(){}setAttribute(){}appendChild(){}remove(){}click(){}setCustomValidity(){}
 getBoundingClientRect(){return {left:0,top:0,width:800,height:800}}
 toDataURL(){return 'data:image/jpeg;base64,/9j/2Q=='}
 }
 ids.forEach(id=>nodes.set(id,new Node(id)));
 const defaults={theme:'paw',cutSize:'3',copies:'6',logoSize:'52',topSize:'34',bottomSize:'28',middleSize:'52',font:'Arial Black',borderStyle:'double',borderColor:'#111111'};
 Object.entries(defaults).forEach(([k,v])=>nodes.get(k).value=v);
-const doc={querySelectorAll(){return []},getElementById(id){assert.ok(nodes.has(id),'Missing control: '+id);return nodes.get(id)},createElement(t){return new Node(t)},body:{append(){}}};
+const doc={querySelectorAll(){return []},getElementById(id){assert.ok(nodes.has(id),'Missing control: '+id);return nodes.get(id)},createElement(t){return new Node(t)},body:{append(){},dataset:{}}};
 class Image {constructor(){this.complete=true;this.naturalWidth=300;this.naturalHeight=300;}}
 const sandbox={document:doc,Image,localStorage:{getItem:()=>null,setItem(){}},confirm:()=>true,TextEncoder,Blob,URL:{createObjectURL:()=>'/blob',revokeObjectURL(){}},setTimeout:()=>{},console,Uint8Array,atob};
 vm.createContext(sandbox);
