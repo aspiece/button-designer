@@ -41,6 +41,30 @@ async function main(){
   await page.waitForFunction(count=>document.querySelectorAll('#uxLogoGroups .studio-logo-card').length===count,totalGalleryImages,{timeout:20000});
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),totalGalleryImages,'Single gallery loads team and approved public images');
 
+  // Desktop uses three genuine columns, and all property actions reuse existing controls.
+  assert.equal(await page.locator('#propertiesPanel').count(),1,'Properties panel exists once');
+  assert.equal(await page.locator('#quickPanel').count(),1,'Existing context controls are not duplicated');
+  assert.equal(await page.locator('#propertiesPanel #quickPanel').count(),1,'Selected-item editor moved to properties');
+  assert.equal(await page.locator('#propertiesPanel .studio-layers').count(),1,'Existing layer manager moved to properties');
+  assert.equal(await page.locator('#propertiesPanel #designWarnings').count(),1,'Actual design warnings moved to properties');
+  assert.equal(await page.locator('#propertiesPanel #openPrintStudio').count(),1,'Actual Print Studio button moved to properties');
+  assert.equal(await page.locator('#propertiesPanel #saveProject').count(),1,'Save control is in right column');
+  const desktopLayout=await page.evaluate(()=>{
+    const r=id=>document.querySelector(id).getBoundingClientRect();
+    const left=r('#designTools'),center=r('.previewPanel'),right=r('#propertiesPanel');
+    return {left:left.x,center:center.x,right:right.x,rightEnd:right.right,viewport:innerWidth};
+  });
+  assert.ok(desktopLayout.left<desktopLayout.center&&desktopLayout.center<desktopLayout.right&&desktopLayout.rightEnd<=desktopLayout.viewport,'Desktop layout has left, middle, right columns');
+  await page.locator('[data-prop-select="top"]').click();
+  assert.equal(await page.locator('[data-prop-select="top"]').getAttribute('aria-pressed'),'true','Top text is selected from layer list');
+  assert.equal(await page.locator('#quickText').count(),1,'Text editor appears in right column');
+  await page.locator('#quickText').fill('PANEL TEST');
+  assert.equal(await page.inputValue('#headline'),'PANEL TEST','Right-side text editor updates real button text');
+  await page.locator('[data-prop-select="background"]').click();
+  assert.equal(await page.locator('#quickBackground').count(),1,'Background color editor appears in properties');
+  assert.equal(await page.locator('[data-prop-select="background"]').getAttribute('aria-pressed'),'true','Background selection visible');
+  assert.equal(await page.locator('#propertiesSaveMenu').count(),1,'Save/Export actions are in one disclosure');
+
   await page.locator('#beginTopText').fill('FENTON ROBOTICS');
   await page.locator('#beginBottomText').fill('TIGER PRIDE');
   assert.equal(await page.inputValue('#headline'),'FENTON ROBOTICS','Main beginner field updates canvas control');
@@ -95,6 +119,9 @@ async function main(){
   assert.ok((await page.evaluate(()=>layers.length))>beforePublicLayer,'Public artwork imported: '+await page.locator('#uxLogoResults').textContent());
   assert.ok((await page.evaluate(()=>layers.at(-1).data)).startsWith('data:image/png'),'SVG public art is converted into editable PNG layer');
   assert.ok((await page.locator('#uxLogoResults').textContent()).includes('Robot'),'Shared gallery reports insertion');
+  assert.equal(await page.locator('#propertiesPanel #quickImageSize').count(),1,'Selected public artwork is editable in the new properties panel');
+  assert.equal(await page.locator('#propertiesPanel .studio-layer-row').count(),1,'Image layer appears in right-hand layer manager');
+
   assert.equal(await page.locator('#uxLogoGroups .public-art-choice').count(),18,'Each curated SVG has a color picker');
   const robot=page.locator('.public-art-choice').filter({has:page.locator('button[data-path="approved-art/images/robot.svg"]')});
   assert.deepEqual(await robot.locator('.public-art-color option').allTextContents(),['Original','Black','Orange','White'],'Public art offers original + the three team colors');
@@ -169,6 +196,8 @@ async function main(){
   await page.click('#openPrintStudio');
   assert.equal(await page.inputValue('#psCopies'),'9','Print Studio quantity synchronizes with editor');
   assert.ok((await page.locator('#psWarnings').textContent()).includes('Low text contrast'),'Print Studio shows non-blocking contrast warning');
+  assert.ok((await page.locator('#propertiesCheckSummary').textContent()).includes('Check the design notes'),'Right-column design check reflects contrast warning');
+
   await page.selectOption('#psCopies','6');
   assert.equal(await page.locator('#psPage').textContent(),'Page 1 of 1','Six buttons fit on one page');
   const [studioPdf]=await Promise.all([page.waitForEvent('download'),page.click('#psDownloadSingle')]);
@@ -200,6 +229,12 @@ async function main(){
     assert.ok(m.canvas.top>=m.heading.bottom,`Preview title precedes canvas at ${width}×${height}`);
     assert.ok(m.header.bottom<m.tabs.top,`Header and tabs do not overlap at ${width}×${height}`);
     assert.ok(m.docWidth<=m.viewWidth,`No horizontal overflow at ${width}×${height}: ${JSON.stringify(m)}`);
+    const propertyPosition=await phone.evaluate(()=>({
+      previewBottom:document.querySelector('.previewPanel').getBoundingClientRect().bottom,
+      propertyTop:document.querySelector('#propertiesPanel').getBoundingClientRect().top
+    }));
+    assert.ok(propertyPosition.propertyTop>=propertyPosition.previewBottom,'On phones, properties stack beneath the preview');
+
     assert.equal(await phone.locator('#uxUndo').count(),1,'Undo is kept on mobile');
     assert.equal(await phone.locator('#tab-logos').isVisible(),true,'Gallery tab is accessible on mobile');
   }
