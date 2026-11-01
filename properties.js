@@ -15,15 +15,23 @@
  const layerSection=document.querySelector('.studio-layers');
  if(layerSection)document.getElementById('propertiesImageLayers').replaceChildren(layerSection);
  const warnings=move('designWarnings','propertiesWarnings');
- const fileActions=move('downloadPng','propertiesSaveActions');
- // Keep the original control container (and its listeners) together inside one disclosure.
- const originalTopTools=document.querySelector('.previewPanel .top-tools');
- if(originalTopTools)document.getElementById('propertiesSaveActions').append(originalTopTools);
- // If a button was individually moved, return it to the original group so no action is duplicated.
- if(fileActions&&originalTopTools&&!originalTopTools.contains(fileActions))originalTopTools.prepend(fileActions);
- const printButton=move('openPrintStudio','propertiesPrintAction');
- const printIntro=document.querySelector('#printTools > .hint');
- if(printIntro)document.getElementById('propertiesPrintAction').append(printIntro);
+ // Save and print belong to the Print tab, not the always-visible properties panel.
+ // Reparent the original controls to retain all existing save/export handlers.
+ const saveActions=document.querySelector('.previewPanel .top-tools');
+ const saveDestination=document.getElementById('printSaveActions');
+ if(saveActions&&saveDestination)saveDestination.append(saveActions);
+
+ // Phase 3 creates the actual Print Studio button in the Print panel. Keep its
+ // original click handler and associated help text, but make it the first action.
+ const printButton=document.getElementById('openPrintStudio');
+ const printIntro=printButton?.previousElementSibling;
+ const printDestination=document.getElementById('printStudioAction');
+ if(printDestination){
+  if(printIntro?.classList.contains('hint')&&printIntro.textContent.includes('Open the print workspace')){
+   printDestination.append(printIntro);
+  }
+  if(printButton)printDestination.prepend(printButton);
+ }
  // The existing dynamic selected-item editor replaces the old image-only controls.
  // Their DOM nodes remain in place for the editor's programmatic commands.
  for(const selector of ['#logoSize','#cropLogo','#centerLogo','#removeLogo']){
@@ -49,6 +57,5 @@
  }
  if(warnings)new MutationObserver(updateChecks).observe(warnings,{childList:true,subtree:true,characterData:true});
  updateChecks();
- // Preserve a useful Print Studio route even if future print tools are reorganized.
- if(!printButton)status.textContent='Print Studio is available in the Print tab.';
+ // The Properties panel remains focused on editing and layer management.
 })();
