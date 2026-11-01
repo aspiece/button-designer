@@ -38,6 +38,21 @@ class ApprovedArtTests(unittest.TestCase):
             cat = root / "approved-art/catalog.json"
             cat.write_text(json.dumps({"version": 1, "images": [item]}))
             self.assertEqual(mod.validate(root), 1)
+            item["recolorable"] = True
+            cat.write_text(json.dumps({"version": 1, "images": [item]}))
+            self.assertEqual(mod.validate(root), 1)
+            for bad in ("yes", 1, None):
+                item["recolorable"] = bad
+                cat.write_text(json.dumps({"version": 1, "images": [item]}))
+                with self.assertRaises(ValueError):
+                    mod.validate(root)
+            item["recolorable"] = True
+            (images / "test.png").write_bytes(b"\\x89PNG\\r\\n\\x1a\\n")
+            item["path"] = "approved-art/images/test.png"
+            cat.write_text(json.dumps({"version": 1, "images": [item]}))
+            with self.assertRaises(ValueError):
+                mod.validate(root)
+            item["path"] = "approved-art/images/test.svg"
             for key, bad in (("approved", False), ("license", "by"), ("path", "https://example.org/a.png"),
                              ("category", "Unapproved"), ("sourceUrl", "http://example.org")):
                 with self.subTest(key=key):
