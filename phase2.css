@@ -62,3 +62,13 @@
 /* Reviewed public-use artwork sits in the same filter and thumbnail grid as team logos. */
 .studio-logo-group[data-category="Public Images"] .studio-logo-card img{height:80px;background:#f4f7f8}
 .studio-logo-group[data-category="Public Images"] .studio-logo-card small{color:#276d50;font-weight:650}
+
+/* Curated public-use artwork gets the same per-card color controls as team logos. */
+.public-art-choice{min-width:0;display:flex;flex-direction:column;gap:6px;padding:5px;border:1px solid #e3e8ed;border-radius:10px}
+.public-art-choice .studio-logo-card{width:100%;border:0}
+.public-art-choice label{display:flex;gap:6px;align-items:center;justify-content:space-between;font-size:12px;font-weight:650;color:#263544}
+.public-art-choice .public-art-color{max-width:110px;min-width:80px;padding:6px 5px;border:1px solid #aebed0;border-radius:6px;background:#fff;color:#101820}
+.public-art-choice .public-art-color:focus-visible{outline:3px solid #317fc7;outline-offset:2px}
+.public-art-choice .studio-logo-card img{background:#f4f7f8;transition:background-color .16s ease}
+.public-art-choice[data-art-color="white"] .studio-logo-card img,.public-art-choice[data-art-color="orange"] .studio-logo-card img{background:#263244}
+.public-art-choice[data-art-color="black"] .studio-logo-card img{background:#f9d7a6}
