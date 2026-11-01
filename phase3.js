@@ -33,7 +33,7 @@ dialog.innerHTML=`
 <option value="1">1″</option><option value="1.25">1.25″</option><option value="1.5">1.5″</option><option value="1.75">1.75″</option><option value="2.25">2.25″ · Standard</option><option value="2.5">2.5″</option><option value="3">3″</option><option value="3.5">3.5″</option><option value="4">4″</option><option value="6">6″</option>
 </select><label for="psCut" style="margin-top:10px">Paper cut diameter (inches)</label><input id="psCut" type="number" min="1" max="8" step="0.001" inputmode="decimal" value="2.625"><p class="ps-muted" id="psSizingHelp">2.25″ finished · 2.625″ paper cut. Verify with your press manufacturer.</p></div>
   <section id="psSingle" role="tabpanel" aria-labelledby="psSingleTab">
-    <label for="psCopies">Number of identical buttons</label><select id="psCopies"><option value="6">6</option><option value="12">12</option><option value="18">18</option><option value="24">24</option><option value="36">36</option><option value="48">48</option></select>
+    <label for="psCopies">Number of identical buttons</label><select id="psCopies"><option value="6">6</option><option value="9">9</option><option value="12">12</option><option value="18">18</option><option value="24">24</option><option value="36">36</option><option value="48">48</option></select>
     <h3>Design checks</h3><div id="psWarnings" class="ps-warnings" aria-live="polite"></div>
     <button type="button" class="btn primary full" id="psDownloadSingle">Download my print PDF</button>
   </section>
@@ -82,8 +82,9 @@ function safeWarnings(){
   const far=Math.hypot(Math.abs(x)+w/2,Math.abs(y)+h/2)/f;
   if(far>safe)errors.push('Picture '+(i+1)+' may overlap the border or wrap onto the back. Reduce its size or move it inward.')
  }
- if($('centerLogoChoice').value!=='none'&&+$('centerSize').value>=90)errors.push('The center graphic is enlarged. Check the border, text clearance and the cut line.');
- if($('headline').value.length>23||$('subline').value.length>23)errors.push('Long curved text may print small. Shorter text is easier to read on a '+selectedSize()+'-inch button.');
+ // Only actual image layers need bounds checks; the obsolete center graphic control is gone.
+ if(typeof designWarnings==='function')errors.push(...designWarnings());
+  else if($('headline').value.length>23||$('subline').value.length>23)errors.push('Long curved text may print small. Shorter text is easier to read.');
  if(+cutInput.value<=selectedSize())errors.push('Cut diameter is not larger than the finished button. Check the paper-wrap requirement.');
  return errors
 }
@@ -118,11 +119,11 @@ function makeTile(item,cut,size){
  previewCache.set(key,c);return c
 }
 function drawMixed(ctx,w,h,items,offset,count,hires=false){
- const cut=+cutInput.value,ly=sheetLayout(cut);
+ const cut=+cutInput.value,ly=sheetLayout(cut),positions=typeof sheetDisplayLayout==='function'?sheetDisplayLayout(cut,count):ly;
  ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);
  const dia=cut/8.5*w,detail=hires?900:520;
  for(let i=0;i<count;i++){
-  const col=i%ly.cols,row=Math.floor(i/ly.cols),x=(ly.x0+col*(cut+ly.hgap))/8.5*w,y=(ly.y0+row*(cut+ly.vgap))/11*h;
+  const col=i%positions.cols,row=Math.floor(i/positions.cols),x=(positions.x0+col*(cut+positions.hgap))/8.5*w,y=(positions.y0+row*(cut+positions.vgap))/11*h;
   const tile=makeTile(items[offset+i],cut,detail);
   ctx.drawImage(tile,x,y,dia,dia);
   ctx.strokeStyle='#495465';ctx.lineWidth=hires?2:1;ctx.beginPath();ctx.arc(x+dia/2,y+dia/2,dia/2,0,Math.PI*2);ctx.stroke()
