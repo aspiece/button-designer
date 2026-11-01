@@ -58,3 +58,7 @@
 .team-logo-choice[data-logo-color="orange"] .studio-logo-card img{background:#263244}
 .team-logo-choice[data-logo-color="black"] .studio-logo-card img{background:#f9d7a6}
 .team-logo-choice .studio-logo-card small{white-space:normal}
+
+/* Reviewed public-use artwork sits in the same filter and thumbnail grid as team logos. */
+.studio-logo-group[data-category="Public Images"] .studio-logo-card img{height:80px;background:#f4f7f8}
+.studio-logo-group[data-category="Public Images"] .studio-logo-card small{color:#276d50;font-weight:650}
