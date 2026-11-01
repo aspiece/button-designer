@@ -53,8 +53,7 @@
   shortcuts.setAttribute('role','group');
   shortcuts.setAttribute('aria-label','Find tiger artwork quickly');
   shortcuts.innerHTML='<span>Looking for a tiger?</span><button type="button" data-tiger-shortcut="pictures" aria-pressed="false">Tiger pictures</button><button type="button" data-tiger-shortcut="teams" aria-pressed="false">Tiger team logos</button><button type="button" data-tiger-shortcut="all" aria-pressed="true">All images</button>';
-  library.querySelector('#uxLogoSearch')?.closest('label')?.before(shortcuts);
-  // Place the shortcuts ahead of search, even when the search label is a sibling.
+  // Place the quick choices before the gallery search label.
   const searchLabel=library.querySelector('label[for="uxLogoSearch"]');
   if(searchLabel)searchLabel.before(shortcuts);
  }
