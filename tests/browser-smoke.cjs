@@ -73,6 +73,7 @@ async function main(){
   await page.locator('#textColor').evaluate(el=>{el.value='#f58220';el.dispatchEvent(new Event('input',{bubbles:true}))});
   assert.ok((await page.locator('#designWarnings').textContent()).includes('Low text contrast'),'WCAG contrast warning appears in design preview');
 
+  await page.click('#tab-logos');
   await page.locator('.studio-logo-card[data-path="logos/tiger-paws-24471.png"]').first().click();
   await page.waitForFunction(()=>window.ButtonStudioUX.getState().layers.length>0,null,{timeout:15000});
   const initialImageX=await page.evaluate(()=>layers[0].x);
