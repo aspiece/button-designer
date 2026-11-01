@@ -6,6 +6,12 @@ This is a **static, allowlisted collection** shown to students in the Fenton edi
 
 The 18 small SVG illustrations included here were created specifically for this button designer and are made available as CC0 (to the extent rights exist). They are intentionally school-friendly and do not include personal data, brands, or photographs. This is a starter set, **not** a claim that thousands of external Openverse images have been screened.
 
+## Artwork color options
+
+The **18 reviewed starter SVGs** have `"recolorable": true` and show an **Original / Black / Orange / White** selector in the shared Image Library, like robotics team logos. Selected color is baked into the imported PNG layer with its transparent background intact. The color shown on the thumbnail matches the inserted art and saved/printed output. White and orange previews appear on dark preview backgrounds only (not part of the image).
+
+**Do not automatically recolor externally sourced photographs or images with solid backgrounds.** For newly approved files, omit `recolorable` (default: false). Only reviewed transparent passive SVG artwork may be flagged `"recolorable": true`; CI validates this metadata. Color changes create a single-color silhouette, not a separate palette for each part of the illustration. Existing team and FIRST artwork follows its own rules.
+
 ## Adding artwork from Openverse or another public source
 
 1. **An adult** searches [Openverse](https://openverse.org/) using the **CC0** or **Public Domain Mark (PDM)** filters, ideally for simple illustrations or icons. Openverse's `mature=false` filter helps but is **not** a substitute for human review.

@@ -68,7 +68,7 @@
    function validItemPath(item){
      return item.category==='Public Images'?validPublicPath(item.path):validPath(item.path);
    }
-   async function approvedPng(blob){
+   async function approvedPng(blob,color='original'){
      if(!blob.size||blob.size>8*1024*1024)throw Error('Artwork is empty or larger than 8 MB');
      const url=URL.createObjectURL(blob);
      try{
@@ -82,7 +82,14 @@
        const cv=document.createElement('canvas');
        cv.width=Math.max(1,Math.round(im.naturalWidth*scale));
        cv.height=Math.max(1,Math.round(im.naturalHeight*scale));
-       cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+       const ctx=cv.getContext('2d');ctx.drawImage(im,0,0,cv.width,cv.height);
+       if(color!=='original'){
+         const rgb=teamColors[color];if(!rgb)throw Error('Unsupported public image color');
+         // Only tint already-visible pixels. Source alpha/transparency remains intact.
+         ctx.globalCompositeOperation='source-in';
+         ctx.fillStyle=`rgb(${rgb.join(',')})`;ctx.fillRect(0,0,cv.width,cv.height);
+         ctx.globalCompositeOperation='source-over';
+       }
        return await new Promise((resolve,reject)=>cv.toBlob(
          image=>image?resolve(image):reject(Error('Could not convert artwork')),'image/png'));
      }finally{URL.revokeObjectURL(url)}
@@ -170,6 +177,30 @@
      if(img.isConnected&&img.dataset.requestedColor===color)img.src=src;
    }
    const imageUrl=path=>path.split('/').map(encodeURIComponent).join('/');
+   const publicBlobCache=new Map(),publicPreviewCache=new Map();
+   function publicBlob(path,color){
+     const key=path+'|'+color;
+     if(!publicBlobCache.has(key)){
+       const pending=fetch(imageUrl(path),{cache:'force-cache'})
+         .then(response=>{if(!response.ok)throw Error('Artwork unavailable ('+response.status+')');return response.blob()})
+         .then(blob=>approvedPng(blob,color));
+       publicBlobCache.set(key,pending);pending.catch(()=>publicBlobCache.delete(key));
+     }
+     return publicBlobCache.get(key);
+   }
+   async function publicPreview(path,img,color){
+     img.dataset.requestedColor=color;
+     if(color==='original'){img.src=imageUrl(path);return}
+     // Clear the previous color immediately so a slow conversion never leaves a stale preview.
+     img.removeAttribute('src');
+     const key=path+'|'+color;
+     if(!publicPreviewCache.has(key)){
+       const pending=publicBlob(path,color).then(blob=>URL.createObjectURL(blob));
+       publicPreviewCache.set(key,pending);pending.catch(()=>publicPreviewCache.delete(key));
+     }
+     const src=await publicPreviewCache.get(key);
+     if(img.isConnected&&img.dataset.requestedColor===color)img.src=src;
+   }
    const mimetype=path=>/\.png$/i.test(path)?'image/png':/\.jpe?g$/i.test(path)?'image/jpeg':/\.webp$/i.test(path)?'image/webp':'image/avif';
    function showGallery(){
      groupsContainer.replaceChildren();
@@ -210,6 +241,24 @@
              teamPreview(item.path,picture,picker.value).catch(()=>{
                button.classList.add('studio-logo-broken');
                detail.textContent='Unable to render '+picker.value+' logo';
+             });
+           });
+           colorLabel.append(picker);wrap.append(button,colorLabel);grid.append(wrap);
+          }else if(item.category==='Public Images'&&item.recolorable){
+           const wrap=document.createElement('div');wrap.className='public-art-choice';wrap.dataset.artColor='original';
+           const colorLabel=document.createElement('label');colorLabel.textContent='Artwork color';
+           const picker=document.createElement('select');picker.className='public-art-color';
+           picker.setAttribute('aria-label',item.name+' artwork color');
+           [['original','Original'],['black','Black'],['orange','Orange'],['white','White']].forEach(([value,name])=>{
+             const option=document.createElement('option');option.value=value;option.textContent=name;picker.append(option);
+           });
+           picker.addEventListener('change',()=>{
+             wrap.dataset.artColor=picker.value;
+             detail.textContent=item.subcategory+' · '+item.license.toUpperCase()+' · '+picker.selectedOptions[0].text;
+             picture.hidden=false;button.classList.remove('studio-logo-broken');
+             publicPreview(item.path,picture,picker.value).catch(()=>{
+               picture.hidden=true;button.classList.add('studio-logo-broken');
+               detail.textContent='Unable to render '+picker.value+' artwork';
              });
            });
            colorLabel.append(picker);wrap.append(button,colorLabel);grid.append(wrap);
@@ -257,7 +306,7 @@
          paths.add(item.path);ids.add(item.id);return true
        }).slice(0,200).map(item=>({
          path:item.path,name:item.name.slice(0,90),category:'Public Images',subcategory:item.category,
-         license:item.license,tags:item.tags.slice(0,10)
+         license:item.license,recolorable:item.recolorable===true&&/\.svg$/.test(item.path),tags:item.tags.slice(0,10)
        }));
      }catch(error){unavailable.push('public images')}
      assets=[...logoAssets,...publicAssets];
@@ -277,11 +326,13 @@
        let blob=await response.blob();
        if(!blob.size||blob.size>8*1024*1024)throw Error('Image is empty or larger than 8 MB');
        if(entry.category==='School Logos')blob=await cleanSchoolBackground(blob);
-       if(entry.category==='Public Images')blob=await approvedPng(blob);
+       const publicColor=entry.category==='Public Images'&&entry.recolorable?(card.closest('.public-art-choice')?.querySelector('.public-art-color')?.value||'original'):'original';
+        if(entry.category==='Public Images')blob=await approvedPng(blob,publicColor);
        const color=entry.category==='Robotics Teams'?(card.closest('.team-logo-choice')?.querySelector('.team-logo-color')?.value||'black'):'black';
        if(entry.category==='Robotics Teams')blob=await recolorTeamLogo(blob,entry.path,color);
        // Let the existing file-import pipeline validate, normalize, and create an editable layer.
-       const file=new File([blob],(entry.name+(entry.category==='Robotics Teams'?' '+color:'' )).replace(/[^a-zA-Z0-9 _-]/g,'').slice(0,55)+'.'+(entry.category!=='FIRST Logos'?'png':entry.path.split('.').pop().toLowerCase()),{type:entry.category!=='FIRST Logos'?'image/png':mimetype(entry.path)});
+       const suffix=entry.category==='Robotics Teams'?' '+color:entry.category==='Public Images'?' '+publicColor:'';
+        const file=new File([blob],(entry.name+suffix).replace(/[^a-zA-Z0-9 _-]/g,'').slice(0,55)+'.'+(entry.category!=='FIRST Logos'?'png':entry.path.split('.').pop().toLowerCase()),{type:entry.category!=='FIRST Logos'?'image/png':mimetype(entry.path)});
        addImages([file]);
        results.textContent='Added '+entry.name+'. Drag the image to position it.';
      }catch(err){
