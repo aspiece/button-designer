@@ -260,7 +260,7 @@ async function main(){
     assert.equal(await card.count(),1,id+' must appear exactly once in approved public gallery');
     const icon=card.locator('img');
     assert.ok(await icon.getAttribute('src'),id+' thumbnail has a nonempty source');
-    assert.equal(await page.locator('.public-art-choice').filter({has:card}).locator('select.public-art-color').count(),1,id+' offers the approved recoloring selector');
+    assert.equal(await page.locator('.public-art-choice').filter({has:page.locator(`button[data-path="approved-art/images/${id}.svg"]`)}).locator('select.public-art-color').count(),1,id+' offers the approved recoloring selector');
   }
   // Import on a fresh button so the existing multi-step smoke test retains
   // its original layer budget and selection behavior.
