@@ -41,6 +41,55 @@ async function main(){
   await page.waitForFunction(count=>document.querySelectorAll('#uxLogoGroups .studio-logo-card').length===count,totalGalleryImages,{timeout:20000});
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),totalGalleryImages,'Single gallery loads team and approved public images');
 
+  // The low-resolution cropped Titanium source is replaced in the actual gallery
+  // with one 1024-unit SVG vector master, not a separate low-res duplicate.
+  const titaniumSvg=fs.readFileSync(path.join(root,'logos/titanium-tigers.svg'),'utf8');
+  assert.ok(titaniumSvg.includes('viewBox="0 0 1024 1024"'),'Titanium master is a full-size vector');
+  assert.ok(titaniumSvg.includes('TITANIUM')===false,'Vector letters are positioned individually around the gear');
+  assert.ok(titaniumSvg.includes('font-size="88"'),'5114 team number uses large print-readable type');
+  assert.equal(gallery.images.filter(item=>item.path.includes('titanium-tigers.')).length,1,'Only the new Titanium SVG is offered in the gallery');
+  assert.equal(gallery.images.find(item=>item.path.includes('titanium-tigers.')).path,'logos/titanium-tigers.svg','No old 215px image remains in the gallery');
+  const titaniumPage=await context.newPage(),titaniumErrors=[];
+  titaniumPage.on('pageerror',e=>titaniumErrors.push(e.message));
+  await titaniumPage.goto('http://127.0.0.1:8765/',{waitUntil:'networkidle'});
+  await titaniumPage.locator('#tab-logos').click();
+  await titaniumPage.locator('#uxLogoSearch').fill('Titanium');
+  const titaniumCard=titaniumPage.locator('.team-logo-choice').filter({has:titaniumPage.locator('button[data-path="logos/titanium-tigers.svg"]')});
+  assert.equal(await titaniumCard.count(),1,'Titanium Tigers appears exactly once in the Logos gallery');
+  for(const [color,rgb] of Object.entries({black:[0,0,0],orange:[245,130,32],white:[255,255,255]})){
+    await titaniumCard.locator('.team-logo-color').selectOption(color);
+    await titaniumPage.waitForFunction(c=>{
+      const image=document.querySelector('.team-logo-choice button[data-path="logos/titanium-tigers.svg"] img');
+      return image?.dataset.requestedColor===c&&image.src.startsWith('blob:')&&image.complete&&image.naturalWidth>=1000;
+    },color,{timeout:20000});
+    const sample=await titaniumCard.locator('img').evaluate(img=>{
+      const cv=document.createElement('canvas');cv.width=img.naturalWidth;cv.height=img.naturalHeight;
+      const cx=cv.getContext('2d',{willReadFrequently:true});cx.drawImage(img,0,0);
+      const d=cx.getImageData(0,0,cv.width,cv.height).data;
+      let pixels=0,bad=0;for(let i=0;i<d.length;i+=4){
+        if(d[i+3]<240)continue;
+        pixels++;
+        const target=img.dataset.requestedColor==='black'?[0,0,0]:img.dataset.requestedColor==='orange'?[245,130,32]:[255,255,255];
+        if(Math.max(Math.abs(d[i]-target[0]),Math.abs(d[i+1]-target[1]),Math.abs(d[i+2]-target[2]))>5)bad++;
+      }
+      return {width:cv.width,visible:pixels,bad,cornerAlpha:d[3]};
+    });
+    assert.ok(sample.visible>20000,color+' Titanium logo contains enough visible detail: '+JSON.stringify(sample));
+    assert.equal(sample.bad,0,color+' Titanium preview is correctly recolored without residual ink');
+    assert.equal(sample.cornerAlpha,0,color+' Titanium background stays transparent');
+    const before=await titaniumPage.evaluate(()=>window.ButtonStudioUX.getState().layers.length);
+    await titaniumCard.locator('button.studio-logo-card').click();
+    await titaniumPage.waitForFunction(n=>window.ButtonStudioUX.getState().layers.length>n||
+       document.getElementById('uxLogoResults').textContent.startsWith('Could not add'),before,{timeout:20000});
+    const state=await titaniumPage.evaluate(()=>window.ButtonStudioUX.getState());
+    assert.equal(state.layers.length,before+1,color+' Titanium artwork adds as an editable layer');
+    assert.ok(state.layers.at(-1).name.toLowerCase().includes(color),color+' selected logo color is saved in the design');
+    assert.ok(state.layers.at(-1).data.startsWith('data:image/png'),color+' Titanium artwork converts to transparent printable PNG');
+  }
+  assert.deepEqual(titaniumErrors,[],'Titanium colors and gallery import create no JavaScript errors');
+  await titaniumPage.close();
+
+
   // Desktop uses three genuine columns, and all property actions reuse existing controls.
   assert.equal(await page.locator('#propertiesPanel').count(),1,'Properties panel exists once');
   assert.equal(await page.locator('#mobilePropertiesActions').isVisible(),false,'Desktop keeps the persistent right column without mobile buttons');
