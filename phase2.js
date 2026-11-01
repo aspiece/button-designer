@@ -90,9 +90,9 @@
      const parts=path.split('/');
      if(parts.length<2||parts.some(p=>!p||p==='.'||p==='..'||p.includes('\\')))return false;
      // Only these three reviewed F-paw colorways are allowed as SVG school logos.
-     if(/\.svg$/i.test(path))return
+     if(/\.svg$/i.test(path))return (
        (category==='School Logos'&&/^logos\/school-logos\/fenton-f-paw-for-(white|black|orange)-background\.svg$/.test(path))||
-       (category==='Robotics Teams'&&path==='logos/titanium-tigers.svg');
+       (category==='Robotics Teams'&&path==='logos/titanium-tigers.svg'));
      return /\.(png|jpe?g|webp|avif)$/i.test(path);
    }
    // Public artwork is a separate allowlist; an arbitrary file or external URL cannot enter the gallery.
