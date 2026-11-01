@@ -223,7 +223,11 @@ async function main(){
       return {canvas:rect('#editorCanvas'),wrap:rect('.canvasWrap'),
         tools:rect('.studio-toolbar'),tabs:rect('.editor-tabs'),header:rect('header'),
         docWidth:document.documentElement.scrollWidth,viewWidth:innerWidth,viewHeight:innerHeight,
-        heading:rect('.previewPanel h2')};
+        heading:rect('.previewPanel h2'),
+        flexDebug:{appDisplay:getComputedStyle(document.querySelector('.app')).display,
+          wrapperParent:document.getElementById('previewWorkspace').parentElement?.id||document.getElementById('previewWorkspace').parentElement?.tagName,
+          children:[...document.querySelector('.app').children].map(node=>({tag:node.tagName,id:node.id,className:node.className,order:getComputedStyle(node).order,top:Math.round(node.getBoundingClientRect().top)}))}
+      };
     });
     assert.ok(m.canvas.width>=110,`Canvas stays usable on ${width}×${height}: ${JSON.stringify(m)}`);
     assert.ok(m.canvas.bottom<=m.viewHeight-8,`Full button visible without vertical scrolling on ${width}×${height}: ${JSON.stringify(m)}`);
