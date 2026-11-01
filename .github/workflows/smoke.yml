@@ -15,6 +15,10 @@ jobs:
         run: node tests/smoke.cjs
       - name: Validate reusable GitHub design library files
         run: python3 scripts/build_library.py --validate
+      - name: Validate explicitly approved public-use artwork and passive SVGs
+        run: |
+          python3 scripts/validate_approved_art.py
+          python3 -m unittest discover -s tests -p 'test_approved_art.py'
       - name: Validate approved image gallery and new-upload behavior
         run: |
           python3 scripts/build_image_catalog.py --validate

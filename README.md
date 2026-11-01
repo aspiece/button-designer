@@ -65,6 +65,14 @@ Three reusable examples are included: Fenton Paw Classic, Titanium Tigers Badge,
 
 **Privacy:** The repository and its shared assets are public. Do not upload student names, photographs, or other identifying details without the school's approval. Saving a project in the student browser is local; clicking Download does **not** publish it to the repo. See [the designs folder instructions](designs/README.md).
 
+## Kid-friendly public-use artwork (teacher-approved)
+
+The Fenton **Logos** tab now has a second, clearly separated **Kid-friendly public-use art** collection for robotics, science, nature, sports, school, and seasonal artwork. It launches with **18 original CC0 starter illustrations**, searchable by keyword and category. Clicking an image inserts a rasterized, movable/resizable image layer; it is included in printable PDFs and saved designs.
+
+**Child safety:** No live Openverse or external image results are exposed to students. The gallery only loads same-origin files that an adult explicitly lists as `approved: true` in [`approved-art/catalog.json`](approved-art/catalog.json). Unlisted files are invisible to students. The separate team/FIRST gallery stays unchanged. Students can still upload their own local pictures, which are **not** content-moderated by this feature.
+
+For vetted public-domain/CC0 images from **Openverse** or another external source, adults should verify the original source's license, inspect the entire image, and commit it with accurate creator/source metadata after review. Instructions: [approved-art review and publishing guide](approved-art/README.md). Unlike the team-logo gallery, the approved-art catalog is never automatically populated by file discovery. `python3 scripts/validate_approved_art.py` and GitHub CI check asset and metadata policy; they cannot replace an educator's visual/license review.
+
 ## Automatically updated Fenton image gallery
 
 The Fenton edition has a **searchable approved image gallery** built from files in `logos/`. Images automatically appear under **School Logos**, **Robotics Teams**, **FIRST Logos**, or **Custom Artwork**. The first catalog includes 14 unique approved images. Selecting a thumbnail adds it through the normal editable image-layer workflow, so images can be moved, resized, cropped and included in saved designs.

@@ -5,7 +5,7 @@ const path=require('node:path');
 const http=require('node:http');
 const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
-const mime={'.html':'text/html; charset=utf-8','.js':'application/javascript','.css':'text/css','.png':'image/png','.json':'application/json','.avif':'image/avif'};
+const mime={'.html':'text/html; charset=utf-8','.js':'application/javascript','.css':'text/css','.png':'image/png','.json':'application/json','.avif':'image/avif','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{
  let pathname;try{pathname=decodeURIComponent(new URL(req.url,'http://127.0.0.1').pathname)}catch{res.writeHead(400).end();return}
  const file=path.resolve(root,'.'+pathname,pathname.endsWith('/')?'index.html':'');
@@ -36,8 +36,8 @@ async function main(){
   assert.equal(await page.locator('#centerLogoChoice').count(),0,'Obsolete center logo control removed');
   assert.equal(await page.locator('#centerSize').count(),0,'Obsolete center size control removed');
   const gallery=JSON.parse(fs.readFileSync(path.join(root,'logos','catalog.json'),'utf8'));
-  await page.waitForFunction(count=>document.querySelectorAll('.studio-logo-card').length===count,gallery.images.length,{timeout:20000});
-  assert.equal(await page.locator('.studio-logo-card').count(),gallery.images.length,'Approved image catalog loads');
+  await page.waitForFunction(count=>document.querySelectorAll('#uxLogoGroups .studio-logo-card').length===count,gallery.images.length,{timeout:20000});
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),gallery.images.length,'Approved image catalog loads');
 
   await page.locator('#beginTopText').fill('FENTON ROBOTICS');
   await page.locator('#beginBottomText').fill('TIGER PRIDE');
@@ -74,6 +74,30 @@ async function main(){
   assert.ok((await page.locator('#designWarnings').textContent()).includes('Low text contrast'),'WCAG contrast warning appears in design preview');
 
   await page.click('#tab-logos');
+  // Student searches only an explicitly approved static same-origin catalog.
+  const publicArt=JSON.parse(fs.readFileSync(path.join(root,'approved-art','catalog.json'),'utf8'));
+  assert.equal(publicArt.images.length,18,'Starter public art includes 18 reviewed illustrations');
+  assert.equal(await page.locator('.studio-approved-art').count(),1,'Kid-friendly public art is separate from team logos');
+  await page.waitForFunction(count=>document.querySelectorAll('.studio-approved-card').length===count,publicArt.images.length,{timeout:20000});
+  assert.equal(await page.locator('.studio-approved-card').count(),18,'Approved-only artwork loads');
+  await page.locator('#approvedArtCategory').selectOption('Science');
+  assert.equal(await page.locator('.studio-approved-card').count(),3,'Science category filters public art');
+  await page.locator('#approvedArtCategory').selectOption('All');
+  await page.locator('#approvedArtSearch').fill('microscope');
+  assert.equal(await page.locator('.studio-approved-card').count(),1,'Keyword search filters the approved set');
+  await page.locator('#approvedArtSearch').fill('');
+  const beforePublicLayer=await page.evaluate(()=>layers.length);
+  await page.locator('.studio-approved-card[data-art-id="robot"]').click();
+  try{
+    await page.waitForFunction(previous=>window.ButtonStudioUX.getState().layers.length>previous||document.getElementById('approvedArtStatus').textContent.startsWith('Unable'),beforePublicLayer,{timeout:12000});
+  }catch(error){
+    console.error('Public art import diagnostics:', await page.evaluate(()=>({message:document.getElementById('approvedArtStatus')?.textContent,appMessage:document.getElementById('message')?.textContent,layers:layers.length,errors:window.__publicArtErrors||[]})));
+    throw error
+  }
+  assert.ok((await page.evaluate(()=>layers.length))>beforePublicLayer,'Approved artwork imported: '+await page.locator('#approvedArtStatus').textContent());
+  assert.ok((await page.evaluate(()=>layers.at(-1).data)).startsWith('data:image/png'),'SVG public art is converted into editable PNG layer');
+  assert.ok((await page.locator('#approvedArtStatus').textContent()).includes('Robot'),'Student receives insert feedback');
+
   await page.locator('.studio-logo-card[data-path="logos/tiger-paws-24471.png"]').first().click();
   await page.waitForFunction(()=>window.ButtonStudioUX.getState().layers.length>0,null,{timeout:15000});
   const initialImageX=await page.evaluate(()=>layers[0].x);
@@ -116,6 +140,7 @@ async function main(){
   await general.goto('http://127.0.0.1:8765/studio/',{waitUntil:'networkidle'});
   assert.equal(await general.locator('.template-card').count(),6,'General edition keeps six neutral templates');
   assert.equal(await general.locator('.studio-logo-card').count(),0,'General edition has no Fenton artwork');
+  assert.equal(await general.locator('.studio-approved-art').count(),0,'General edition does not show Fenton curated art');
   const genericHeadline=await general.inputValue('#headline');
   await general.locator('.template-card[data-template="paw"]').click();
   assert.equal(await general.inputValue('#headline'),genericHeadline,'General edition also preserves user text');

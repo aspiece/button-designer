@@ -1,0 +1,14 @@
+
+/* Teacher-curated public-use art: distinct from team and FIRST trademarks */
+.studio-approved-art{border-top:2px solid #e3e9ef;margin:16px 0 12px;padding:15px 0 0}
+.studio-approved-heading{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin-bottom:6px}
+.studio-approved-heading h3{margin:0;font-size:14px}
+.studio-approved-pill{font-size:10px;font-weight:750;line-height:1.4;padding:3px 7px;border:1px solid #a6c9b9;border-radius:100px;color:#276d50;background:#f2fbf6}
+.studio-approved-art label{display:block;font-size:12px;font-weight:650;margin:11px 0 5px}
+.studio-approved-art input[type="search"],.studio-approved-art select{display:block;box-sizing:border-box;width:100%;min-height:39px;border-radius:8px;border:1px solid #ccd6e4;background:white;padding:9px;font-size:13px}
+.studio-approved-art #approvedArtStatus{color:#475f75;min-height:15px;margin:10px 0;font-size:11px}
+.studio-approved-art .studio-logo-grid{max-height:470px;overflow-y:auto;padding:2px;scrollbar-gutter:stable}
+.studio-approved-card img{height:80px;background:#f4f7f8}
+.studio-approved-art #approvedArtEmpty:not([hidden]){padding:11px;background:#f6f8fa;border-radius:8px;font-size:12px}
+.studio-approved-art .studio-approved-note{font-size:11px;color:#5c6d7f;margin:12px 0}
+.studio-approved-art input:focus-visible,.studio-approved-art select:focus-visible{outline:3px solid #317fc7}
