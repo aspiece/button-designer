@@ -11,9 +11,9 @@ Both URLs currently live in this GitHub Pages repository. Creating a truly separ
 
 ## Features
 
-- Six editable starting templates: **Fenton Paw**, **Tiger**, **Titanium Tigers**, **Blank**, **Orange**, and **Black**.
+- **14 Fenton starting templates:** Orange Solid, Black Solid, White & Orange, Orange + Black Ring, Black + Orange Ring, Orange / Black Split, Titanium Dark, Tiger Stripes, Paw Pattern, Hex Tech, Radial Burst, Clean White, Dark Minimal, and Blank Light. The separate General edition has six neutral templates.
 - Change background, top/bottom curved text, middle text, fonts, border style and border color (black, white, orange).
-- Choose a **custom-drawn** center graphic: none, Fenton F lettermark, tiger paw, or T shield. These drawn graphics are not official logo files.
+- Add image layers from the approved team/FIRST gallery or your own uploaded artwork. The obsolete hidden Fenton center-logo picker and size slider have been removed. General edition keeps its own preset-symbol control.
 - Add Fenton team logos from the files already uploaded to `logos/`: Tiger Paws (24471), Tiger Cubs (29168), Tiger Kits (31558), Tiger Claws (31575), Tiger Eyes (31577), Siberian Tigers (38050), Bengal Tigers (52545), Tungsten Tigers, Chromium Tigers, and Iridium Tigers.
 - Drag-and-drop multiple PNG/JPEG/WebP/AVIF images onto the button. Select a layer to move, crop, resize, center or remove it.
 - Export a button PNG or a **US Letter, actual-size PDF** of repeated button designs.
@@ -22,17 +22,17 @@ Both URLs currently live in this GitHub Pages repository. Creating a truly separ
 
 ## Interactive editor — Phase 1
 
-The editor now starts with **six picture-based template cards**. Choose a design and tap any text or graphic on the button to edit it. The selection panel shows only the relevant controls:
+The Fenton editor starts with **14 picture-based template cards** (the General edition has six). Choose a design and tap any text or graphic on the button to edit it. The selection panel shows only the relevant controls:
 
 - **Top and bottom curved text:** change words, adjust size, drag the ring slightly to reposition it, or use the orange handle to resize.
 - **Center text:** edit, drag, resize, center, or remove it.
-- **Center graphic:** change F, paw, T, or blank; drag or resize it.
+- **Curved text in Beginner mode:** the Main and Bottom text fields are always visible, with live character counters and warnings when text becomes too small for printing or approaches the border.
 - **Uploaded/team images:** tap one to select it, drag to move, drag the orange corner handle to resize, crop, change layer order, or remove it.
-- **Larger center artwork:** image layers now enlarge up to **180%** (enough to cover the button face), and built-in center symbols up to **125%**. Use the image selection slider or drag the orange corner handle. Larger sizes are preserved in editable projects and classroom print imports. Artwork extending past the cut circle is clipped when printed, and Print Studio can warn about border overlap.
+- **Larger center artwork:** uploaded image layers enlarge up to **180%**. Use the image slider or drag the orange corner handle. Artwork past the cut circle is clipped in the PDF; Print Studio warns when images cross the safe area.
 - **Background:** change background and border colors.
-- **Undo / Redo:** buttons beside the canvas (Ctrl/Cmd+Z, Ctrl/Cmd+Y when not typing in a field). Up to 35 committed design changes are retained during this session.
+- **Keyboard canvas:** focus the canvas, press Enter or ] for the next layer, [ for the previous layer, and use arrow keys to reposition selected text/images (Shift + arrow for larger steps). Tab continues normal keyboard focus. Undo/Redo feedback is separate from the selected-layer announcement. Up to 35 design changes are retained.
 
-The **All design settings · advanced** section contains the original precise controls, print settings remain at the right, and PNG/PDF outputs never include the orange selection guides. Editable JSON project files now retain curved-text positions and center-logo placement.
+The **All design settings · advanced** section contains precise controls; curved top/bottom fields remain visible in Beginner. Switching templates changes their styling without clearing user text, text positions or image layers. PNG/PDF outputs never include editing handles. Editable JSON project files now retain curved-text positions and center-logo placement.
 
 ## Phase 2: Find and arrange team logos
 
@@ -40,14 +40,14 @@ The **All design settings · advanced** section contains the original precise co
 - A **thumbnail library** shows all ten named Fenton team PNG files already available in `logos/`, grouped by numbered teams and Titanium Tigers teams.
 - **Search by team name or number** filters the library. Clicking a logo inserts it onto the canvas.
 - The **Pictures on your button** panel lists uploaded and team art, lets students select a layer, and moves it forward/backward in the stack.
-- While dragging images and center artwork, teal **snap-to-center guides** appear only in the editor. They never print.
+- While dragging images, teal **snap-to-center guides** appear only in the editor. They never print.
 - The existing advanced controls, cropping, portable save files, and PDF output remain available.
 
 ## Phase 3 — classroom Print Studio
 
 Click **Preview, print & combine buttons** (or **Print Studio** beside Undo/Redo) to open a dedicated printing workspace. The editor stays unchanged while printing.
 
-- **My button**: Select cut-circle diameter and quantity, inspect the sheet preview, and download an actual-size US Letter PDF. Design warnings flag oversized images, very long arc text, and 2.5-inch circles without paper wrap. Warnings are guidance, not guaranteed collision detection.
+- **My button**: Select cut-circle diameter and quantity (including 6 or 9 buttons), inspect the matching sheet preview, and download an actual-size US Letter PDF. Non-blocking design warnings flag oversized images, curved text shrinking below 7 pt or approaching the ring, text/background contrast below WCAG 4.5:1, and missing paper wrap. Patterns may need additional human contrast checks. Warnings are guidance, not guaranteed collision detection.
 - **Classroom sheet**: Add your current design, import multiple student `.json` editable project files or finished `.png` designs, set each button's quantity, reorder the print queue, preview every page, and download one combined PDF. The total is capped at 120 buttons or 30 designs per batch. PNG artwork is flattened, and the whole classroom sheet uses one selected finished size; **JSON projects are preferred** so the editor can rescale each design consistently.
 - **Local autosave and recovery**: The app stores a small automatic backup on the same browser/device. Students can restore a previous design when they reopen the site. If browser storage is full, students should use **Download editable project** instead.
 - **Print safety**: All PDFs use US Letter page geometry and the cut-circle size selected. Print at **Actual size / 100%**, check the press manufacturer's exact paper diameter, and measure a test sheet. A successful PDF download is not proof of physical printer calibration.
@@ -76,11 +76,15 @@ The general-purpose edition at `/studio/` neither loads the approved-image catal
 ## Student workflow
 
 1. Open the designer and select a starting template.
-2. Customize text and colors. Choose a border and center graphic.
+2. Customize curved text, colors and borders; optionally add center text.
 3. Select a Fenton team logo or upload/drag an image, then adjust its size and position.
 4. **Download editable project** if you want to return to the design later. Browser storage can be cleared or fill up.
 5. Select the paper cut-circle diameter required by your actual button press, choose the number of buttons, then **Download print-ready PDF**.
 6. Print at **100% / Actual size**, not Fit to page, and **measure a test cut circle with a ruler** before production.
+
+## Print preview and actual dimensions
+
+The selected button quantity determines what appears in both the preview and PDF. The 6-button default uses a centered **2-column × 3-row** grid on US Letter paper, rather than leaving a blank bottom row in a 3×3 grid. Nine identical buttons use the full 3×3 grid at the standard 2.625-inch cut diameter. Every PDF page is **612 × 792 points (8.5 × 11 inches)**; always print at 100% and measure a physical test circle.
 
 ## Button sizes and print dimensions
 
