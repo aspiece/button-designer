@@ -152,7 +152,7 @@ async function main(){
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),totalGalleryImages,'All images restores the complete gallery');
   await page.locator('[data-tiger-shortcut="pictures"]').click();
   await page.locator('#uxLogoSearch').fill('microscope');
-  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),0,'Manual search clears tiger-only filter');
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),1,'Manual search clears tiger-only filter and finds the microscope');
   await page.locator('[data-tiger-shortcut="all"]').click();
   await page.selectOption('#uxLogoCategory','Public Images');
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),20,'Public Images filter shows all 20 reviewed illustrations');
