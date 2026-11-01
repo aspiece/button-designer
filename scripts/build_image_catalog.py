@@ -29,7 +29,7 @@ APPROVED_SCHOOL_SVGS = {
     "school-logos/fenton-f-paw-for-black-background.svg",
     "school-logos/fenton-f-paw-for-orange-background.svg",
 }
-APPROVED_TEAM_SVGS = {"titanium-tigers.svg"}
+APPROVED_TEAM_SVGS = {"titanium-tigers-approved.svg"}
 MAX_FILES = 300
 MAX_FILE_BYTES = 8 * 1024 * 1024
 
