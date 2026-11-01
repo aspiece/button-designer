@@ -139,8 +139,10 @@ async function main(){
   assert.ok((await page.locator('#uxLogoGroups .studio-logo-card').count())>0,'Existing team logos remain accessible');
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-card[data-path^="approved-art/"]').count(),0,'Team filter excludes public images');
 
+  const beforeTeamLayer=await page.evaluate(()=>layers.length);
   await page.locator('.studio-logo-card[data-path="logos/tiger-paws-24471.png"]').first().click();
-  await page.waitForFunction(()=>window.ButtonStudioUX.getState().layers.length>0,null,{timeout:15000});
+  // Wait for the new team logo, not merely any earlier public-art image.
+  await page.waitForFunction(previous=>window.ButtonStudioUX.getState().layers.length>previous,beforeTeamLayer,{timeout:15000});
   // Two images have been imported. Select the first explicitly before testing motion,
   // rather than relying on a cycling order influenced by asynchronous layer updates.
   await page.evaluate(()=>window.ButtonStudioUX.selectImage(0));
