@@ -350,19 +350,54 @@
       ]
     },
     {
-      "path": "logos/school-logos/fenton-paw-f.png",
-      "name": "Fenton Tigers – Orange F Paw Emblem",
+      "path": "logos/school-logos/fenton-f-paw-for-white-background.svg",
+      "name": "Fenton F Paw – White Background",
       "category": "School Logos",
       "tags": [
         "Fenton",
+        "F paw",
         "Tigers",
-        "F logo",
-        "paw",
         "paw emblem",
-        "letter F",
-        "orange",
         "school",
-        "emblem"
+        "logo",
+        "F logo",
+        "letter F",
+        "White background",
+        "orange F · dark outline"
+      ]
+    },
+    {
+      "path": "logos/school-logos/fenton-f-paw-for-black-background.svg",
+      "name": "Fenton F Paw – Black Background",
+      "category": "School Logos",
+      "tags": [
+        "Fenton",
+        "F paw",
+        "Tigers",
+        "paw emblem",
+        "school",
+        "logo",
+        "F logo",
+        "letter F",
+        "Black background",
+        "orange F · white outer outline"
+      ]
+    },
+    {
+      "path": "logos/school-logos/fenton-f-paw-for-orange-background.svg",
+      "name": "Fenton F Paw – Orange Background",
+      "category": "School Logos",
+      "tags": [
+        "Fenton",
+        "F paw",
+        "Tigers",
+        "paw emblem",
+        "school",
+        "logo",
+        "F logo",
+        "letter F",
+        "Orange background",
+        "white F · dark outline"
       ]
     },
     {

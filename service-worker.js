@@ -1,19 +1,21 @@
 /* GitHub Pages offline shell. Never caches student uploads or private projects. */
-const VERSION = 'button-studio-pwa-20261101-v13';
+const VERSION = 'button-studio-pwa-20261101-v14';
 const SHELL = VERSION + '-shell';
 const RUNTIME = VERSION + '-runtime';
 const SCOPE = self.registration.scope;
 const ROOT = new URL(SCOPE);
 const FILES = [
-  './', './studio/', './phase1.js?v=20261101a', './phase2.js?v=20261101f', './phase3.js?v=20261101',
-  './phase1.css?v=20261101-all-screens', './phase2.css?v=20261101d', './phase3.css?v=20261101',
+  './', './studio/', './phase1.js?v=20261101a', './phase2.js?v=20261101g', './phase3.js?v=20261101',
+  './phase1.css?v=20261101-all-screens', './phase2.css?v=20261101e', './phase3.css?v=20261101',
   './properties.js?v=20261101d', './properties.css?v=20261101d',
   './library.js?v=20261101', './library.css?v=20261101', './studio/general.css?v=20261101',
   './pwa.js?v=20261101', './pwa.css?v=20261101', './manifest.json', './manifest-general.json',
   './icons/icon-192.png', './icons/icon-512.png', './logos/catalog.json', './approved-art/catalog.json',
   './logos/school-logos/fenton-bengal-tiger-head.png',
   './logos/school-logos/fenton-siberian-tiger-head.png',
-  './logos/school-logos/fenton-paw-f.png'
+  './logos/school-logos/fenton-f-paw-for-white-background.svg',
+  './logos/school-logos/fenton-f-paw-for-black-background.svg',
+  './logos/school-logos/fenton-f-paw-for-orange-background.svg'
 ];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(SHELL).then(c => c.addAll(FILES.map(p => new URL(p, ROOT).href))).then(() => self.skipWaiting()));
