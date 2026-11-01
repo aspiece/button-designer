@@ -5,7 +5,7 @@ const http=require('node:http');
 const path=require('node:path');
 const assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
-const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.png':'image/png','.avif':'image/avif'};
+const types={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.png':'image/png','.avif':'image/avif','.svg':'image/svg+xml'};
 const server=http.createServer((req,res)=>{
   const url=new URL(req.url,'http://127.0.0.1:8768');
   let file;
