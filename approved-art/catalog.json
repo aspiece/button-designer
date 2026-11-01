@@ -355,6 +355,220 @@
       "creator": "Fenton Button Designer project",
       "approved": true,
       "recolorable": true
+    },
+    {
+      "id": "game-controller",
+      "path": "approved-art/images/game-controller.svg",
+      "name": "Game Controller",
+      "category": "Robotics",
+      "tags": [
+        "game",
+        "controller",
+        "gaming",
+        "play"
+      ],
+      "license": "cc0",
+      "source": "Original teacher-reviewed Fenton Button Designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "robot-arm",
+      "path": "approved-art/images/robot-arm.svg",
+      "name": "Robot Arm",
+      "category": "Robotics",
+      "tags": [
+        "robot",
+        "arm",
+        "engineering",
+        "automation"
+      ],
+      "license": "cc0",
+      "source": "Original teacher-reviewed Fenton Button Designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "computer-chip",
+      "path": "approved-art/images/computer-chip.svg",
+      "name": "Computer Chip",
+      "category": "Robotics",
+      "tags": [
+        "computer",
+        "chip",
+        "coding",
+        "electronics"
+      ],
+      "license": "cc0",
+      "source": "Original teacher-reviewed Fenton Button Designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "coding-symbols",
+      "path": "approved-art/images/coding-symbols.svg",
+      "name": "Coding Symbols",
+      "category": "Robotics",
+      "tags": [
+        "coding",
+        "code",
+        "programming",
+        "computer"
+      ],
+      "license": "cc0",
+      "source": "Original teacher-reviewed Fenton Button Designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "3d-printer",
+      "path": "approved-art/images/3d-printer.svg",
+      "name": "3D Printer",
+      "category": "Robotics",
+      "tags": [
+        "3d printer",
+        "printing",
+        "makers",
+        "technology"
+      ],
+      "license": "cc0",
+      "source": "Original teacher-reviewed Fenton Button Designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "science-flask",
+      "path": "approved-art/images/science-flask.svg",
+      "name": "Science Flask",
+      "category": "Science",
+      "tags": [
+        "science",
+        "flask",
+        "chemistry",
+        "experiment"
+      ],
+      "license": "cc0",
+      "source": "Original teacher-reviewed Fenton Button Designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "football",
+      "path": "approved-art/images/football.svg",
+      "name": "Football",
+      "category": "Sports",
+      "tags": [
+        "football",
+        "sports",
+        "ball"
+      ],
+      "license": "cc0",
+      "source": "Original teacher-reviewed Fenton Button Designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "baseball",
+      "path": "approved-art/images/baseball.svg",
+      "name": "Baseball",
+      "category": "Sports",
+      "tags": [
+        "baseball",
+        "sports",
+        "ball"
+      ],
+      "license": "cc0",
+      "source": "Original teacher-reviewed Fenton Button Designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "music-notes",
+      "path": "approved-art/images/music-notes.svg",
+      "name": "Music Notes",
+      "category": "School",
+      "tags": [
+        "music",
+        "notes",
+        "song",
+        "band"
+      ],
+      "license": "cc0",
+      "source": "Original teacher-reviewed Fenton Button Designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "sea-turtle",
+      "path": "approved-art/images/sea-turtle.svg",
+      "name": "Sea Turtle",
+      "category": "Nature",
+      "tags": [
+        "turtle",
+        "sea",
+        "nature",
+        "ocean"
+      ],
+      "license": "cc0",
+      "source": "Original teacher-reviewed Fenton Button Designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "friendly-frog",
+      "path": "approved-art/images/friendly-frog.svg",
+      "name": "Friendly Frog",
+      "category": "Nature",
+      "tags": [
+        "frog",
+        "pond",
+        "animal",
+        "nature"
+      ],
+      "license": "cc0",
+      "source": "Original teacher-reviewed Fenton Button Designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "dragonfly",
+      "path": "approved-art/images/dragonfly.svg",
+      "name": "Dragonfly",
+      "category": "Nature",
+      "tags": [
+        "dragonfly",
+        "insect",
+        "nature",
+        "pond"
+      ],
+      "license": "cc0",
+      "source": "Original teacher-reviewed Fenton Button Designer illustration",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
     }
   ]
 }

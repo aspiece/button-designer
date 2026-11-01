@@ -185,7 +185,7 @@ async function main(){
   assert.equal(await page.locator('#saveProject').isVisible(),false,'Save actions are not shown in Logos');
   assert.ok(await page.locator('#logosTools .studio-logo-library').evaluate(el=>el.compareDocumentPosition(document.querySelector('#uxLogoGroups'))===16||el.contains(document.querySelector('#uxLogoGroups'))),'Gallery entries stay inside Logos tab');
   // A single searchable gallery presents logos and reviewed public art as categories.
-  assert.equal(publicArt.images.length,20,'Gallery includes 18 starter illustrations and two coach-approved Fenton tiger mascots');
+  assert.equal(publicArt.images.length,32,'Gallery includes 18 starter, 2 approved mascot, and 12 new teacher-approved public illustrations');
   assert.equal(await page.locator('#uxLogoSearch').count(),1,'One gallery search box');
   assert.equal(await page.locator('#uxLogoCategory').count(),1,'One gallery category dropdown');
   assert.equal(await page.locator('#approvedArtSearch, #approvedArtCategory, .studio-approved-art').count(),0,'No duplicate public-art panel');
@@ -237,10 +237,10 @@ async function main(){
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),1,'Manual search clears tiger-only filter and finds the microscope');
   await page.locator('[data-tiger-shortcut="all"]').click();
   await page.selectOption('#uxLogoCategory','Public Images');
-  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),20,'Public Images filter shows all 20 reviewed illustrations');
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),32,'Public Images filter shows all 32 reviewed illustrations');
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-group').count(),1,'Public Images has one grouped section');
   await page.locator('#uxLogoSearch').fill('Science');
-  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),3,'Public art topic remains searchable within shared gallery');
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),4,'Public art topic finds science illustrations including the new flask');
   await page.locator('#uxLogoSearch').fill('microscope');
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),1,'Keyword search finds public illustration');
   await page.locator('#uxLogoSearch').fill('');
@@ -253,7 +253,29 @@ async function main(){
   assert.equal(await page.locator('#propertiesPanel #quickImageSize').count(),1,'Selected public artwork is editable in the new properties panel');
   assert.equal(await page.locator('#propertiesPanel .studio-layer-row').count(),1,'Image layer appears in right-hand layer manager');
 
-  assert.equal(await page.locator('#uxLogoGroups .public-art-choice').count(),20,'Each curated SVG including two Fenton mascots has a color picker');
+  assert.equal(await page.locator('#uxLogoGroups .public-art-choice').count(),32,'Each reviewed SVG including 12 newly approved graphics has a color picker');
+  for(const id of ['game-controller','robot-arm','computer-chip','coding-symbols','3d-printer','science-flask','football','baseball','music-notes','sea-turtle','friendly-frog','dragonfly']){
+    const selector=`#uxLogoGroups .studio-logo-card[data-path="approved-art/images/${id}.svg"]`;
+    const card=page.locator(selector);
+    assert.equal(await card.count(),1,id+' must appear exactly once in approved public gallery');
+    const icon=card.locator('img');
+    assert.ok(await icon.getAttribute('src'),id+' thumbnail has a nonempty source');
+    assert.equal(await page.locator('.public-art-choice').filter({has:page.locator(`button[data-path="approved-art/images/${id}.svg"]`)}).locator('select.public-art-color').count(),1,id+' offers the approved recoloring selector');
+  }
+  // Import on a fresh button so the existing multi-step smoke test retains
+  // its original layer budget and selection behavior.
+  const approvedPage=await context.newPage();
+  await approvedPage.goto('http://127.0.0.1:8765/',{waitUntil:'networkidle'});
+  await approvedPage.locator('#tab-logos').click();
+  await approvedPage.locator('#uxLogoSearch').fill('game controller');
+  const newArt=approvedPage.locator('.studio-logo-card[data-path="approved-art/images/game-controller.svg"]');
+  const beforeNew=await approvedPage.evaluate(()=>window.ButtonStudioUX.getState().layers.length);
+  await newArt.click();
+  await approvedPage.waitForFunction(old=>window.ButtonStudioUX.getState().layers.length>old, beforeNew,{timeout:15000});
+  assert.equal(await approvedPage.evaluate(()=>window.ButtonStudioUX.getState().layers.length),beforeNew+1,'New game controller image inserts onto actual editable button');
+  assert.ok((await approvedPage.evaluate(()=>window.ButtonStudioUX.getState().layers.at(-1).data)).startsWith('data:image/png'),'New original SVG is converted to printable PNG layer');
+  await approvedPage.close();
+
   const robot=page.locator('.public-art-choice').filter({has:page.locator('button[data-path="approved-art/images/robot.svg"]')});
   assert.deepEqual(await robot.locator('.public-art-color option').allTextContents(),['Original','Black','Orange','White'],'Public art offers original + the three team colors');
   // Pixel-level verification: same tint is visible in card preview, editable layer and PDF source.
