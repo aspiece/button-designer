@@ -1,14 +1,14 @@
 /* GitHub Pages offline shell. Never caches student uploads or private projects. */
-const VERSION = 'button-studio-pwa-20261031-v1';
+const VERSION = 'button-studio-pwa-20261101-v2';
 const SHELL = VERSION + '-shell';
 const RUNTIME = VERSION + '-runtime';
 const SCOPE = self.registration.scope;
 const ROOT = new URL(SCOPE);
 const FILES = [
-  './', './studio/', './phase1.js', './phase2.js', './phase3.js',
-  './phase1.css', './phase2.css', './phase3.css',
-  './library.js', './library.css', './studio/general.css',
-  './pwa.js', './pwa.css', './manifest.json', './manifest-general.json',
+  './', './studio/', './phase1.js?v=20261101', './phase2.js?v=20261101', './phase3.js?v=20261101',
+  './phase1.css?v=20261101', './phase2.css?v=20261101', './phase3.css?v=20261101',
+  './library.js?v=20261101', './library.css?v=20261101', './studio/general.css?v=20261101',
+  './pwa.js?v=20261101', './pwa.css?v=20261101', './manifest.json', './manifest-general.json',
   './icons/icon-192.png', './icons/icon-512.png', './logos/catalog.json'
 ];
 self.addEventListener('install', event => {
