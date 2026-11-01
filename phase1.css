@@ -123,3 +123,29 @@ header{box-shadow:0 2px 12px #00000019}
  .previewPanel #historyFeedback:empty{display:none}
  .previewPanel .studio-canvas-hint{margin:6px 0 9px}
 }
+
+/* 701–760px inherited a stacked layout from the older tablet stylesheet.
+   Restore the actual two-column editor here, so the design panel does not
+   push the preview down below the fold at this transitional breakpoint. */
+@media(min-width:701px) and (max-width:760px){
+ body[data-studio-edition="fenton"] .app{
+  display:grid;
+  grid-template-columns:minmax(245px,330px) minmax(0,1fr);
+ }
+ body[data-studio-edition="fenton"] .editor-tabs{
+  grid-column:1/-1;
+  grid-row:1;
+  width:100%;
+ }
+ body[data-studio-edition="fenton"] .app>.previewPanel{
+  grid-column:2;
+  grid-row:2;
+  order:0;
+ }
+ body[data-studio-edition="fenton"] #designTools,
+ body[data-studio-edition="fenton"] #sideTools{
+  grid-column:1;
+  grid-row:2;
+  order:0;
+ }
+}
