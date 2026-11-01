@@ -1,4 +1,4 @@
-/* Phase 2: Visual team logo library, layered artwork, and beginner/advanced mode. */
+/* Phase 2: One image gallery for team logos, FIRST marks, school logos, and approved public art. */
 (() => {
  'use strict';
  const general=window.ButtonStudioEdition==='general';
@@ -26,10 +26,10 @@
  setMode(false);
  
  const library=document.createElement('section');library.className='studio-logo-library';
- library.setAttribute('aria-label',general?'Upload your own images':'Fenton robotics image gallery');
+ library.setAttribute('aria-label',general?'Upload your own images':'Fenton image gallery with teacher-approved public art');
  library.innerHTML=general?
   '<h3>Your artwork</h3><p>No preloaded team images. Upload a photo, logo, or illustration from your own device.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload an image</button>':
-  '<h3>Image Library</h3><p>Choose a reusable image uploaded to GitHub. New artwork appears after the gallery updates.</p><label for="uxLogoSearch">Search images</label><input type="search" id="uxLogoSearch" placeholder="Search names, teams, or keywords" autocomplete="off"><label for="uxLogoCategory">Category</label><select id="uxLogoCategory"><option value="All">All images</option><option value="School Logos">School Logos</option><option value="Robotics Teams">Robotics Teams</option><option value="FIRST Logos">FIRST Logos</option></select><div class="studio-logo-results" id="uxLogoResults" role="status" aria-live="polite">Loading images…</div><div id="uxLogoGroups"></div><p id="uxLogoEmpty" hidden>No images match these filters.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload my own picture</button>';
+  '<h3>Image Library</h3><p>Search team logos, school logos, FIRST artwork, and coach-approved public images in one place. Public images are reviewed before appearing here; there is no live internet image search.</p><label for="uxLogoSearch">Search images</label><input type="search" id="uxLogoSearch" placeholder="Search names, teams, or keywords" autocomplete="off"><label for="uxLogoCategory">Category</label><select id="uxLogoCategory"><option value="All">All images</option><option value="School Logos">School Logos</option><option value="Robotics Teams">Robotics Teams</option><option value="FIRST Logos">FIRST Logos</option><option value="Public Images">Public Images</option></select><div class="studio-logo-results" id="uxLogoResults" role="status" aria-live="polite">Loading images…</div><div id="uxLogoGroups"></div><p id="uxLogoEmpty" hidden>No images match these filters.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload my own picture</button>';
  const logoTab=!general?document.getElementById('logosTools')?.querySelector('.toolSectionBody'):null;
  if(logoTab){
   // Keep the existing hidden inputs and layer controls wired to the editor,
@@ -52,13 +52,40 @@
    const select=document.getElementById('uxLogoCategory');
    const results=document.getElementById('uxLogoResults');
    const empty=document.getElementById('uxLogoEmpty');
-   const ORDER=['Robotics Teams','FIRST Logos','School Logos'];
+   const ORDER=['Robotics Teams','FIRST Logos','School Logos','Public Images'];
+   const PUBLIC_CATEGORIES=new Set(['Robotics','Science','Nature','Sports','School','Seasonal']);
    let assets=[];
    let busy=false;
    function validPath(path){
      if(typeof path!=='string'||!path.startsWith('logos/'))return false;
      const parts=path.split('/');
      return parts.length>=2&&!parts.some(p=>!p||p==='.'||p==='..'||p.includes('\\'))&&/\.(png|jpe?g|webp|avif)$/i.test(path);
+   }
+   // Public artwork is a separate allowlist; an arbitrary file or external URL cannot enter the gallery.
+   function validPublicPath(path){
+     return typeof path==='string'&&/^approved-art\/images\/[a-z0-9-]+\.(?:svg|png|jpe?g|webp)$/.test(path);
+   }
+   function validItemPath(item){
+     return item.category==='Public Images'?validPublicPath(item.path):validPath(item.path);
+   }
+   async function approvedPng(blob){
+     if(!blob.size||blob.size>8*1024*1024)throw Error('Artwork is empty or larger than 8 MB');
+     const url=URL.createObjectURL(blob);
+     try{
+       const im=new Image();
+       await new Promise((resolve,reject)=>{
+         im.onload=resolve;im.onerror=()=>reject(Error('Could not decode artwork'));
+         im.src=url;
+       });
+       if(!im.naturalWidth||!im.naturalHeight)throw Error('Artwork has invalid dimensions');
+       const scale=Math.min(1,1200/Math.max(im.naturalWidth,im.naturalHeight));
+       const cv=document.createElement('canvas');
+       cv.width=Math.max(1,Math.round(im.naturalWidth*scale));
+       cv.height=Math.max(1,Math.round(im.naturalHeight*scale));
+       cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+       return await new Promise((resolve,reject)=>cv.toBlob(
+         image=>image?resolve(image):reject(Error('Could not convert artwork')),'image/png'));
+     }finally{URL.revokeObjectURL(url)}
    }
    // Remove only white/near-white regions connected to image edges.
    // This preserves enclosed white lettering and details inside logos.
@@ -148,7 +175,7 @@
      groupsContainer.replaceChildren();
      const query=search.value.trim().toLowerCase(),category=select.value;
      const filtered=assets.filter(item=>(category==='All'||item.category===category)&&
-      (item.name+' '+item.path+' '+item.tags.join(' ')).toLowerCase().includes(query));
+      (item.name+' '+item.category+' '+(item.subcategory||'')+' '+item.tags.join(' ')).toLowerCase().includes(query));
      for(const groupName of ORDER){
        const items=filtered.filter(item=>item.category===groupName);
        if(!items.length)continue;
@@ -167,7 +194,8 @@
          picture.addEventListener('error',()=>{picture.hidden=true;button.classList.add('studio-logo-broken')});
          const label=document.createElement('span');label.textContent=item.name;
          const detail=document.createElement('small');
-         detail.textContent=item.category==='Robotics Teams'?'Black logo · transparent background':groupName;
+         detail.textContent=item.category==='Robotics Teams'?'Black logo · transparent background':
+           item.category==='Public Images'?(item.subcategory+' · '+item.license.toUpperCase()+' · reviewed'):groupName;
          button.append(picture,label,detail);
          if(item.category==='Robotics Teams'){
            const wrap=document.createElement('div');wrap.className='team-logo-choice';wrap.dataset.logoColor='black';
@@ -193,31 +221,54 @@
      results.textContent=filtered.length+' of '+assets.length+' image'+(assets.length===1?'':'s')+' shown';
    }
    async function loadGallery(){
-     results.textContent='Loading images…';
+     results.textContent='Loading image gallery…';
+     const unavailable=[];
+     let logoAssets=[],publicAssets=[];
      try{
        const response=await fetch('logos/catalog.json',{cache:'no-store'});
-       if(!response.ok)throw Error('Catalog not available ('+response.status+')');
+       if(!response.ok)throw Error('Team-logo catalog unavailable');
        const manifest=await response.json();
-       if(manifest.version!==1||!Array.isArray(manifest.images))throw Error('Invalid gallery format');
+       if(manifest.version!==1||!Array.isArray(manifest.images))throw Error('Invalid team-logo catalog');
        const paths=new Set();
-       assets=manifest.images.filter(item=>{
-         if(!item||!validPath(item.path)||typeof item.name!=='string'||!item.name.trim()||!ORDER.includes(item.category)||paths.has(item.path))return false;
+       logoAssets=manifest.images.filter(item=>{
+         if(!item||!validPath(item.path)||typeof item.name!=='string'||!item.name.trim()||
+            !ORDER.slice(0,3).includes(item.category)||paths.has(item.path))return false;
          paths.add(item.path);return true
        }).slice(0,300).map(item=>({
          path:item.path,name:item.name.slice(0,100),category:item.category,
          tags:Array.isArray(item.tags)?item.tags.filter(x=>typeof x==='string').slice(0,10):[]
        }));
-       showGallery()
-     }catch(error){
-       results.textContent='Could not load the image gallery: '+error.message;
-       empty.hidden=true
-     }
+     }catch(error){unavailable.push('team logos')}
+     try{
+       const response=await fetch('approved-art/catalog.json',{cache:'no-store'});
+       if(!response.ok)throw Error('Approved artwork catalog unavailable');
+       const manifest=await response.json();
+       if(manifest.version!==1||!Array.isArray(manifest.images))throw Error('Invalid approved artwork catalog');
+       const paths=new Set(),ids=new Set();
+       publicAssets=manifest.images.filter(item=>{
+         if(!item||item.approved!==true||!validPublicPath(item.path)||typeof item.name!=='string'||
+            !item.name.trim()||!PUBLIC_CATEGORIES.has(item.category)||
+            !['cc0','pdm'].includes(item.license)||typeof item.id!=='string'||
+            !/^[a-z0-9-]+$/.test(item.id)||paths.has(item.path)||ids.has(item.id)||
+            typeof item.source!=='string'||!item.source.trim()||
+            typeof item.creator!=='string'||!item.creator.trim()||
+            typeof item.sourceUrl!=='string'||!item.sourceUrl.startsWith('https://')||
+            !Array.isArray(item.tags)||item.tags.some(t=>typeof t!=='string'))return false;
+         paths.add(item.path);ids.add(item.id);return true
+       }).slice(0,200).map(item=>({
+         path:item.path,name:item.name.slice(0,90),category:'Public Images',subcategory:item.category,
+         license:item.license,tags:item.tags.slice(0,10)
+       }));
+     }catch(error){unavailable.push('public images')}
+     assets=[...logoAssets,...publicAssets];
+     showGallery();
+     if(unavailable.length)results.textContent+=' · Unavailable: '+unavailable.join(', ');
    }
    search.addEventListener('input',showGallery);
    select.addEventListener('change',showGallery);
    groupsContainer.addEventListener('click',async e=>{
      const card=e.target.closest('button[data-path]');if(!card||busy)return;
-     const entry=assets.find(x=>x.path===card.dataset.path);if(!entry||!validPath(entry.path))return;
+     const entry=assets.find(x=>x.path===card.dataset.path);if(!entry||!validItemPath(entry))return;
      if(api.getState().layers.length>=12){results.textContent='Maximum 12 image layers. Remove one first.';return}
      busy=true;card.disabled=true;results.textContent='Adding '+entry.name+'…';
      try{
@@ -226,6 +277,7 @@
        let blob=await response.blob();
        if(!blob.size||blob.size>8*1024*1024)throw Error('Image is empty or larger than 8 MB');
        if(entry.category==='School Logos')blob=await cleanSchoolBackground(blob);
+       if(entry.category==='Public Images')blob=await approvedPng(blob);
        const color=entry.category==='Robotics Teams'?(card.closest('.team-logo-choice')?.querySelector('.team-logo-color')?.value||'black'):'black';
        if(entry.category==='Robotics Teams')blob=await recolorTeamLogo(blob,entry.path,color);
        // Let the existing file-import pipeline validate, normalize, and create an editable layer.
