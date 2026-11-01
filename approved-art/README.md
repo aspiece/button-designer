@@ -16,6 +16,10 @@ The **18 reviewed starter SVGs** have `"recolorable": true` and show an **Origin
 
 The coach approved **12 original, transparent SVG button illustrations**: Game Controller, Robot Arm, Computer Chip, Coding Symbols, 3D Printer, Science Flask, Football, Baseball, Music Notes, Sea Turtle, Friendly Frog, and Dragonfly. They are listed in `catalog.json` under their existing school-friendly categories, so no new menu is required. All 12 were visually reviewed as a contact sheet before approval. They are original project illustrations (not imported from Openverse), designated CC0 to the extent rights exist, and support Original / Black / Orange / White coloration with transparent backgrounds. The student-facing **Public Images** gallery now contains **32 approved graphics**. Other generated candidate artwork is not published until approved.
 
+## Approved student graphics — Batch 2 (November 2026)
+
+The coach also approved **all 12 original graphics** in Batch 2: Headphones, Electric Guitar, Chess Knight, Volleyball, Skateboard, Dinosaur Head, Fox Head, Honeybee, Camping Tent, Artist Palette, Open Book, and Compass. These are transparent, passive SVG assets under existing categories and were reviewed as a numbered preview before publication. Every graphic is marked `approved: true`, designated CC0 to the extent rights exist, and supports Original / Black / Orange / White recoloring. With Batch 1 and the earlier graphics, **Public Images now offers 44 reviewed choices**; designs not explicitly approved remain unpublished.
+
 ## Adding artwork from Openverse or another public source
 
 1. **An adult** searches [Openverse](https://openverse.org/) using the **CC0** or **Public Domain Mark (PDM)** filters, ideally for simple illustrations or icons. Openverse's `mature=false` filter helps but is **not** a substitute for human review.
