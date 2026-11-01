@@ -451,7 +451,7 @@ function updateCounters(){
   onUpdate(fn){phase2Listeners.add(fn);fn();return ()=>phase2Listeners.delete(fn)},
   getState(){return {layers:layers.map((l,i)=>({index:i,name:l.name,data:l.data,size:l.size})),selected:selected?{...selected}:null}},
   selectImage(index){if(Number.isInteger(index)&&layers[index])newSelection('image',index)},
-  selectElement(kind){if(['top','bottom','middle','background'].includes(kind))newSelection(kind)},
+  selectElement(kind){if(kind===null||['top','bottom','middle','background'].includes(kind))newSelection(kind)},
   addLogo(id){const select=$('teamLogo');if(!select||![...select.options].some(o=>o.value===id))return false;
    select.value=id;select.dispatchEvent(new Event('change',{bubbles:true}));return true},
   reorderImage(index,move){
