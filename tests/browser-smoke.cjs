@@ -263,12 +263,19 @@ async function main(){
     assert.ok(await icon.evaluate(img=>img.naturalWidth>=256),id+' thumbnail loads as real SVG artwork');
     assert.equal(await page.locator('.public-art-choice').filter({has:card}).locator('select.public-art-color').count(),1,id+' offers the approved recoloring selector');
   }
-  const newArt=page.locator('.studio-logo-card[data-path="approved-art/images/game-controller.svg"]');
-  const beforeNew=await page.evaluate(()=>window.ButtonStudioUX.getState().layers.length);
+  // Import on a fresh button so the existing multi-step smoke test retains
+  // its original layer budget and selection behavior.
+  const approvedPage=await context.newPage();
+  await approvedPage.goto('http://127.0.0.1:8765/',{waitUntil:'networkidle'});
+  await approvedPage.locator('#tab-logos').click();
+  await approvedPage.locator('#uxLogoSearch').fill('game controller');
+  const newArt=approvedPage.locator('.studio-logo-card[data-path="approved-art/images/game-controller.svg"]');
+  const beforeNew=await approvedPage.evaluate(()=>window.ButtonStudioUX.getState().layers.length);
   await newArt.click();
-  await page.waitForFunction(old=>window.ButtonStudioUX.getState().layers.length>old, beforeNew,{timeout:15000});
-  assert.equal(await page.evaluate(()=>window.ButtonStudioUX.getState().layers.length),beforeNew+1,'New game controller image inserts onto actual editable button');
-  assert.ok((await page.evaluate(()=>window.ButtonStudioUX.getState().layers.at(-1).data)).startsWith('data:image/png'),'New original SVG is converted to printable PNG layer');
+  await approvedPage.waitForFunction(old=>window.ButtonStudioUX.getState().layers.length>old, beforeNew,{timeout:15000});
+  assert.equal(await approvedPage.evaluate(()=>window.ButtonStudioUX.getState().layers.length),beforeNew+1,'New game controller image inserts onto actual editable button');
+  assert.ok((await approvedPage.evaluate(()=>window.ButtonStudioUX.getState().layers.at(-1).data)).startsWith('data:image/png'),'New original SVG is converted to printable PNG layer');
+  await approvedPage.close();
 
   const robot=page.locator('.public-art-choice').filter({has:page.locator('button[data-path="approved-art/images/robot.svg"]')});
   assert.deepEqual(await robot.locator('.public-art-color option').allTextContents(),['Original','Black','Orange','White'],'Public art offers original + the three team colors');
