@@ -29,6 +29,7 @@ APPROVED_SCHOOL_SVGS = {
     "school-logos/fenton-f-paw-for-black-background.svg",
     "school-logos/fenton-f-paw-for-orange-background.svg",
 }
+APPROVED_TEAM_SVGS = {"titanium-tigers.svg"}
 MAX_FILES = 300
 MAX_FILE_BYTES = 8 * 1024 * 1024
 
@@ -71,7 +72,7 @@ def make_catalog(root: Path = LOGOS) -> dict:
         metadata = document.get("assets", {})
     paths = [p for p in root.rglob("*") if p.is_file() and (
         p.suffix.lower() in EXT
-        or (p.suffix.lower() == ".svg" and p.relative_to(root).as_posix() in APPROVED_SCHOOL_SVGS)
+        or (p.suffix.lower() == ".svg" and p.relative_to(root).as_posix() in APPROVED_SCHOOL_SVGS | APPROVED_TEAM_SVGS)
     )]
     if len(paths) > MAX_FILES:
         raise ValueError(f"Limit is {MAX_FILES} gallery images")

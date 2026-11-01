@@ -90,7 +90,9 @@
      const parts=path.split('/');
      if(parts.length<2||parts.some(p=>!p||p==='.'||p==='..'||p.includes('\\')))return false;
      // Only these three reviewed F-paw colorways are allowed as SVG school logos.
-     if(/\.svg$/i.test(path))return category==='School Logos'&&/^logos\/school-logos\/fenton-f-paw-for-(white|black|orange)-background\.svg$/.test(path);
+     if(/\.svg$/i.test(path))return (
+       (category==='School Logos'&&/^logos\/school-logos\/fenton-f-paw-for-(white|black|orange)-background\.svg$/.test(path))||
+       (category==='Robotics Teams'&&path==='logos/titanium-tigers.svg'));
      return /\.(png|jpe?g|webp|avif)$/i.test(path);
    }
    // Public artwork is a separate allowlist; an arbitrary file or external URL cannot enter the gallery.
@@ -176,7 +178,17 @@
    async function recolorTeamLogo(blob,path,color='black'){
      const rgb=teamColors[color];
      if(!rgb)throw Error('Unknown team logo color');
-     const bitmap=await createImageBitmap(blob),cv=document.createElement('canvas');
+     // Chromium does not consistently decode SVG through createImageBitmap.
+     // Reuse the normal rasterization path for a strictly allowlisted vector team logo.
+     let bitmap;
+     try{bitmap=await createImageBitmap(blob)}
+     catch(error){
+       if(blob.type!=='image/svg+xml')throw error;
+       const src=URL.createObjectURL(blob),img=new Image();
+       try{img.src=src;await img.decode();bitmap=img}
+       finally{URL.revokeObjectURL(src)}
+     }
+     const cv=document.createElement('canvas');
      const scale=Math.min(1,1400/Math.max(bitmap.width,bitmap.height));
      cv.width=Math.max(1,Math.round(bitmap.width*scale));cv.height=Math.max(1,Math.round(bitmap.height*scale));
      const cx=cv.getContext('2d',{willReadFrequently:true});
@@ -200,7 +212,9 @@
      return await new Promise((resolve,reject)=>cv.toBlob(out=>out?resolve(out):reject(Error('Could not render logo')),'image/png'));
    }
    async function teamPreview(path,img,color='black'){
-     img.dataset.requestedColor=color;
+     // Keep the last fully rendered image until its replacement is ready, but do
+     // not claim the new color has loaded while displaying a stale previous color.
+     img.dataset.pendingColor=color;
      const cacheKey=path+'|'+color;
      let pending=teamPreviewCache.get(cacheKey);
      if(!pending){
@@ -215,7 +229,10 @@
      }
      const src=await pending;
      // A slow request for Black must not overwrite a later Orange or White choice.
-     if(img.isConnected&&img.dataset.requestedColor===color)img.src=src;
+     if(img.isConnected&&img.dataset.pendingColor===color){
+       img.src=src;
+       img.dataset.requestedColor=color;
+     }
    }
    const imageUrl=path=>path.split('/').map(encodeURIComponent).join('/');
    const publicBlobCache=new Map(),publicPreviewCache=new Map();
