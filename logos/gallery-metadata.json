@@ -420,19 +420,22 @@
       ]
     },
     "logos/titanium-tigers.svg": {
-      "name": "Titanium Tigers · 5114 – Restored Original",
+      "exclude": true
+    },
+    "logos/titanium-tigers-approved.svg": {
+      "name": "Titanium Tigers · 5114 – Approved Emblem",
       "category": "Robotics Teams",
       "tags": [
         "Fenton Robotics",
-        "Tigers",
         "Titanium",
+        "Tigers",
         "5114",
-        "Black",
-        "Orange",
-        "White",
         "Gear",
         "T",
-        "Original"
+        "Approved",
+        "Black",
+        "Orange",
+        "White"
       ]
     }
   }
