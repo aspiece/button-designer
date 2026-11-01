@@ -261,7 +261,7 @@ async function main(){
     const card=page.locator(`#uxLogoGroups button.studio-logo-card[data-path="${path}"]`);
     assert.equal(await card.count(),1,id+' appears exactly once in the student Public Images gallery');
     assert.ok(await card.locator('img').getAttribute('src'),id+' has a rendered SVG preview source');
-    const selector=page.locator('.public-art-choice').filter({has:card}).locator('select.public-art-color');
+    const selector=page.locator('.public-art-choice').filter({has:page.locator(`button[data-path="${path}"]`)}).locator('select.public-art-color');
     assert.deepEqual(await selector.locator('option').allTextContents(),['Original','Black','Orange','White'],id+' offers original plus three recolors');
   }
   const batch2Page=await context.newPage();
