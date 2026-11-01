@@ -102,7 +102,7 @@ body[data-editor-tab="logos"] #logosTools .studio-logo-library{
   padding:14px 16px 24px;border-radius:16px 0 0 16px;
   box-shadow:-14px 0 44px #10182745;
   transform:translateX(105%);visibility:hidden;pointer-events:none;
-  transition:transform .18s ease,visibility .18s ease;
+  transition:transform .18s ease;
  }
  #previewWorkspace>#propertiesPanel[data-drawer-open="true"]{
   transform:translateX(0);visibility:visible;pointer-events:auto;
