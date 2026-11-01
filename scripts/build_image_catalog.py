@@ -23,6 +23,12 @@ FOLDERS = {
     "first logos": "FIRST Logos",
 }
 EXT = {".png", ".jpg", ".jpeg", ".webp", ".avif"}
+# A narrow allowlist keeps SVG scripts or random uploaded vectors out of the student gallery.
+APPROVED_SCHOOL_SVGS = {
+    "school-logos/fenton-f-paw-for-white-background.svg",
+    "school-logos/fenton-f-paw-for-black-background.svg",
+    "school-logos/fenton-f-paw-for-orange-background.svg",
+}
 MAX_FILES = 300
 MAX_FILE_BYTES = 8 * 1024 * 1024
 
@@ -63,7 +69,10 @@ def make_catalog(root: Path = LOGOS) -> dict:
         if not isinstance(document, dict) or not isinstance(document.get("assets", {}), dict):
             raise ValueError("Invalid gallery metadata")
         metadata = document.get("assets", {})
-    paths = [p for p in root.rglob("*") if p.is_file() and p.suffix.lower() in EXT]
+    paths = [p for p in root.rglob("*") if p.is_file() and (
+        p.suffix.lower() in EXT
+        or (p.suffix.lower() == ".svg" and p.relative_to(root).as_posix() in APPROVED_SCHOOL_SVGS)
+    )]
     if len(paths) > MAX_FILES:
         raise ValueError(f"Limit is {MAX_FILES} gallery images")
     # Prefer files without '(1)' if identical copies were uploaded.

@@ -21,7 +21,7 @@ jobs:
           python3 -m unittest discover -s tests -p 'test_approved_art.py'
       - name: Validate approved image gallery and new-upload behavior
         run: |
-          python3 scripts/build_image_catalog.py --validate
+          python3 scripts/build_image_catalog.py --check
           python3 -m unittest discover -s tests -p 'test_image_catalog.py'
 
   browser:
