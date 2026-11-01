@@ -134,17 +134,30 @@ async function main(){
   await page.locator('[data-tiger-shortcut="pictures"]').click();
   assert.equal(await page.inputValue('#uxLogoSearch'),'tiger','Tiger pictures search is set automatically');
   assert.equal(await page.inputValue('#uxLogoCategory'),'All','Tiger pictures includes both school logos and curated mascot art');
-  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),4,'Tiger pictures shows both existing school illustrations and two new mascot designs');
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),6,'Tiger pictures shows existing art plus new Bengal and Siberian roaring heads');
   assert.equal(await page.locator('.studio-logo-card[data-path="logos/school-logos/images.jpeg"]').count(),1,'Roaring tiger illustration is immediately findable');
   assert.equal(await page.locator('.studio-logo-card[data-path="logos/school-logos/SE-Logo_medium.png"]').count(),1,'Tiger head illustration is immediately findable');
   assert.equal(await page.locator('.studio-logo-card[data-path="approved-art/images/fenton-tiger-roar.svg"]').count(),1,'New roaring Fenton mascot is immediately findable');
   assert.equal(await page.locator('.studio-logo-card[data-path="approved-art/images/fenton-tiger-flame.svg"]').count(),1,'New flame-stripe Fenton mascot is immediately findable');
+  assert.equal(await page.locator('.studio-logo-card[data-path="logos/school-logos/fenton-bengal-tiger-head.png"]').count(),1,'New Bengal tiger head is immediately findable');
+  assert.equal(await page.locator('.studio-logo-card[data-path="logos/school-logos/fenton-siberian-tiger-head.png"]').count(),1,'New Siberian tiger head is immediately findable');
+  for(const name of ['fenton-bengal-tiger-head','fenton-siberian-tiger-head']){
+    const im=page.locator(`.studio-logo-card[data-path="logos/school-logos/${name}.png"] img`);
+    await im.evaluate(async el=>{if(!el.complete)await new Promise((resolve,reject)=>{el.addEventListener('load',resolve,{once:true});el.addEventListener('error',reject,{once:true});})});
+    assert.ok(await im.evaluate(el=>el.naturalWidth>=600),name+' displays the real print-resolution illustration');
+  }
   for(const id of ['fenton-tiger-roar','fenton-tiger-flame']){
     const img=page.locator(`.studio-logo-card[data-path="approved-art/images/${id}.svg"] img`);
     await img.evaluate(async element=>{if(!element.complete)await new Promise((resolve,reject)=>{element.addEventListener('load',resolve,{once:true});element.addEventListener('error',reject,{once:true});})});
     assert.ok(await img.evaluate(el=>el.naturalWidth>100),id+' is a real visible image, not an empty placeholder');
   }
   assert.equal(await page.locator('[data-tiger-shortcut="pictures"]').getAttribute('aria-pressed'),'true','Tiger pictures shortcut announces selection');
+  await page.locator('#uxLogoSearch').fill('paw emblem');
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card[data-path="logos/school-logos/fenton-paw-f.png"]').count(),1,'Fenton F and paw is findable by name');
+  const paw=page.locator('.studio-logo-card[data-path="logos/school-logos/fenton-paw-f.png"] img');
+  await paw.evaluate(async el=>{if(!el.complete)await new Promise((resolve,reject)=>{el.addEventListener('load',resolve,{once:true});el.addEventListener('error',reject,{once:true});})});
+  assert.ok(await paw.evaluate(el=>el.naturalHeight>=600),'Fenton paw F logo is sharp at print resolution');
+  await page.locator('[data-tiger-shortcut="pictures"]').click();
   await page.locator('[data-tiger-shortcut="teams"]').click();
   assert.equal(await page.inputValue('#uxLogoCategory'),'Robotics Teams','Team shortcut switches to robotics logos');
   assert.ok(await page.locator('#uxLogoGroups .studio-logo-card').count()>4,'Team shortcut shows multiple tiger team logos');
@@ -257,6 +270,21 @@ async function main(){
     assert.ok((await page.evaluate(()=>layers.at(-1).name)).includes('orange'),id+' keeps its selected orange variant');
   }
 
+  // New transparent local PNGs must add correctly through the existing school-logo import pipeline.
+  for(const [file,label] of [
+    ['fenton-bengal-tiger-head','Bengal'],
+    ['fenton-siberian-tiger-head','Siberian'],
+    ['fenton-paw-f','Paw']
+  ]){
+    await page.locator('[data-tiger-shortcut="all"]').click();
+    const before=await page.evaluate(()=>layers.length);
+    const card=page.locator(`.studio-logo-card[data-path="logos/school-logos/${file}.png"]`);
+    await card.click();
+    await page.waitForFunction(old=>layers.length>old||document.getElementById('uxLogoResults').textContent.startsWith('Could not add'),before,{timeout:15000});
+    assert.equal(await page.evaluate(()=>layers.length),before+1,label+' PNG imported into the button');
+    assert.ok((await page.evaluate(()=>layers.at(-1).data)).startsWith('data:image/png'),label+' image is a valid editable PNG');
+    assert.ok((await page.evaluate(()=>layers.at(-1).name)).includes(label),label+' layer has a recognizable name');
+  }
   await page.locator('#tab-print').click();
   assert.equal(await page.locator('#legacyPrint').count(),0,'Fenton print tools are directly visible');
   assert.equal(await page.locator('#openPrintStudio').isVisible(),true,'Print Studio is the primary Print-tab action');

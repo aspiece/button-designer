@@ -74,7 +74,9 @@
     'logos/school-logos/images.jpeg',
     'logos/school-logos/SE-Logo_medium.png',
     'approved-art/images/fenton-tiger-roar.svg',
-    'approved-art/images/fenton-tiger-flame.svg'
+    'approved-art/images/fenton-tiger-flame.svg',
+    'logos/school-logos/fenton-siberian-tiger-head.png',
+    'logos/school-logos/fenton-bengal-tiger-head.png'
    ]);
    let tigerPicturesOnly=false;
    const tigerShortcuts=library.querySelector('.studio-tiger-shortcuts');
