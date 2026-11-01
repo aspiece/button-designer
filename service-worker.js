@@ -1,5 +1,5 @@
 /* GitHub Pages offline shell. Never caches student uploads or private projects. */
-const VERSION = 'button-studio-pwa-20261101-v18';
+const VERSION = 'button-studio-pwa-20261101-v19';
 const SHELL = VERSION + '-shell';
 const RUNTIME = VERSION + '-runtime';
 const SCOPE = self.registration.scope;

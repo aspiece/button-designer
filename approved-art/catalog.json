@@ -569,6 +569,231 @@
       "creator": "Fenton Button Designer project",
       "approved": true,
       "recolorable": true
+    },
+    {
+      "id": "headphones",
+      "path": "approved-art/images/headphones.svg",
+      "name": "Headphones",
+      "category": "School",
+      "tags": [
+        "music",
+        "headphones",
+        "audio",
+        "listening",
+        "school"
+      ],
+      "license": "cc0",
+      "source": "Original coach-approved Fenton Button Designer artwork",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "electric-guitar",
+      "path": "approved-art/images/electric-guitar.svg",
+      "name": "Electric Guitar",
+      "category": "School",
+      "tags": [
+        "guitar",
+        "music",
+        "instrument",
+        "band",
+        "rock"
+      ],
+      "license": "cc0",
+      "source": "Original coach-approved Fenton Button Designer artwork",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "chess-knight",
+      "path": "approved-art/images/chess-knight.svg",
+      "name": "Chess Knight",
+      "category": "School",
+      "tags": [
+        "chess",
+        "knight",
+        "strategy",
+        "games",
+        "thinking"
+      ],
+      "license": "cc0",
+      "source": "Original coach-approved Fenton Button Designer artwork",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "volleyball",
+      "path": "approved-art/images/volleyball.svg",
+      "name": "Volleyball",
+      "category": "Sports",
+      "tags": [
+        "volleyball",
+        "sports",
+        "ball",
+        "team",
+        "game"
+      ],
+      "license": "cc0",
+      "source": "Original coach-approved Fenton Button Designer artwork",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "skateboard",
+      "path": "approved-art/images/skateboard.svg",
+      "name": "Skateboard",
+      "category": "Sports",
+      "tags": [
+        "skateboard",
+        "skating",
+        "sports",
+        "wheels"
+      ],
+      "license": "cc0",
+      "source": "Original coach-approved Fenton Button Designer artwork",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "dinosaur-head",
+      "path": "approved-art/images/dinosaur-head.svg",
+      "name": "Dinosaur Head",
+      "category": "Nature",
+      "tags": [
+        "dinosaur",
+        "prehistoric",
+        "animal",
+        "reptile"
+      ],
+      "license": "cc0",
+      "source": "Original coach-approved Fenton Button Designer artwork",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "fox-head",
+      "path": "approved-art/images/fox-head.svg",
+      "name": "Fox Head",
+      "category": "Nature",
+      "tags": [
+        "fox",
+        "wildlife",
+        "animal",
+        "forest"
+      ],
+      "license": "cc0",
+      "source": "Original coach-approved Fenton Button Designer artwork",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "honeybee",
+      "path": "approved-art/images/honeybee.svg",
+      "name": "Honeybee",
+      "category": "Nature",
+      "tags": [
+        "bee",
+        "honeybee",
+        "pollinator",
+        "insect",
+        "nature"
+      ],
+      "license": "cc0",
+      "source": "Original coach-approved Fenton Button Designer artwork",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "camping-tent",
+      "path": "approved-art/images/camping-tent.svg",
+      "name": "Camping Tent",
+      "category": "Nature",
+      "tags": [
+        "camping",
+        "tent",
+        "outdoors",
+        "adventure",
+        "nature"
+      ],
+      "license": "cc0",
+      "source": "Original coach-approved Fenton Button Designer artwork",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "artist-palette",
+      "path": "approved-art/images/artist-palette.svg",
+      "name": "Artist Palette",
+      "category": "School",
+      "tags": [
+        "art",
+        "painting",
+        "artist",
+        "colors",
+        "creativity"
+      ],
+      "license": "cc0",
+      "source": "Original coach-approved Fenton Button Designer artwork",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "open-book",
+      "path": "approved-art/images/open-book.svg",
+      "name": "Open Book",
+      "category": "School",
+      "tags": [
+        "book",
+        "reading",
+        "library",
+        "school",
+        "learning"
+      ],
+      "license": "cc0",
+      "source": "Original coach-approved Fenton Button Designer artwork",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
+    },
+    {
+      "id": "compass",
+      "path": "approved-art/images/compass.svg",
+      "name": "Compass",
+      "category": "Science",
+      "tags": [
+        "compass",
+        "navigation",
+        "direction",
+        "exploration",
+        "map"
+      ],
+      "license": "cc0",
+      "source": "Original coach-approved Fenton Button Designer artwork",
+      "sourceUrl": "https://github.com/aspiece/button-designer/tree/main/approved-art",
+      "creator": "Fenton Button Designer project",
+      "approved": true,
+      "recolorable": true
     }
   ]
 }

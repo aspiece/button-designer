@@ -185,7 +185,7 @@ async function main(){
   assert.equal(await page.locator('#saveProject').isVisible(),false,'Save actions are not shown in Logos');
   assert.ok(await page.locator('#logosTools .studio-logo-library').evaluate(el=>el.compareDocumentPosition(document.querySelector('#uxLogoGroups'))===16||el.contains(document.querySelector('#uxLogoGroups'))),'Gallery entries stay inside Logos tab');
   // A single searchable gallery presents logos and reviewed public art as categories.
-  assert.equal(publicArt.images.length,32,'Gallery includes 18 starter, 2 approved mascot, and 12 new teacher-approved public illustrations');
+  assert.equal(publicArt.images.length,44,'Gallery includes 18 starter, 2 Fenton mascots, and 24 approved new public illustrations');
   assert.equal(await page.locator('#uxLogoSearch').count(),1,'One gallery search box');
   assert.equal(await page.locator('#uxLogoCategory').count(),1,'One gallery category dropdown');
   assert.equal(await page.locator('#approvedArtSearch, #approvedArtCategory, .studio-approved-art').count(),0,'No duplicate public-art panel');
@@ -237,10 +237,10 @@ async function main(){
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),1,'Manual search clears tiger-only filter and finds the microscope');
   await page.locator('[data-tiger-shortcut="all"]').click();
   await page.selectOption('#uxLogoCategory','Public Images');
-  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),32,'Public Images filter shows all 32 reviewed illustrations');
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),44,'Public Images filter shows all 44 teacher-approved illustrations');
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-group').count(),1,'Public Images has one grouped section');
   await page.locator('#uxLogoSearch').fill('Science');
-  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),4,'Public art topic finds science illustrations including the new flask');
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),5,'Public art science search finds 5 graphics including compass and flask');
   await page.locator('#uxLogoSearch').fill('microscope');
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),1,'Keyword search finds public illustration');
   await page.locator('#uxLogoSearch').fill('');
@@ -253,7 +253,40 @@ async function main(){
   assert.equal(await page.locator('#propertiesPanel #quickImageSize').count(),1,'Selected public artwork is editable in the new properties panel');
   assert.equal(await page.locator('#propertiesPanel .studio-layer-row').count(),1,'Image layer appears in right-hand layer manager');
 
-  assert.equal(await page.locator('#uxLogoGroups .public-art-choice').count(),32,'Each reviewed SVG including 12 newly approved graphics has a color picker');
+  assert.equal(await page.locator('#uxLogoGroups .public-art-choice').count(),44,'All 44 reviewed public SVGs have a color picker');
+  // Teacher-approved Batch 2: visibility, search, color controls and actual import.
+  const approvedBatch2=['headphones','electric-guitar','chess-knight','volleyball','skateboard','dinosaur-head','fox-head','honeybee','camping-tent','artist-palette','open-book','compass'];
+  for(const id of approvedBatch2){
+    const path=`approved-art/images/${id}.svg`;
+    const card=page.locator(`#uxLogoGroups button.studio-logo-card[data-path="${path}"]`);
+    assert.equal(await card.count(),1,id+' appears exactly once in the student Public Images gallery');
+    assert.ok(await card.locator('img').getAttribute('src'),id+' has a rendered SVG preview source');
+    const selector=page.locator('.public-art-choice').filter({has:page.locator(`button[data-path="${path}"]`)}).locator('select.public-art-color');
+    assert.deepEqual(await selector.locator('option').allTextContents(),['Original','Black','Orange','White'],id+' offers original plus three recolors');
+  }
+  const batch2Page=await context.newPage();
+  await batch2Page.goto('http://127.0.0.1:8765/',{waitUntil:'networkidle'});
+  await batch2Page.locator('#tab-logos').click();
+  await batch2Page.locator('#uxLogoCategory').selectOption('Public Images');
+  await batch2Page.locator('#uxLogoSearch').fill('chess knight');
+  const batch2Choice=batch2Page.locator('.public-art-choice').filter({has:batch2Page.locator('button[data-path="approved-art/images/chess-knight.svg"]')});
+  assert.equal(await batch2Choice.count(),1,'Chess Knight is discoverable by its name');
+  await batch2Choice.locator('.public-art-color').selectOption('orange');
+  await batch2Page.waitForFunction(()=>{
+    const p=document.querySelector('.public-art-choice:has(button[data-path="approved-art/images/chess-knight.svg"])');
+    const img=p?.querySelector('img');
+    return p?.dataset.artColor==='orange'&&img?.complete&&img.naturalWidth>0&&img.src.startsWith('blob:');
+  },null,{timeout:15000});
+  const oldLayerCount=await batch2Page.evaluate(()=>window.ButtonStudioUX.getState().layers.length);
+  await batch2Choice.locator('button.studio-logo-card').click();
+  await batch2Page.waitForFunction(n=>window.ButtonStudioUX.getState().layers.length>n||
+    document.getElementById('uxLogoResults').textContent.startsWith('Could not add'),oldLayerCount,{timeout:15000});
+  const newState=await batch2Page.evaluate(()=>window.ButtonStudioUX.getState());
+  assert.equal(newState.layers.length,oldLayerCount+1,'Approved chess artwork inserts into the editable button');
+  assert.ok(newState.layers.at(-1).name.toLowerCase().includes('orange'),'Chosen Batch 2 artwork color is preserved');
+  assert.ok(newState.layers.at(-1).data.startsWith('data:image/png'),'Approved Batch 2 vector converts into printable transparent PNG');
+  await batch2Page.close();
+
   for(const id of ['game-controller','robot-arm','computer-chip','coding-symbols','3d-printer','science-flask','football','baseball','music-notes','sea-turtle','friendly-frog','dragonfly']){
     const selector=`#uxLogoGroups .studio-logo-card[data-path="approved-art/images/${id}.svg"]`;
     const card=page.locator(selector);
