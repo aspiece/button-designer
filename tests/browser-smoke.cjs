@@ -73,6 +73,24 @@ async function main(){
   await page.locator('#textColor').evaluate(el=>{el.value='#f58220';el.dispatchEvent(new Event('input',{bubbles:true}))});
   assert.ok((await page.locator('#designWarnings').textContent()).includes('Low text contrast'),'WCAG contrast warning appears in design preview');
 
+  // Student searches only an explicitly approved static same-origin catalog.
+  const publicArt=JSON.parse(fs.readFileSync(path.join(root,'approved-art','catalog.json'),'utf8'));
+  assert.equal(publicArt.images.length,18,'Starter public art includes 18 reviewed illustrations');
+  assert.equal(await page.locator('.studio-approved-art').count(),1,'Kid-friendly public art is separate from team logos');
+  await page.waitForFunction(count=>document.querySelectorAll('.studio-approved-card').length===count,publicArt.images.length,{timeout:20000});
+  assert.equal(await page.locator('.studio-approved-card').count(),18,'Approved-only artwork loads');
+  await page.locator('#approvedArtCategory').selectOption('Science');
+  assert.equal(await page.locator('.studio-approved-card').count(),3,'Science category filters public art');
+  await page.locator('#approvedArtCategory').selectOption('All');
+  await page.locator('#approvedArtSearch').fill('microscope');
+  assert.equal(await page.locator('.studio-approved-card').count(),1,'Keyword search filters the approved set');
+  await page.locator('#approvedArtSearch').fill('');
+  const beforePublicLayer=await page.evaluate(()=>layers.length);
+  await page.locator('.studio-approved-card[data-art-id="robot"]').click();
+  await page.waitForFunction(previous=>window.ButtonStudioUX.getState().layers.length>previous,beforePublicLayer,{timeout:20000});
+  assert.ok((await page.evaluate(()=>layers.at(-1).data)).startsWith('data:image/png'),'SVG public art is converted into editable PNG layer');
+  assert.ok((await page.locator('#approvedArtStatus').textContent()).includes('Robot'),'Student receives insert feedback');
+
   await page.click('#tab-logos');
   await page.locator('.studio-logo-card[data-path="logos/tiger-paws-24471.png"]').first().click();
   await page.waitForFunction(()=>window.ButtonStudioUX.getState().layers.length>0,null,{timeout:15000});
