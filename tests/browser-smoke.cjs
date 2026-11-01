@@ -75,6 +75,8 @@ async function main(){
   assert.ok((await page.locator('#designWarnings').textContent()).match(/shrinks|border ring/),'Long arc text warns about print');
   await page.locator('#beginTopText').fill('FENTON ROBOTICS');
 
+  // Return to the editor's normal unselected state before testing layer cycling.
+  await page.evaluate(()=>window.ButtonStudioUX.selectElement(null));
   const canvas=page.locator('#editorCanvas');await canvas.focus();
   await canvas.press('Enter');assert.equal(await page.evaluate(()=>window.ButtonStudioUX.getState().selected.kind),'background','Enter selects background');
   await canvas.press('Enter');assert.equal(await page.evaluate(()=>window.ButtonStudioUX.getState().selected.kind),'top','Enter cycles to top text');
