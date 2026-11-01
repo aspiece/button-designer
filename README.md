@@ -34,7 +34,7 @@ The Fenton editor starts with **14 picture-based template cards** (the General e
 
 The **All design settings · advanced** section contains precise controls; curved top/bottom fields remain visible in Beginner. Switching templates changes their styling without clearing user text, text positions or image layers. PNG/PDF outputs never include editing handles. Editable JSON project files now retain curved-text positions and center-logo placement.
 
-**Mobile preview:** On smaller phones and tablets, the canvas appears immediately below the editing tabs and its heading. The compact header and height-aware canvas keep the full circular button visible without scrolling past Undo/Redo or a long selection status; those controls remain directly below the canvas. The desktop layout and printing/export sizes are unchanged.
+**Preview-first on every screen:** Phones, tablets, laptops and desktops place the editable circular button immediately beneath the editing tabs and heading, with Undo/Redo and layer status below. A compact header and viewport-height-aware preview reduce scrolling while preserving the canvas aspect ratio, interactive editing and actual-size PDF/print output. Desktop settings remain in the adjacent column; short browser windows scale the preview down rather than clipping it.
 
 ## Phase 2: Find and arrange team logos
 
