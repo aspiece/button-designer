@@ -309,6 +309,12 @@
       ]
     },
     {
+      "path": "logos/school-logos/fenton-bengal-tiger-head.png",
+      "name": "Fenton Bengal Tiger Head",
+      "category": "School Logos",
+      "tags": []
+    },
+    {
       "path": "logos/school-logos/large_7acbcc92-8566-4045-a126-21a31307561d.png",
       "name": "Fenton High School – Orange F Crest",
       "category": "School Logos",
@@ -317,6 +323,18 @@
         "School",
         "Tigers"
       ]
+    },
+    {
+      "path": "logos/school-logos/fenton-paw-f.png",
+      "name": "Fenton Paw F",
+      "category": "School Logos",
+      "tags": []
+    },
+    {
+      "path": "logos/school-logos/fenton-siberian-tiger-head.png",
+      "name": "Fenton Siberian Tiger Head",
+      "category": "School Logos",
+      "tags": []
     },
     {
       "path": "logos/school-logos/images (2).jpeg",
@@ -378,52 +396,6 @@
         "Tigers",
         "Tomek-Eastern",
         "Elementary"
-      ]
-    },
-    {
-      "path": "logos/school-logos/fenton-siberian-tiger-head.png",
-      "name": "Fenton Siberian Tigers – Roaring Head",
-      "category": "School Logos",
-      "tags": [
-        "Fenton",
-        "Siberian",
-        "Tigers",
-        "tiger head",
-        "roaring",
-        "mascot",
-        "white",
-        "orange",
-        "school"
-      ]
-    },
-    {
-      "path": "logos/school-logos/fenton-bengal-tiger-head.png",
-      "name": "Fenton Bengal Tigers – Roaring Head",
-      "category": "School Logos",
-      "tags": [
-        "Fenton",
-        "Bengal",
-        "Tigers",
-        "tiger head",
-        "roaring",
-        "mascot",
-        "orange",
-        "school"
-      ]
-    },
-    {
-      "path": "logos/school-logos/fenton-paw-f.png",
-      "name": "Fenton Tigers – Orange F Paw Emblem",
-      "category": "School Logos",
-      "tags": [
-        "Fenton",
-        "Tigers",
-        "F logo",
-        "paw",
-        "letter F",
-        "orange",
-        "school",
-        "emblem"
       ]
     }
   ]
