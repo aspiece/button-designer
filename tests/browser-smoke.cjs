@@ -85,7 +85,7 @@ async function main(){
   assert.ok((await page.evaluate(()=>layers[0].x))>initialImageX,'Keyboard moves selected image');
 
   await page.locator('#tab-print').click();
-  await page.locator('#legacyPrint > summary').click();
+  assert.equal(await page.locator('#legacyPrint').count(),0,'Fenton print tools are directly visible');
   await page.selectOption('#copies','6');
   assert.ok((await page.locator('#sheetStatus').textContent()).includes('6 of 6 buttons shown'),'Legacy preview agrees with six-button selection');
   assert.deepEqual(await page.evaluate(()=>{const p=sheetDisplayLayout(selectedCut(),6);return [p.cols,p.rows]}),[2,3],'Six circles use full-height 2×3 grid');
