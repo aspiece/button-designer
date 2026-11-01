@@ -45,6 +45,20 @@
  }
 
  (logoTab||left).insertBefore(library,logoTab?logoTab.firstChild:quick);
+ // Students often want a tiger picture rather than a named robotics team logo.
+ // Offer direct links into two already curated, locally hosted collections.
+ if(!general){
+  const shortcuts=document.createElement('div');
+  shortcuts.className='studio-tiger-shortcuts';
+  shortcuts.setAttribute('role','group');
+  shortcuts.setAttribute('aria-label','Find tiger artwork quickly');
+  shortcuts.innerHTML='<span>Looking for a tiger?</span><button type="button" data-tiger-shortcut="pictures" aria-pressed="false">Tiger pictures</button><button type="button" data-tiger-shortcut="teams" aria-pressed="false">Tiger team logos</button><button type="button" data-tiger-shortcut="all" aria-pressed="true">All images</button>';
+  library.querySelector('#uxLogoSearch')?.closest('label')?.before(shortcuts);
+  // Place the shortcuts ahead of search, even when the search label is a sibling.
+  const searchLabel=library.querySelector('label[for="uxLogoSearch"]');
+  if(searchLabel)searchLabel.before(shortcuts);
+ }
+
 
  if(!general){
    const groupsContainer=document.getElementById('uxLogoGroups');
@@ -56,6 +70,17 @@
    const PUBLIC_CATEGORIES=new Set(['Robotics','Science','Nature','Sports','School','Seasonal']);
    let assets=[];
    let busy=false;
+   const TIGER_PICTURES=new Set([
+    'logos/school-logos/images.jpeg',
+    'logos/school-logos/SE-Logo_medium.png'
+   ]);
+   let tigerPicturesOnly=false;
+   const tigerShortcuts=library.querySelector('.studio-tiger-shortcuts');
+   function markTigerShortcut(active){
+    tigerShortcuts?.querySelectorAll('[data-tiger-shortcut]').forEach(button=>{
+     button.setAttribute('aria-pressed',String(button.dataset.tigerShortcut===active));
+    });
+   }
    function validPath(path){
      if(typeof path!=='string'||!path.startsWith('logos/'))return false;
      const parts=path.split('/');
@@ -206,6 +231,7 @@
      groupsContainer.replaceChildren();
      const query=search.value.trim().toLowerCase(),category=select.value;
      const filtered=assets.filter(item=>(category==='All'||item.category===category)&&
+      (!tigerPicturesOnly||TIGER_PICTURES.has(item.path))&&
       (item.name+' '+item.category+' '+(item.subcategory||'')+' '+item.tags.join(' ')).toLowerCase().includes(query));
      for(const groupName of ORDER){
        const items=filtered.filter(item=>item.category===groupName);
@@ -313,8 +339,18 @@
      showGallery();
      if(unavailable.length)results.textContent+=' · Unavailable: '+unavailable.join(', ');
    }
-   search.addEventListener('input',showGallery);
-   select.addEventListener('change',showGallery);
+   search.addEventListener('input',()=>{tigerPicturesOnly=false;markTigerShortcut('');showGallery()});
+   select.addEventListener('change',()=>{tigerPicturesOnly=false;markTigerShortcut('');showGallery()});
+   tigerShortcuts?.addEventListener('click',event=>{
+    const button=event.target.closest('[data-tiger-shortcut]');if(!button)return;
+    const type=button.dataset.tigerShortcut;
+    if(type==='pictures'){select.value='School Logos';search.value='tiger';tigerPicturesOnly=true}
+    else if(type==='teams'){select.value='Robotics Teams';search.value='tiger';tigerPicturesOnly=false}
+    else if(type==='all'){select.value='All';search.value='';tigerPicturesOnly=false}
+    else return;
+    markTigerShortcut(type);
+    showGallery();
+   });
    groupsContainer.addEventListener('click',async e=>{
      const card=e.target.closest('button[data-path]');if(!card||busy)return;
      const entry=assets.find(x=>x.path===card.dataset.path);if(!entry||!validItemPath(entry))return;
