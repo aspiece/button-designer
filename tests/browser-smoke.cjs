@@ -95,6 +95,46 @@ async function main(){
   assert.ok((await page.evaluate(()=>layers.length))>beforePublicLayer,'Public artwork imported: '+await page.locator('#uxLogoResults').textContent());
   assert.ok((await page.evaluate(()=>layers.at(-1).data)).startsWith('data:image/png'),'SVG public art is converted into editable PNG layer');
   assert.ok((await page.locator('#uxLogoResults').textContent()).includes('Robot'),'Shared gallery reports insertion');
+  assert.equal(await page.locator('#uxLogoGroups .public-art-choice').count(),18,'Each curated SVG has a color picker');
+  const robot=page.locator('.public-art-choice').filter({has:page.locator('button[data-path="approved-art/images/robot.svg"]')});
+  assert.deepEqual(await robot.locator('.public-art-color option').allTextContents(),['Original','Black','Orange','White'],'Public art offers original + the three team colors');
+  // Pixel-level verification: same tint is visible in card preview, editable layer and PDF source.
+  async function sampleArtwork(imageData){
+    return await page.evaluate(async data=>{
+      const im=new Image();im.src=data;await im.decode();
+      const cv=document.createElement('canvas');cv.width=im.naturalWidth;cv.height=im.naturalHeight;
+      const ctx=cv.getContext('2d');ctx.drawImage(im,0,0);
+      const bytes=ctx.getImageData(0,0,cv.width,cv.height).data;
+      let sample=null,opaque=0,clear=0;
+      for(let i=0;i<bytes.length;i+=4){
+        if(bytes[i+3]===0)clear++;
+        if(bytes[i+3]===255){opaque++;if(!sample)sample=Array.from(bytes.slice(i,i+3))}
+      }
+      return {sample,opaque,clear};
+    },imageData);
+  }
+  for(const [color,expected] of [['black',[0,0,0]],['orange',[245,130,32]],['white',[255,255,255]]]){
+    await robot.locator('.public-art-color').selectOption(color);
+    await page.waitForFunction(shade=>{
+      const wrap=document.querySelector('.public-art-choice:has(button[data-path="approved-art/images/robot.svg"])');
+      const img=wrap?.querySelector('img');return wrap?.dataset.artColor===shade&&img?.dataset.requestedColor===shade&&img.src.startsWith('blob:')&&img.complete&&img.naturalWidth>0;
+    },color,{timeout:15000});
+    const previewImage=await robot.locator('img').evaluate(img=>img.src);
+    const preview=await sampleArtwork(previewImage);
+    assert.deepEqual(preview.sample,expected,color+' preview uses selected color');
+    assert.ok(preview.opaque>0&&preview.clear>0,color+' preview preserves transparency');
+    const previous=await page.evaluate(()=>layers.length);
+    await robot.locator('button[data-path]').click();
+    await page.waitForFunction(old=>layers.length>old,previous,{timeout:15000});
+    const imported=await sampleArtwork(await page.evaluate(()=>layers.at(-1).data));
+    assert.deepEqual(imported.sample,expected,color+' button layer uses selected color');
+    assert.ok(imported.opaque>0&&imported.clear>0,color+' imported layer retains transparency');
+    assert.ok((await page.evaluate(()=>layers.at(-1).name)).includes(color),color+' survives in the layer name');
+  }
+  await robot.locator('.public-art-color').selectOption('original');
+  assert.equal(await robot.locator('img').getAttribute('src'),'approved-art/images/robot.svg','Original restores full-color artwork preview');
+  assert.equal(await robot.getAttribute('data-art-color'),'original','Original remains the default mode');
+
   await page.selectOption('#uxLogoCategory','Robotics Teams');
   assert.ok((await page.locator('#uxLogoGroups .studio-logo-card').count())>0,'Existing team logos remain accessible');
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-card[data-path^="approved-art/"]').count(),0,'Team filter excludes public images');
