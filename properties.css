@@ -81,7 +81,7 @@ body[data-editor-tab="logos"] #logosTools .studio-logo-library{
  }
  .mobile-properties-actions button{
   display:flex;align-items:center;justify-content:center;gap:6px;flex:1;
-  font:750 13px inherit;font-family:inherit;font-size:13px;min-width:0;min-height:46px;
+  font-family:inherit;font-size:13px;font-weight:750;min-width:0;min-height:46px;
   padding:10px 8px;color:#233a55;cursor:pointer;background:#fff;
   border:1px solid #bdcce0;border-radius:11px;
  }
