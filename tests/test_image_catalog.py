@@ -73,7 +73,7 @@ class ImageCatalogTests(unittest.TestCase):
             for name in (*approved_names,"unreviewed-artwork.svg"):
                 target=root/"school-logos"/name
                 target.parent.mkdir(parents=True,exist_ok=True)
-                target.write_text('<svg xmlns="http://www.w3.org/2000/svg"/>')
+                target.write_text('<svg xmlns="http://www.w3.org/2000/svg"><!-- '+name+' --></svg>')
             metadata={"assets":{
                 "logos/school-logos/"+name:{
                     "name":"Fenton F Paw "+name,
