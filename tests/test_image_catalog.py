@@ -87,18 +87,20 @@ class ImageCatalogTests(unittest.TestCase):
             self.assertNotIn("logos/school-logos/unreviewed-artwork.svg",paths)
 
 
-    def test_titanium_vector_replaces_low_resolution_source(self):
+    def test_approved_titanium_emblem_replaces_older_versions(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)
+            (root/"titanium-tigers-approved.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg"/>')
             (root/"titanium-tigers.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg"/>')
             (root/"titanium-tigers.png").write_bytes(b"old low-res image")
             (root/"unknown-team.svg").write_text('<svg xmlns="http://www.w3.org/2000/svg"/>')
             (root/"gallery-metadata.json").write_text(json.dumps({"assets":{
-                "logos/titanium-tigers.svg":{"name":"Titanium Tigers – Clean Vector","category":"Robotics Teams","tags":["5114"]},
+                "logos/titanium-tigers-approved.svg":{"name":"Titanium Tigers – Approved Emblem","category":"Robotics Teams","tags":["5114"]},
+                "logos/titanium-tigers.svg":{"exclude":True},
                 "logos/titanium-tigers.png":{"exclude":True}
             }}))
             found=make_catalog(root)["images"]
-            self.assertEqual([item["path"] for item in found],["logos/titanium-tigers.svg"])
+            self.assertEqual([item["path"] for item in found],["logos/titanium-tigers-approved.svg"])
             self.assertEqual(found[0]["category"],"Robotics Teams")
             self.assertEqual(found[0]["tags"],["5114"])
 
