@@ -1,12 +1,12 @@
 /* GitHub Pages offline shell. Never caches student uploads or private projects. */
-const VERSION = 'button-studio-pwa-20261101-v6';
+const VERSION = 'button-studio-pwa-20261101-v7';
 const SHELL = VERSION + '-shell';
 const RUNTIME = VERSION + '-runtime';
 const SCOPE = self.registration.scope;
 const ROOT = new URL(SCOPE);
 const FILES = [
   './', './studio/', './phase1.js?v=20261101', './phase2.js?v=20261101c', './phase3.js?v=20261101',
-  './phase1.css?v=20261101-mobile', './phase2.css?v=20261101c', './phase3.css?v=20261101',
+  './phase1.css?v=20261101-all-screens', './phase2.css?v=20261101c', './phase3.css?v=20261101',
   './library.js?v=20261101', './library.css?v=20261101', './studio/general.css?v=20261101',
   './pwa.js?v=20261101', './pwa.css?v=20261101', './manifest.json', './manifest-general.json',
   './icons/icon-192.png', './icons/icon-512.png', './logos/catalog.json', './approved-art/catalog.json'

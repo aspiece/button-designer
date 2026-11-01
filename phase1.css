@@ -91,3 +91,61 @@ header{box-shadow:0 2px 12px #00000019}
  .previewPanel #selectedName{font-size:11px}
  .previewPanel .studio-canvas-hint{margin:6px 0 9px}
 }
+
+/* Above-the-fold editor at tablet, laptop and desktop widths.
+   Mirrors the phone preview-first flow without changing artwork or print dimensions. */
+@media(min-width:701px){
+ body>header{padding:10px clamp(12px,2.2vw,26px);gap:8px}
+ body>header b{font-size:clamp(17px,1.5vw,20px)}
+ body>header small{font-size:11px;margin-top:1px}
+ body>header .edition-nav{gap:7px}
+ body>header .btn{padding:8px 10px;min-height:36px;font-size:12px}
+ body>header .install-app-btn{min-height:36px}
+ .app{padding-top:12px;row-gap:8px}
+ .editor-tabs{padding:4px 0 7px}
+ .editor-tabs button{padding:9px 12px;min-height:42px}
+ .app>.previewPanel{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  padding:12px 14px;
+  top:60px;
+ }
+ .previewPanel>h2{order:-2;font-size:14px;margin:0 0 6px}
+ .previewPanel>.canvasWrap{
+  order:-1;
+  width:min(100%,535px,max(140px,calc(100svh - 235px)));
+  padding:8px;
+  margin:0 auto 7px;
+ }
+ .previewPanel #editorCanvas{width:100%;max-width:none;height:auto}
+ .previewPanel .studio-toolbar{margin:5px 0 8px}
+ .previewPanel #historyFeedback:empty{display:none}
+ .previewPanel .studio-canvas-hint{margin:6px 0 9px}
+}
+
+/* 701–760px inherited a stacked layout from the older tablet stylesheet.
+   Restore the actual two-column editor here, so the design panel does not
+   push the preview down below the fold at this transitional breakpoint. */
+@media(min-width:701px) and (max-width:760px){
+ body[data-studio-edition="fenton"] .app{
+  display:grid;
+  grid-template-columns:minmax(245px,330px) minmax(0,1fr);
+ }
+ body[data-studio-edition="fenton"] .editor-tabs{
+  grid-column:1/-1;
+  grid-row:1;
+  width:100%;
+ }
+ body[data-studio-edition="fenton"] .app>.previewPanel{
+  grid-column:2;
+  grid-row:2;
+  order:0;
+ }
+ body[data-studio-edition="fenton"] #designTools,
+ body[data-studio-edition="fenton"] #sideTools{
+  grid-column:1;
+  grid-row:2;
+  order:0;
+ }
+}
