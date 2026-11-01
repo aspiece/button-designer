@@ -43,6 +43,10 @@ async function main(){
 
   // Desktop uses three genuine columns, and all property actions reuse existing controls.
   assert.equal(await page.locator('#propertiesPanel').count(),1,'Properties panel exists once');
+  assert.equal(await page.locator('#mobilePropertiesActions').isVisible(),false,'Desktop keeps the persistent right column without mobile buttons');
+  assert.equal(await page.locator('#propertiesPanel').isVisible(),true,'Desktop Properties and Layers remain expanded');
+  assert.equal(await page.locator('#propertiesEditor').isVisible(),true,'Desktop shows selected item editing');
+  assert.equal(await page.locator('#propertiesLayers').isVisible(),true,'Desktop shows all layers');
   assert.equal(await page.locator('#quickPanel').count(),1,'Existing context controls are not duplicated');
   assert.equal(await page.locator('#propertiesPanel #quickPanel').count(),1,'Selected-item editor moved to properties');
   assert.equal(await page.locator('#propertiesPanel .studio-layers').count(),1,'Existing layer manager moved to properties');
@@ -262,15 +266,58 @@ async function main(){
     assert.ok(m.canvas.top>=m.heading.bottom,`Preview title precedes canvas at ${width}×${height}`);
     assert.ok(m.header.bottom<m.tabs.top,`Header and tabs do not overlap at ${width}×${height}`);
     assert.ok(m.docWidth<=m.viewWidth,`No horizontal overflow at ${width}×${height}: ${JSON.stringify(m)}`);
-    const propertyPosition=await phone.evaluate(()=>({
+    const mobileLayout=await phone.evaluate(()=>({
       previewBottom:document.querySelector('.previewPanel').getBoundingClientRect().bottom,
-      propertyTop:document.querySelector('#propertiesPanel').getBoundingClientRect().top
+      buttonsTop:document.querySelector('#mobilePropertiesActions').getBoundingClientRect().top,
+      drawerOpen:document.querySelector('#propertiesPanel').dataset.drawerOpen,
+      inert:document.querySelector('#propertiesPanel').inert,
+      backdropHidden:document.querySelector('#propertiesBackdrop').hidden
     }));
-    assert.ok(propertyPosition.propertyTop>=propertyPosition.previewBottom,'On phones, properties stack beneath the preview');
+    assert.ok(mobileLayout.buttonsTop>=mobileLayout.previewBottom,'On phones, edit buttons are immediately below the preview');
+    assert.equal(mobileLayout.drawerOpen,'false','Mobile drawer starts closed');
+    assert.equal(mobileLayout.inert,true,'Closed drawer is not keyboard focusable');
+    assert.equal(mobileLayout.backdropHidden,true,'Closed drawer has no backdrop');
+    assert.ok(await phone.locator('#mobileEditButton').isVisible(),'Edit Selected action appears on phones');
+    assert.ok(await phone.locator('#mobileLayersButton').isVisible(),'Layers action appears on phones');
+    assert.equal(await phone.locator('#propertiesPanel').isVisible(),false,'Expanded properties do not push gallery down on phones');
 
     assert.equal(await phone.locator('#uxUndo').count(),1,'Undo is kept on mobile');
     assert.equal(await phone.locator('#tab-logos').isVisible(),true,'Gallery tab is accessible on mobile');
     if(width===360){
+      await phone.locator('#mobileEditButton').click();
+      assert.ok(await phone.locator('#propertiesPanel').isVisible(),'Edit action opens the existing editing panel');
+      assert.equal(await phone.locator('#propertiesPanel').getAttribute('role'),'dialog','Mobile panel is an accessible dialog');
+      assert.equal(await phone.locator('#propertiesPanel').getAttribute('aria-modal'),'true','Mobile drawer is modal');
+      assert.ok(await phone.locator('#propertiesEditor').isVisible(),'Edit opens selected-item properties');
+      assert.equal(await phone.locator('#propertiesLayers').isVisible(),false,'Layers are initially hidden while editing');
+      assert.equal(await phone.locator('#mobileEditButton').getAttribute('aria-expanded'),'true','Edit button reports open state');
+      assert.equal(await phone.locator('#propertiesBackdrop').isVisible(),true,'Opened drawer has dismissible backdrop');
+      await phone.keyboard.press('Escape');
+      assert.equal(await phone.locator('#propertiesPanel').isVisible(),false,'Escape closes the drawer');
+      assert.equal(await phone.locator('#mobileEditButton').getAttribute('aria-expanded'),'false','Escape resets edit button state');
+      assert.equal(await phone.evaluate(()=>document.activeElement?.id),'mobileEditButton','Escape restores focus to drawer opener');
+
+      await phone.locator('#mobileLayersButton').click();
+      assert.ok(await phone.locator('#propertiesLayers').isVisible(),'Layers action opens the real layer list');
+      assert.equal(await phone.locator('#propertiesEditor').isVisible(),false,'Layers view hides selected-item editor');
+      await phone.locator('#propertiesLayers [data-prop-select="top"]').click();
+      assert.ok(await phone.locator('#propertiesEditor').isVisible(),'Selecting a layer switches back to its editing controls');
+      assert.equal(await phone.locator('#quickText').isVisible(),true,'Selected text is editable inside the drawer');
+      await phone.locator('#quickText').fill('MOBILE PANEL');
+      assert.equal(await phone.inputValue('#headline'),'MOBILE PANEL','Drawer controls edit the actual canvas text');
+      await phone.locator('#propertiesClose').click();
+      assert.equal(await phone.locator('#propertiesPanel').isVisible(),false,'Close button dismisses the drawer');
+      assert.equal(await phone.evaluate(()=>document.activeElement?.id),'mobileEditButton','Close restores focus after editing');
+      await phone.locator('#mobileLayersButton').click();
+      await phone.locator('#propertiesBackdrop').click({position:{x:5,y:5}});
+      assert.equal(await phone.locator('#propertiesPanel').isVisible(),false,'Tapping backdrop dismisses layer drawer');
+      await phone.locator('#mobileEditButton').click();
+      await phone.locator('#propertiesClose').focus();
+      await phone.keyboard.press('Shift+Tab');
+      assert.equal(await phone.locator('#propertiesPanel').isVisible(),true,'Keyboard focus remains inside the open drawer');
+      assert.equal(await phone.evaluate(()=>document.querySelector('#propertiesPanel').contains(document.activeElement)),true,'Keyboard focus stays trapped in the dialog');
+      await phone.keyboard.press('Escape');
+
       await phone.locator('#tab-logos').click();
       await phone.waitForFunction(()=>{
         const box=document.querySelector('#logosTools .studio-logo-library')?.getBoundingClientRect();
@@ -303,6 +350,22 @@ async function main(){
     assert.ok(m.canvas.top>=m.heading.bottom,`Heading is above canvas at ${width}×${height}`);
     assert.ok(m.header.bottom<m.tabs.top,`Header remains clear of tab bar at ${width}×${height}`);
     assert.ok(m.docWidth<=m.viewWidth,`No horizontal scrolling at ${width}×${height}: ${JSON.stringify(m)}`);
+    if(width>=701&&width<=1119){
+      assert.ok(await phone.locator('#mobileEditButton').isVisible(),'Tablet has on-demand editing controls');
+      assert.equal(await phone.locator('#propertiesPanel').isVisible(),false,'Tablet properties do not consume preview space when closed');
+      await phone.locator('#mobileLayersButton').click();
+      const tabletDrawer=await phone.evaluate(()=>({
+        edge:document.getElementById('propertiesPanel').getBoundingClientRect().right,
+        width:document.getElementById('propertiesPanel').getBoundingClientRect().width,
+        viewWidth:innerWidth
+      }));
+      assert.ok(tabletDrawer.edge<=tabletDrawer.viewWidth+1&&tabletDrawer.width<tabletDrawer.viewWidth,'Tablet drawer opens at right without covering entire screen');
+      await phone.keyboard.press('Escape');
+      assert.equal(await phone.locator('#propertiesPanel').isVisible(),false,'Tablet drawer closes on Escape');
+    }else{
+      assert.equal(await phone.locator('#mobileEditButton').isVisible(),false,'Desktop keeps dedicated right column');
+      assert.equal(await phone.locator('#propertiesEditor').isVisible(),true,'Desktop editing panel remains visible');
+    }
   }
   for(const [width,height] of [[1024,600],[1440,800]]){
     await phone.setViewportSize({width,height});
