@@ -83,9 +83,12 @@ The Fenton edition combines the automatically generated `logos/catalog.json` and
 
 The general-purpose edition at `/studio/` neither loads the approved-image catalog nor preloads any Fenton artwork; students can still upload their own local images there.
 
-## Titanium Tigers #5114 — faithful original restoration
+## Titanium Tigers #5114 — coach-approved gallery emblem
 
-The previous *Clean Vector* redraw was a **different logo**: it changed the shape and tooth count of the gear, used generic letters instead of the team's original stylized typography, and moved the number and dots. We corrected this by tracing the actual team-supplied **215 × 220 black silhouette**, preserving the distinctive original gear, split central T, individually shaped **TITANIUM TIGERS** lettering, bottom **5114**, and the two dots. Conservatively extend the four sides' cropped strokes without changing the original inner artwork. The resulting transparent SVG has a **255 × 260 viewBox with 20-pixel padding** and renders at **1020 × 1040 pixels** for printing. At original scale, its pixels reproduce over **99.8% of the source silhouette**, rather than redesigning any parts. Students find the fixed version under **Logos → Robotics Teams → Titanium Tigers · 5114 – Restored Original**. Black, Orange, and White logo color options remain available and are tested through actual gallery previews and editable button layers. The archived original PNG stays in the repository for reference and older projects; gallery refresh metadata retains the restored SVG as the only Titanium selection. CI tests compare the generated SVG directly against the original black PNG so future edits cannot quietly alter team branding again.
+The gallery uses the **coach-approved Titanium Tigers graphic**, originally reviewed as a 1254×1254 image. To avoid white backgrounds on colored buttons or jagged printing, it has been converted into a transparent, antialiased SVG at **1350×1350 viewBox resolution** with additional transparent margins. The emblem retains the approved gear, central split T, curved **TITANIUM TIGERS** letterforms, **5114** team number, and two dots as traced silhouettes—not regenerated fonts.
+
+Students find it via **Logos → Robotics Teams → Titanium Tigers · 5114 – Approved Emblem**, or by searching `Titanium`. The existing **Black**, **Orange**, and **White** color picker generates correctly tinted, transparent and printable PNG layers. The previously published `titanium-tigers.svg` and the earliest `titanium-tigers.png` are intentionally kept in the repository as archived assets but are excluded from the approved gallery. The catalog metadata and a strict approved-SVG allowlist ensure automatic gallery refresh does not reintroduce old versions. Browser regression tests verify SVG geometry, preview transparency, RGB recoloring, and insertion into editable project layers.
+
 
 ## Three-column laptop editor
 
