@@ -180,6 +180,43 @@ async function main(){
   await page.click('#psClose');
   await page.screenshot({path:path.join(__dirname,'browser-preview.png')});
 
+  // Short mobile screens show the entire editable button without scrolling past
+  // the header, toolbar, status, or into the image. Controls remain below it.
+  const phone=await context.newPage(),phoneErrors=[];
+  phone.on('pageerror',err=>phoneErrors.push(err.message));
+  for(const [width,height] of [[320,568],[360,640],[375,500],[390,667],[700,500]]){
+    await phone.setViewportSize({width,height});
+    await phone.goto('http://127.0.0.1:8765/',{waitUntil:'networkidle'});
+    const m=await phone.evaluate(()=>{
+      const rect=selector=>{const e=document.querySelector(selector);const r=e.getBoundingClientRect();return {top:r.top,bottom:r.bottom,width:r.width}};
+      return {canvas:rect('#editorCanvas'),wrap:rect('.canvasWrap'),
+        tools:rect('.studio-toolbar'),tabs:rect('.editor-tabs'),header:rect('header'),
+        docWidth:document.documentElement.scrollWidth,viewWidth:innerWidth,viewHeight:innerHeight,
+        heading:rect('.previewPanel h2')};
+    });
+    assert.ok(m.canvas.width>=110,`Canvas stays usable on ${width}×${height}: ${JSON.stringify(m)}`);
+    assert.ok(m.canvas.bottom<=m.viewHeight-8,`Full button visible without vertical scrolling on ${width}×${height}: ${JSON.stringify(m)}`);
+    assert.ok(m.tools.top>=m.canvas.bottom,`Editing toolbar follows mobile preview at ${width}×${height}`);
+    assert.ok(m.canvas.top>=m.heading.bottom,`Preview title precedes canvas at ${width}×${height}`);
+    assert.ok(m.header.bottom<m.tabs.top,`Header and tabs do not overlap at ${width}×${height}`);
+    assert.ok(m.docWidth<=m.viewWidth,`No horizontal overflow at ${width}×${height}: ${JSON.stringify(m)}`);
+    assert.equal(await phone.locator('#uxUndo').count(),1,'Undo is kept on mobile');
+    assert.equal(await phone.locator('#tab-logos').isVisible(),true,'Gallery tab is accessible on mobile');
+  }
+  await phone.setViewportSize({width:360,height:640});
+  await phone.goto('http://127.0.0.1:8765/studio/',{waitUntil:'networkidle'});
+  const generalPhone=await phone.evaluate(()=>({
+    canvasBottom:document.getElementById('editorCanvas').getBoundingClientRect().bottom,
+    toolbarTop:document.querySelector('.studio-toolbar').getBoundingClientRect().top,
+    canvasBottomForOrder:document.getElementById('editorCanvas').getBoundingClientRect().bottom,
+    viewportHeight:innerHeight,docWidth:document.documentElement.scrollWidth,viewWidth:innerWidth
+  }));
+  assert.ok(generalPhone.canvasBottom<=generalPhone.viewportHeight-8,'General edition button preview also fits a phone viewport');
+  assert.ok(generalPhone.toolbarTop>=generalPhone.canvasBottomForOrder,'General edition has its editing toolbar below the preview');
+  assert.ok(generalPhone.docWidth<=generalPhone.viewWidth,'General edition avoids horizontal overflow');
+  assert.deepEqual(phoneErrors,[],'No JavaScript errors on mobile Fenton and General editions');
+  await phone.close();
+
   const general=await context.newPage(),generalErrors=[];general.on('pageerror',err=>generalErrors.push(err.message));
   await general.goto('http://127.0.0.1:8765/studio/',{waitUntil:'networkidle'});
   assert.equal(await general.locator('.template-card').count(),6,'General edition keeps six neutral templates');
