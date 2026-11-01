@@ -36,8 +36,8 @@ async function main(){
   assert.equal(await page.locator('#centerLogoChoice').count(),0,'Obsolete center logo control removed');
   assert.equal(await page.locator('#centerSize').count(),0,'Obsolete center size control removed');
   const gallery=JSON.parse(fs.readFileSync(path.join(root,'logos','catalog.json'),'utf8'));
-  await page.waitForFunction(count=>document.querySelectorAll('.studio-logo-card').length===count,gallery.images.length,{timeout:20000});
-  assert.equal(await page.locator('.studio-logo-card').count(),gallery.images.length,'Approved image catalog loads');
+  await page.waitForFunction(count=>document.querySelectorAll('#uxLogoGroups .studio-logo-card').length===count,gallery.images.length,{timeout:20000});
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),gallery.images.length,'Approved image catalog loads');
 
   await page.locator('#beginTopText').fill('FENTON ROBOTICS');
   await page.locator('#beginBottomText').fill('TIGER PRIDE');
