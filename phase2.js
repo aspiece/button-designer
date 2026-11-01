@@ -191,6 +191,8 @@
    async function publicPreview(path,img,color){
      img.dataset.requestedColor=color;
      if(color==='original'){img.src=imageUrl(path);return}
+     // Clear the previous color immediately so a slow conversion never leaves a stale preview.
+     img.removeAttribute('src');
      const key=path+'|'+color;
      if(!publicPreviewCache.has(key)){
        const pending=publicBlob(path,color).then(blob=>URL.createObjectURL(blob));
