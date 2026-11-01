@@ -41,6 +41,12 @@
  #previewWorkspace>.previewPanel{grid-column:2;grid-row:2;position:sticky;top:70px}
  #propertiesPanel{grid-column:3;grid-row:2;align-self:start;position:sticky;top:70px;max-height:calc(100svh - 80px);overflow:auto;overscroll-behavior:contain}
 }
+/* The original mobile rule gives .previewPanel order:1. In this wrapper,
+   explicitly keep the canvas ahead of the new properties panel. */
+@media(max-width:1119px){
+ #previewWorkspace>.previewPanel{order:-1}
+ #previewWorkspace>#propertiesPanel{order:0}
+}
 @media(min-width:701px) and (max-width:1119px){
  #previewWorkspace{grid-column:2;grid-row:2;align-self:start}
  #propertiesPanel{width:100%}
