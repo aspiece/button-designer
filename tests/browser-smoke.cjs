@@ -88,7 +88,12 @@ async function main(){
   await page.locator('#approvedArtSearch').fill('');
   const beforePublicLayer=await page.evaluate(()=>layers.length);
   await page.locator('.studio-approved-card[data-art-id="robot"]').click();
-  await page.waitForFunction(previous=>window.ButtonStudioUX.getState().layers.length>previous||document.getElementById('approvedArtStatus').textContent.startsWith('Unable'),beforePublicLayer,{timeout:12000});
+  try{
+    await page.waitForFunction(previous=>window.ButtonStudioUX.getState().layers.length>previous||document.getElementById('approvedArtStatus').textContent.startsWith('Unable'),beforePublicLayer,{timeout:12000});
+  }catch(error){
+    console.error('Public art import diagnostics:', await page.evaluate(()=>({message:document.getElementById('approvedArtStatus')?.textContent,appMessage:document.getElementById('message')?.textContent,layers:layers.length,errors:window.__publicArtErrors||[]})));
+    throw error
+  }
   assert.ok((await page.evaluate(()=>layers.length))>beforePublicLayer,'Approved artwork imported: '+await page.locator('#approvedArtStatus').textContent());
   assert.ok((await page.evaluate(()=>layers.at(-1).data)).startsWith('data:image/png'),'SVG public art is converted into editable PNG layer');
   assert.ok((await page.locator('#approvedArtStatus').textContent()).includes('Robot'),'Student receives insert feedback');
