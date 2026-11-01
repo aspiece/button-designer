@@ -62,6 +62,31 @@ class ImageCatalogTests(unittest.TestCase):
             self.assertNotIn("logos/robotics-teams/tiger-paws (1).png", rebuilt)
 
 
+    def test_only_reviewed_f_paw_svg_variants_are_discovered(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            approved_names=(
+                "fenton-f-paw-for-white-background.svg",
+                "fenton-f-paw-for-black-background.svg",
+                "fenton-f-paw-for-orange-background.svg",
+            )
+            for name in (*approved_names,"unreviewed-artwork.svg"):
+                target=root/"school-logos"/name
+                target.parent.mkdir(parents=True,exist_ok=True)
+                target.write_text('<svg xmlns="http://www.w3.org/2000/svg"/>')
+            metadata={"assets":{
+                "logos/school-logos/"+name:{
+                    "name":"Fenton F Paw "+name,
+                    "category":"School Logos",
+                    "tags":["F paw"]
+                } for name in approved_names
+            }}
+            (root/"gallery-metadata.json").write_text(json.dumps(metadata))
+            paths={item["path"] for item in make_catalog(root)["images"]}
+            self.assertEqual(paths,{"logos/school-logos/"+name for name in approved_names})
+            self.assertNotIn("logos/school-logos/unreviewed-artwork.svg",paths)
+
+
     def test_reject_invalid_categories_and_oversized_files(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
