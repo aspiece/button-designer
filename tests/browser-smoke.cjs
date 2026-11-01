@@ -101,13 +101,13 @@ async function main(){
 
   await page.locator('.studio-logo-card[data-path="logos/tiger-paws-24471.png"]').first().click();
   await page.waitForFunction(()=>window.ButtonStudioUX.getState().layers.length>0,null,{timeout:15000});
-  const initialImageX=await page.evaluate(()=>layers[0].x);
+  const initialImageXs=await page.evaluate(()=>layers.map(layer=>layer.x));
   await canvas.focus();
   // The last-added image is selected; use brackets to reach it again through the cycle.
   await canvas.press(']');await canvas.press('[');
   assert.equal(await page.evaluate(()=>window.ButtonStudioUX.getState().selected.kind),'image','Keyboard can select picture layer');
   await canvas.press('Shift+ArrowRight');
-  assert.ok((await page.evaluate(()=>layers[0].x))>initialImageX,'Keyboard moves selected image');
+  assert.ok(await page.evaluate(previous=>{const selected=window.ButtonStudioUX.getState().selected;return selected?.kind==='image'&&layers[selected.index].x>previous[selected.index]},initialImageXs),'Keyboard moves selected image');
 
   await page.locator('#tab-print').click();
   assert.equal(await page.locator('#legacyPrint').count(),0,'Fenton print tools are directly visible');
