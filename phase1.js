@@ -17,7 +17,18 @@
  const advanced=document.createElement('details');advanced.id='advancedTools';
  const sum=document.createElement('summary');sum.textContent='All design settings · advanced';advanced.append(sum);
  existing.forEach(n=>advanced.append(n));
- left.append(gallery,quick,advanced);
+ const curved=document.createElement('section');curved.className='studio-curved-text';curved.innerHTML='<h3>2 · Add curved text</h3><div class="quick-field"><label for="beginTopText">Main (top) text</label><input id="beginTopText" type="text" maxlength="28"><output id="beginTopCount" for="beginTopText"></output></div><div class="quick-field"><label for="beginBottomText">Bottom text</label><input id="beginBottomText" type="text" maxlength="28"><output id="beginBottomCount" for="beginBottomText"></output></div>';
+left.append(gallery,curved,quick,advanced);
+for(const [field,source] of [['beginTopText','headline'],['beginBottomText','subline']])curved.querySelector('#'+field).addEventListener('input',e=>setControl(source,e.target.value));
+for(const source of ['headline','subline','centerText']){const input=$(source),out=document.createElement('output');out.className='text-counter';out.id=source+'Count';out.setAttribute('for',source);input.insertAdjacentElement('afterend',out)}
+function countLabel(input){const max=input.maxLength;return input.value.length+' / '+max+' characters'+(input.value.length>=max?' · Maximum reached':'')}
+function updateCounters(){
+ for(const [from,to,counter] of [['headline','beginTopText','beginTopCount'],['subline','beginBottomText','beginBottomCount']]){
+  const original=$(from),visible=$(to);if(visible!==document.activeElement)visible.value=original.value;$(counter).textContent=countLabel(original)
+ }
+ for(const id of ['headline','subline','centerText'])$(id+'Count').textContent=countLabel($(id));
+ const current=quick.querySelector('#quickText');if(current){const source=selected?.kind==='top'?'headline':selected?.kind==='bottom'?'subline':'centerText';const output=quick.querySelector('#quickTextCount');if(output)output.textContent=countLabel($(source))}
+}
  const sizes=document.getElementById('buttonSizeControl');if(sizes)left.insertBefore(sizes,gallery);
  const templates=general?[
  ['paw','Classic','Clean and bright'],['tiger','Modern','Dark blue'],['titanium','Badge','Custom emblem'],['blank','Blank','Start fresh'],['orange','Color Pop','Bright color'],['black','Dark','Black canvas']
@@ -49,14 +60,14 @@
  function syncGallery(){
   grid.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.template===$('theme').value)))
  }
- const title=previewPanel.querySelector('h2');if(title)title.textContent='2 · Design on the canvas';
+ const title=previewPanel.querySelector('h2');if(title)title.textContent='3 · Design on the canvas';
  const tools=document.createElement('div');tools.className='studio-toolbar';
- tools.innerHTML='<button type="button" class="studio-tool" id="uxUndo" disabled title="Undo (Ctrl+Z)">↶ Undo</button><button type="button" class="studio-tool" id="uxRedo" disabled title="Redo (Ctrl+Y)">↷ Redo</button><span id="selectedName">Tap a logo on the preview to move, resize or delete it</span>';
- previewPanel.insertBefore(tools,previewPanel.querySelector('.canvasWrap'));
- editor.tabIndex=0;editor.setAttribute('role','img');
- editor.setAttribute('aria-label','Editable circular button. Tap text or a logo to select and drag. Use the selected element controls to resize.');
+ tools.innerHTML='<button type="button" class="studio-tool" id="uxUndo" disabled title="Undo (Ctrl+Z)">↶ Undo</button><button type="button" class="studio-tool" id="uxRedo" disabled title="Redo (Ctrl+Y)">↷ Redo</button><span id="selectedName" aria-live="polite">Use Enter or [ and ] on the canvas to select a layer</span>';
+ previewPanel.insertBefore(tools,previewPanel.querySelector('.canvasWrap'));const historyFeedback=document.createElement('p');historyFeedback.id='historyFeedback';historyFeedback.setAttribute('role','status');historyFeedback.setAttribute('aria-live','polite');tools.after(historyFeedback);
+ editor.tabIndex=0;editor.setAttribute('role','group');
+ editor.setAttribute('aria-label','Editable circular button preview. Enter, [ or ] selects a layer. Arrow keys move selected text or images; hold Shift for larger moves. Pointer users can drag text and images; selection handles do not print.');
  const help=document.createElement('p');help.className='studio-canvas-hint';
- help.textContent='Tap a logo to select it, drag to move, drag the lower-right handle to resize, or tap the red X to delete. Handles are never printed.';
+ help.textContent='Tap text or an image to select and drag it. Orange handles resize; the red X appears only for selected images. On the canvas, Enter or [ and ] cycles layers, arrows move selected text or images, Shift + arrow moves farther. Handles never print.';
  previewPanel.querySelector('.canvasWrap').after(help);
  const selectedLabel=$('selectedName'),undoBtn=$('uxUndo'),redoBtn=$('uxRedo');
  let selected=null,draggingObject=null,gesture=false,formFocus=false,restoring=false;
@@ -97,11 +108,11 @@
  }
  function undo(){
   if(gesture)return;commit();if(!past.length)return;
-  future.push(current);restoreSnapshot(past.pop());setMessage('Undo complete.')
+  future.push(current);restoreSnapshot(past.pop());historyFeedback.textContent='↶ Undo: previous design restored.';setMessage('Undo complete.')
  }
  function redo(){
   if(gesture)return;if(!future.length)return;
-  past.push(current);restoreSnapshot(future.pop());setMessage('Redo complete.')
+  past.push(current);restoreSnapshot(future.pop());historyFeedback.textContent='↷ Redo: change restored.';setMessage('Redo complete.')
  }
  undoBtn.onclick=undo;redoBtn.onclick=redo;
  function startGesture(){commit();gesture=true}
@@ -129,17 +140,17 @@
   return '<div class="quick-field"><label for="'+id+'">'+label+'</label><input id="'+id+'" type="'+type+'" value="'+String(value).replace(/"/g,'&quot;')+'"'+range+'></div>'
  }
  function refreshContext(){
-  selectedLabel.textContent=desc();
+  selectedLabel.textContent='Selected: '+desc();
   if(!selected){
-   quick.innerHTML='<h3>3 · Edit your selection</h3><p>Tap the top text, bottom text, center logo, or an uploaded image on the button. The right tools appear here. For other controls open <strong>All design settings</strong>.</p><div class="quick-actions"><button type="button" data-quick="addText">Add center text</button><button type="button" data-quick="addImage">Upload picture</button></div>';
+   quick.innerHTML='<h3>Edit a selected layer</h3><p>Select text, the background, or an image on the canvas. Controls appear here. For precise settings open <strong>All design settings</strong>.</p><div class="quick-actions"><button type="button" data-quick="addText">Add center text</button><button type="button" data-quick="addImage">Upload picture</button></div>';updateCounters();
    return
   }
   const kind=selected.kind;
-  let body='<h3>3 · '+desc()+'</h3>';
+  let body='<h3>Edit · '+desc()+'</h3>';
   if(kind==='top'||kind==='bottom'||kind==='middle'){
    const field=kind==='top'?'headline':kind==='bottom'?'subline':'centerText';
    const size=kind==='top'?'topSize':kind==='bottom'?'bottomSize':'middleSize';
-   body+=quickInput('quickText','Words','text',$(field).value);
+   body+=quickInput('quickText','Words','text',$(field).value);body+='<output id="quickTextCount" class="text-counter" for="quickText"></output>';
    body+=quickInput('quickTextSize','Text size ('+$(size).value+')','range',$(size).value,kind==='middle'?20:kind==='top'?20:16,kind==='middle'?72:kind==='top'?56:48);
    if(kind!=='middle')body+='<p>Drag the curved letters to reposition the ring text safely. Text stays upright for printing.</p><div class="quick-actions"><button type="button" data-quick="resetArc">Reset text position</button><button type="button" data-quick="clearText">Remove text</button></div>';
    else body+='<p>Drag the text itself to move it. Drag its orange corner handle to resize.</p><div class="quick-actions"><button type="button" data-quick="centerMiddle">Center text</button><button type="button" data-quick="clearText">Remove text</button></div>';
@@ -160,11 +171,12 @@
   quick.innerHTML=body;
   if(kind==='mark')$('quickMark').value=$('centerLogoChoice').value;
   if(kind==='background'){$('quickBorder').value=$('borderColor').value;$('quickBorderStyle').value=$('borderStyle').value}
+  if(kind==='top'||kind==='bottom'||kind==='middle'){$('quickText').maxLength=$(kind==='top'?'headline':kind==='bottom'?'subline':'centerText').maxLength;updateCounters()}
  }
  quick.addEventListener('input',e=>{
   if(!selected)return;
   const id=e.target.id,k=selected.kind;
-  if(id==='quickText'){setControl(k==='top'?'headline':k==='bottom'?'subline':'centerText',e.target.value)}
+  if(id==='quickText'){setControl(k==='top'?'headline':k==='bottom'?'subline':'centerText',e.target.value);updateCounters()}
   if(id==='quickTextSize'){setControl(k==='top'?'topSize':k==='bottom'?'bottomSize':'middleSize',e.target.value)}
   if(id==='quickImageSize'&&k==='image'){const l=layers[selected.index];if(l){l.size=+e.target.value;setControl('logoSize',l.size)}}
   if(id==='quickMark'){setControl('centerLogoChoice',e.target.value)}
@@ -245,7 +257,7 @@
   const {m,f}=metrics(),dx=p.x-m,dy=p.y-m,dist=Math.hypot(dx,dy);
   if(dist<=f*.9&&dist>=f*.57&&p.y<m&&$('headline').value.trim())return {kind:'top',mode:'move'};
   if(dist<=f*.9&&dist>=f*.57&&p.y>m&&$('subline').value.trim())return {kind:'bottom',mode:'move'};
-  const mark=markRect();if($('centerLogoChoice').value!=='none'&&Math.abs(p.x-mark.cx)<mark.w/2+9&&Math.abs(p.y-mark.cy)<mark.h/2+9)return {kind:'mark',mode:'move'};
+  const mark=markRect();if(general&&$('centerLogoChoice')?.value!=='none'&&Math.abs(p.x-mark.cx)<mark.w/2+9&&Math.abs(p.y-mark.cy)<mark.h/2+9)return {kind:'mark',mode:'move'};
   if(dist<f)return {kind:'background',mode:'none'};
   return null
  }
@@ -290,7 +302,7 @@
  });
  const oldRender=render;
  render=function(){
-  oldRender();drawOverlay();if(imageActions)imageActions.hidden=!(selected?.kind==='image'&&layers[selected.index]);
+  oldRender();drawOverlay();updateCounters();if(imageActions)imageActions.hidden=!(selected?.kind==='image'&&layers[selected.index]);
   if(!gesture&&!formFocus&&!restoring)commit();
   syncGallery()
  };
@@ -362,7 +374,7 @@
   const index=+$('imageLayer').value;
   if(Number.isInteger(index)&&index>=0&&index<layers.length)newSelection('image',index)
  });
- $('centerLogoChoice').addEventListener('change',()=>{if(selected?.kind==='mark')refreshContext()});
+ $('centerLogoChoice')?.addEventListener('change',()=>{if(selected?.kind==='mark')refreshContext()});
  document.addEventListener('focusin',e=>{
   if(e.target.closest('.quick-panel')||e.target.closest('#advancedTools')){
    if(e.target.matches('input:not([type=file]),select,textarea')){commit();formFocus=true}
@@ -388,14 +400,32 @@
   else if(cmd&&e.key.toLowerCase()==='y'){e.preventDefault();redo()}
   else if((e.key==='Delete'||e.key==='Backspace')&&selected){
    e.preventDefault();commit();if(selected.kind==='image'){layers.splice(selected.index,1);selectedLayer=layers.length-1;image=layers[selectedLayer]?.im||null;imageData=layers[selectedLayer]?.data||'';syncLayerUI()}
-   else if(selected.kind==='mark')setControl('centerLogoChoice','none');
+   else if(selected.kind==='mark'&&general)setControl('centerLogoChoice','none');
    else if(selected.kind!=='background')setControl(selected.kind==='top'?'headline':selected.kind==='bottom'?'subline':'centerText','');
    newSelection(null);commit()
   }
  });
- // Select via keyboard even if the canvas has no mouse/touch input.
+ // Enter/[ and ] cycle layers, leaving Tab to navigate normal browser controls.
+ const keyboardLayers=()=>[{kind:'background'},{kind:'top'},{kind:'bottom'},{kind:'middle'},
+  ...(general&&$('centerLogoChoice')?.value!=='none'?[{kind:'mark'}]:[]),
+  ...layers.map((_,index)=>({kind:'image',index}))];
  editor.addEventListener('keydown',e=>{
-  if(e.key==='Enter'){newSelection('background');e.preventDefault()}
+  if(e.key==='Enter'||e.key==='['||e.key===']'){
+   e.preventDefault();const available=keyboardLayers(),at=available.findIndex(item=>item.kind===selected?.kind&&item.index===selected?.index);
+   const direction=e.key==='['?-1:1,next=available[(at+direction+available.length)%available.length];newSelection(next.kind,next.index);return
+  }
+  if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;
+  e.preventDefault();if(!selected||selected.kind==='background'){selectedLabel.textContent='Select a movable layer with Enter, [ or ] first';return}
+  const step=e.shiftKey?.035:.007,dx=e.key==='ArrowLeft'?-step:e.key==='ArrowRight'?step:0,dy=e.key==='ArrowUp'?-step:e.key==='ArrowDown'?step:0;
+  commit();
+  if(selected.kind==='image'&&layers[selected.index]){const l=layers[selected.index];l.x=clamp(l.x+dx,.08,.92);l.y=clamp(l.y+dy,.08,.92)}
+  else if(selected.kind==='middle'){uxText.middle.x=clamp(uxText.middle.x+dx,.16,.84);uxText.middle.y=clamp(uxText.middle.y+dy,.17,.9)}
+  else if(selected.kind==='mark'&&general){uxMark.x=clamp(uxMark.x+dx,.15,.85);uxMark.y=clamp(uxMark.y+dy,.15,.85)}
+  else if(selected.kind==='top'||selected.kind==='bottom'){
+   const v=uxText[selected.kind],sign=selected.kind==='top'?-1:1;
+   v.angle=clamp(v.angle+dx*.7,-.16,.16);v.radius=clamp(v.radius-dy*sign,.61,.78)
+  }
+  render();commit();selectedLabel.textContent='Selected: '+desc()+' · moved with arrow key';
  });
  // Keep image selection and undo snapshots current when images finish loading asynchronously.
  const oldSync=syncLayerUI;
