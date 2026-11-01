@@ -134,6 +134,7 @@ async function main(){
   await general.goto('http://127.0.0.1:8765/studio/',{waitUntil:'networkidle'});
   assert.equal(await general.locator('.template-card').count(),6,'General edition keeps six neutral templates');
   assert.equal(await general.locator('.studio-logo-card').count(),0,'General edition has no Fenton artwork');
+  assert.equal(await general.locator('.studio-approved-art').count(),0,'General edition does not show Fenton curated art');
   const genericHeadline=await general.inputValue('#headline');
   await general.locator('.template-card[data-template="paw"]').click();
   assert.equal(await general.inputValue('#headline'),genericHeadline,'General edition also preserves user text');
