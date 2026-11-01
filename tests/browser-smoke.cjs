@@ -128,6 +128,25 @@ async function main(){
   assert.equal(await page.locator('#uxLogoSearch').count(),1,'One gallery search box');
   assert.equal(await page.locator('#uxLogoCategory').count(),1,'One gallery category dropdown');
   assert.equal(await page.locator('#approvedArtSearch, #approvedArtCategory, .studio-approved-art').count(),0,'No duplicate public-art panel');
+
+  // Student-requested tiger pictures are one tap away, separate from team emblems.
+  assert.equal(await page.locator('.studio-tiger-shortcuts').count(),1,'One prominent tiger artwork shortcut group');
+  await page.locator('[data-tiger-shortcut="pictures"]').click();
+  assert.equal(await page.inputValue('#uxLogoSearch'),'tiger','Tiger pictures search is set automatically');
+  assert.equal(await page.inputValue('#uxLogoCategory'),'School Logos','Tiger pictures filter chooses school artwork');
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),2,'Tiger pictures show two approved tiger illustrations');
+  assert.equal(await page.locator('.studio-logo-card[data-path="logos/school-logos/images.jpeg"]').count(),1,'Roaring tiger illustration is immediately findable');
+  assert.equal(await page.locator('.studio-logo-card[data-path="logos/school-logos/SE-Logo_medium.png"]').count(),1,'Tiger head illustration is immediately findable');
+  assert.equal(await page.locator('[data-tiger-shortcut="pictures"]').getAttribute('aria-pressed'),'true','Tiger pictures shortcut announces selection');
+  await page.locator('[data-tiger-shortcut="teams"]').click();
+  assert.equal(await page.inputValue('#uxLogoCategory'),'Robotics Teams','Team shortcut switches to robotics logos');
+  assert.ok(await page.locator('#uxLogoGroups .studio-logo-card').count()>4,'Team shortcut shows multiple tiger team logos');
+  await page.locator('[data-tiger-shortcut="all"]').click();
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),totalGalleryImages,'All images restores the complete gallery');
+  await page.locator('[data-tiger-shortcut="pictures"]').click();
+  await page.locator('#uxLogoSearch').fill('microscope');
+  assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),0,'Manual search clears tiger-only filter');
+  await page.locator('[data-tiger-shortcut="all"]').click();
   await page.selectOption('#uxLogoCategory','Public Images');
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-card').count(),18,'Public Images filter shows only reviewed art');
   assert.equal(await page.locator('#uxLogoGroups .studio-logo-group').count(),1,'Public Images has one grouped section');
@@ -201,6 +220,15 @@ async function main(){
   await canvas.focus();
   await canvas.press('Shift+ArrowRight');
   assert.ok((await page.evaluate(()=>layers[0].x))>initialImageX,'Keyboard moves selected image');
+
+  // Students can actually add a tiger picture; it becomes an editable image layer.
+  await page.locator('[data-tiger-shortcut="pictures"]').click();
+  const beforeTiger=await page.evaluate(()=>layers.length);
+  await page.locator('.studio-logo-card[data-path="logos/school-logos/SE-Logo_medium.png"]').click();
+  await page.waitForFunction(previous=>layers.length>previous||document.getElementById('uxLogoResults').textContent.startsWith('Could not add'),beforeTiger,{timeout:15000});
+  assert.equal(await page.evaluate(()=>layers.length),beforeTiger+1,'Tiger head artwork imports onto the button');
+  assert.ok((await page.evaluate(()=>layers.at(-1).name)).includes('Tiger Head'),'Imported tiger is labeled clearly');
+  assert.equal(await page.locator('#propertiesPanel #quickImageSize').count(),1,'Tiger is editable through existing image size controls');
 
   await page.locator('#tab-print').click();
   assert.equal(await page.locator('#legacyPrint').count(),0,'Fenton print tools are directly visible');
