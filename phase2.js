@@ -129,7 +129,16 @@
    // Remove only white/near-white regions connected to image edges.
    // This preserves enclosed white lettering and details inside logos.
    async function cleanSchoolBackground(blob){
-     const bitmap=await createImageBitmap(blob);
+     let bitmap;
+     try{bitmap=await createImageBitmap(blob)}
+     catch(error){
+       if(blob.type!=='image/svg+xml')throw error;
+       // Chrome's createImageBitmap(Blob) does not reliably decode SVG.
+       // A standard <img> can decode these three reviewed local SVG logos safely.
+       const url=URL.createObjectURL(blob),img=new Image();
+       try{img.src=url;await img.decode();bitmap=img}
+       finally{URL.revokeObjectURL(url)}
+     }
      const maxSide=1400,scale=Math.min(1,maxSide/Math.max(bitmap.width,bitmap.height));
      const cv=document.createElement('canvas');
      cv.width=Math.max(1,Math.round(bitmap.width*scale));cv.height=Math.max(1,Math.round(bitmap.height*scale));
