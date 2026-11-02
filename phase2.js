@@ -159,6 +159,29 @@
      cx.putImageData(pixels,0,0);
      return new Promise(resolve=>cv.toBlob(out=>resolve(out||blob),'image/png'));
    }
+   // Keep the three elementary school preview images identical to the cleaned
+   // image that students actually add to their buttons. Do not recolor or
+   // redesign school-specific artwork.
+   const elementarySealPaths=new Set([
+     'logos/school-logos/state-road-clean-approved.png',
+     'logos/school-logos/logo_Nr-web.png',
+     'logos/school-logos/logo_template_300.png'
+   ]);
+   const elementaryPreviewCache=new Map();
+   async function elementaryPreview(path,img){
+     let pending=elementaryPreviewCache.get(path);
+     if(!pending){
+       pending=(async()=>{
+         const response=await fetch(imageUrl(path),{cache:'force-cache'});
+         if(!response.ok)throw Error('Elementary school image unavailable ('+response.status+')');
+         return URL.createObjectURL(await cleanSchoolBackground(await response.blob()));
+       })();
+       elementaryPreviewCache.set(path,pending);
+       pending.catch(()=>elementaryPreviewCache.delete(path));
+     }
+     const url=await pending;
+     if(img.isConnected)img.src=url;
+   }
    // Logos in the library have two source styles:
    //  - Orange-backed badges and the dark Titanium mark: dark ink is the artwork.
    //  - Tungsten/Chromium/Iridium (including alternate marks): WHITE ink is the artwork.
@@ -280,12 +303,21 @@
          const picture=document.createElement('img');
          picture.alt='';picture.loading='lazy';
          if(item.category==='Robotics Teams')teamPreview(item.path,picture,'black').catch(()=>{button.classList.add('studio-logo-broken')});
-         else picture.src=imageUrl(item.path);
+         else if(elementarySealPaths.has(item.path)){
+           elementaryPreview(item.path,picture).catch(()=>{
+             button.classList.add('studio-logo-broken');
+             picture.hidden=true;
+           });
+         }else picture.src=imageUrl(item.path);
          picture.addEventListener('error',()=>{picture.hidden=true;button.classList.add('studio-logo-broken')});
          const label=document.createElement('span');label.textContent=item.name;
          const detail=document.createElement('small');
          detail.textContent=item.category==='Robotics Teams'?'Black logo · transparent background':
            item.category==='Public Images'?(item.subcategory+' · '+item.license.toUpperCase()+' · reviewed'):groupName;
+         if(elementarySealPaths.has(item.path)){
+           button.classList.add('elementary-seal');
+           detail.textContent='Full-color elementary seal · transparent outside';
+         }
          // Show a real background preview without baking the background into the logo.
          // All three SVGs remain transparent when placed on the button.
          const pawBackground=item.path.match(/^logos\/school-logos\/fenton-f-paw-for-(white|black|orange)-background\.svg$/);

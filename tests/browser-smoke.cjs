@@ -190,6 +190,69 @@ async function main(){
   assert.equal(await page.locator('#uxLogoCategory').count(),1,'One gallery category dropdown');
   assert.equal(await page.locator('#approvedArtSearch, #approvedArtCategory, .studio-approved-art').count(),0,'No duplicate public-art panel');
 
+  // All three Fenton elementary schools keep distinct branding, but use one
+  // consistent set of gallery names and preview the actual cleaned button art.
+  const elementaryPaths=[
+    'logos/school-logos/logo_Nr-web.png',
+    'logos/school-logos/state-road-clean-approved.png',
+    'logos/school-logos/logo_template_300.png'
+  ];
+  const elementaryNames=[
+    'North Road Elementary – Tigers Seal',
+    'State Road Elementary – Tigers Seal',
+    'Tomek-Eastern Elementary – Tigers Seal'
+  ];
+  const elementaries=gallery.images.filter(item=>item.name.includes('Elementary – Tigers Seal'));
+  assert.equal(elementaries.length,3,'All three elementary seals have consistent names');
+  assert.deepEqual(elementaries.map(item=>item.name),elementaryNames,'Elementary school names are standardized and sorted');
+  for(const item of elementaries){
+    assert.ok(elementaryPaths.includes(item.path),'Elementary seal points only to an approved original or approved cleanup');
+    assert.ok(item.tags.includes('Elementary')&&item.tags.includes('Fenton'),'Elementary school seal has consistent search tags');
+  }
+  assert.equal(gallery.images.filter(item=>item.path.includes('e1d2a38d-2143')).length,0,'Old smudged State Road JPEG is archived, not shown in gallery');
+  const schoolPage=await context.newPage(),schoolErrors=[];
+  schoolPage.on('pageerror',err=>schoolErrors.push(err.message));
+  await schoolPage.goto('http://127.0.0.1:8765/',{waitUntil:'networkidle'});
+  await schoolPage.locator('#tab-logos').click();
+  await schoolPage.locator('#uxLogoCategory').selectOption('School Logos');
+  await schoolPage.locator('#uxLogoSearch').fill('Elementary');
+  assert.equal(await schoolPage.locator('#uxLogoGroups .elementary-seal').count(),3,'All elementary schools appear in the same school logo gallery');
+  for(const logoPath of elementaryPaths){
+    const card=schoolPage.locator(`#uxLogoGroups .elementary-seal[data-path="${logoPath}"]`);
+    await schoolPage.waitForFunction(path=>{
+      const img=document.querySelector(`#uxLogoGroups button[data-path="${path}"] img`);
+      return img?.src.startsWith('blob:')&&img.complete&&img.naturalWidth>0;
+    },logoPath,{timeout:30000});
+    assert.ok((await card.innerText()).includes('transparent outside'),'Students know the school seal is transparent outside');
+    const alpha=await card.locator('img').evaluate(img=>{
+      const cv=document.createElement('canvas');cv.width=img.naturalWidth;cv.height=img.naturalHeight;
+      const ctx=cv.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
+      return {width:cv.width,height:cv.height,corner:ctx.getImageData(0,0,1,1).data[3]};
+    });
+    assert.equal(alpha.corner,0,logoPath+' gallery preview has transparent outer corners');
+    assert.ok(alpha.width>=250&&alpha.height>=250,logoPath+' keeps useful print detail');
+    const before=await schoolPage.evaluate(()=>window.ButtonStudioUX.getState().layers.length);
+    await card.click();
+    await schoolPage.waitForFunction(old=>window.ButtonStudioUX.getState().layers.length>old||
+      document.getElementById('uxLogoResults').textContent.startsWith('Could not add'),before,{timeout:25000});
+    const state=await schoolPage.evaluate(()=>window.ButtonStudioUX.getState());
+    assert.equal(state.layers.length,before+1,logoPath+' imports as an editable image layer');
+    assert.ok(state.layers.at(-1).data.startsWith('data:image/png'),logoPath+' is exported to a printable image layer');
+    const pixel=await schoolPage.evaluate(async()=>{
+      const l=window.ButtonStudioUX.getState().layers.at(-1);
+      const img=new Image();img.src=l.data;await img.decode();
+      const cv=document.createElement('canvas');cv.width=img.naturalWidth;cv.height=img.naturalHeight;
+      const cx=cv.getContext('2d',{willReadFrequently:true});cx.drawImage(img,0,0);
+      return [cx.getImageData(0,0,1,1).data[3],img.naturalWidth,img.naturalHeight];
+    });
+    assert.equal(pixel[0],0,logoPath+' inserted artwork has no opaque white rectangle');
+    assert.ok(pixel[1]>250&&pixel[2]>250,logoPath+' remains detailed when inserted');
+  }
+  const stateCard=schoolPage.locator('button[data-path="logos/school-logos/state-road-clean-approved.png"]');
+  assert.ok((await stateCard.innerText()).includes('State Road'),'The approved State Road seal retains its school identity');
+  assert.deepEqual(schoolErrors,[],'No errors rendering and adding the three elementary school logos');
+  await schoolPage.close();
+
   // Student-requested tiger pictures are one tap away, separate from team emblems.
   assert.equal(await page.locator('.studio-tiger-shortcuts').count(),1,'One prominent tiger artwork shortcut group');
   await page.locator('[data-tiger-shortcut="pictures"]').click();

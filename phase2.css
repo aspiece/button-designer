@@ -104,3 +104,14 @@
 }
 .studio-logo-card.f-paw-scheme small{line-height:1.3;font-weight:650}
 .studio-logo-card.f-paw-scheme:hover{border-color:#e77921}
+
+/* All Fenton elementary-school seals use an identical gallery presentation.
+   The picture is cleaned before preview; no school colors or shapes are edited. */
+.studio-logo-card.elementary-seal{min-height:146px;padding:8px 6px}
+.studio-logo-card.elementary-seal img{
+  height:82px;object-fit:contain;background:#fff;
+  padding:3px;border:1px solid #e2e8ee;border-radius:8px;
+}
+.studio-logo-card.elementary-seal small{
+  font-size:10px;font-weight:600;line-height:1.3;color:#4e6275;
+}
