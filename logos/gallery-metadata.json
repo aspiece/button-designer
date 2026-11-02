@@ -10,13 +10,7 @@
       ]
     },
     "logos/school-logos/e1d2a38d-2143-4107-9e18-c8b2f4986951.jpeg": {
-      "name": "State Road – Tigers School Emblem",
-      "category": "School Logos",
-      "tags": [
-        "Fenton",
-        "School",
-        "Tigers"
-      ]
+      "exclude": true
     },
     "logos/school-logos/images (2).jpeg": {
       "name": "Fenton Tigers – Paw and Script",
@@ -46,23 +40,27 @@
       ]
     },
     "logos/school-logos/logo_Nr-web.png": {
-      "name": "North Road – Tigers School Emblem",
+      "name": "North Road Elementary – Tigers Seal",
       "category": "School Logos",
       "tags": [
         "Fenton",
+        "Elementary",
         "School",
-        "Tigers"
+        "Tigers",
+        "North Road",
+        "Full color"
       ]
     },
     "logos/school-logos/logo_template_300.png": {
-      "name": "Tomek-Eastern Elementary – Tigers Emblem",
+      "name": "Tomek-Eastern Elementary – Tigers Seal",
       "category": "School Logos",
       "tags": [
         "Fenton",
+        "Elementary",
         "School",
         "Tigers",
         "Tomek-Eastern",
-        "Elementary"
+        "Full color"
       ]
     },
     "logos/school-logos/SE-Logo_medium.png": {
@@ -436,6 +434,19 @@
         "Black",
         "Orange",
         "White"
+      ]
+    },
+    "logos/school-logos/state-road-clean-approved.png": {
+      "name": "State Road Elementary – Tigers Seal",
+      "category": "School Logos",
+      "tags": [
+        "Fenton",
+        "Elementary",
+        "School",
+        "Tigers",
+        "State Road",
+        "Approved",
+        "Full color"
       ]
     }
   }
