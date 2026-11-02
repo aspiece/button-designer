@@ -83,6 +83,12 @@ The Fenton edition combines the automatically generated `logos/catalog.json` and
 
 The general-purpose edition at `/studio/` neither loads the approved-image catalog nor preloads any Fenton artwork; students can still upload their own local images there.
 
+## Fenton elementary school logo quality and alignment
+
+The three **elementary school** seals under **Logos → School Logos** are consistently named and searchable with `Elementary`: **North Road Elementary – Tigers Seal**, **State Road Elementary – Tigers Seal**, and **Tomek-Eastern Elementary – Tigers Seal**. The original North Road and Tomek-Eastern imagery has **not been redesigned**. The State Road image is the specific **coach-approved smudge-free artwork**, with white/checkerboard outside the circular seal removed from the real PNG alpha channel; the white interior of the badge remains opaque for contrast on black/orange/white button backgrounds. The old State Road JPEG remains archived but excluded from the public gallery.
+
+For all three elementary-school logos, gallery thumbnails now run through the **same edge-connected white-background cleanup** as the actual insertion workflow, so students can see the real printable transparent result before selecting an image. All three use matching thumbnail sizing/labels and retain original full-color branding. Chrome regression tests check the 3 corresponding gallery entries, thumbnail transparency, decoding, and adding each to editable printable button layers. State Road has a 1254px source, and school preview cleanup avoids recoloring the original emblems.
+
 ## Titanium Tigers #5114 — coach-approved gallery emblem
 
 The gallery uses the **coach-approved Titanium Tigers graphic**, originally reviewed as a 1254×1254 image. To avoid white backgrounds on colored buttons or jagged printing, it has been converted into a transparent, antialiased SVG at **1350×1350 viewBox resolution** with additional transparent margins. The emblem retains the approved gear, central split T, curved **TITANIUM TIGERS** letterforms, **5114** team number, and two dots as traced silhouettes—not regenerated fonts.
