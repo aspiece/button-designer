@@ -8,9 +8,9 @@ const openButton=document.createElement('button');
 openButton.id='openPrintStudio';openButton.type='button';
 openButton.className='btn primary full';openButton.textContent='Preview, print & combine buttons';
 const intro=document.createElement('p');intro.className='hint';
-intro.textContent='Open the print workspace for single designs or a whole team. Everything prints at actual size.';
+intro.textContent=general?'Open the print workspace for one design or a combined sheet. Everything prints at actual size.':'Open the print workspace for single designs or a whole team. Everything prints at actual size.';
 const heading=panel.querySelector('h2');if(heading)heading.after(intro,openButton);else panel.prepend(intro,openButton);
-if(general){
+if(general&&!document.getElementById('printPrimaryActions')){
  const legacy=document.createElement('details');legacy.id='legacyPrint';
  const legacySummary=document.createElement('summary');legacySummary.textContent='Quick print controls (advanced)';
  const movable=[...panel.children].filter(el=>el!==panel.querySelector('h2')&&el!==intro&&el!==openButton);
