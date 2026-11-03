@@ -7,6 +7,8 @@ A browser-based multi-size round button designer for Fenton Robotics students. [
 - **Fenton Robotics edition:** https://fentonbuttons.geneseelearninglab.com/ — has Fenton colors, preloaded team logos, and the approved shared team-design library.
 - **General edition:** https://fentonbuttons.geneseelearninglab.com/studio/ — neutral templates, no Fenton images or team library, and a separate local save. The general page uses the same underlying editing, cropping, sizing and PDF code.
 
+**Optional logo-only usage tracking:** The Fenton edition can report which built-in team, school, and FIRST logos are added to designs, without collecting student information. Tracking stays off until an Umami Website ID is configured. See [Logo analytics setup](LOGO-ANALYTICS.md).
+
 Both URLs currently live in this GitHub Pages repository. Creating a truly separate `aspiece/button-studio` repository requires a one-time GitHub repo creation step that is not available through the connected GitHub tools. See [General edition setup](studio/README.md).
 
 ## Features
