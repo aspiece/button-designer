@@ -28,9 +28,9 @@
  const library=document.createElement('section');library.className='studio-logo-library';
  library.setAttribute('aria-label',general?'Upload your own images':'Fenton image gallery with teacher-approved public art');
  library.innerHTML=general?
-  '<h3>Your artwork</h3><p>No preloaded team images. Upload a photo, logo, or illustration from your own device.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload an image</button>':
+  '<h3>Public Image Library</h3><p>Browse approved public-use illustrations or add your own image. No school, team, or FIRST branding is preloaded.</p><label for="uxLogoSearch">Search images</label><input type="search" id="uxLogoSearch" placeholder="Search nature, science, sports and more" autocomplete="off"><label for="uxLogoCategory">Category</label><select id="uxLogoCategory"><option value="All">All public images</option><option value="Robotics">Technology</option><option value="Science">Science</option><option value="Nature">Nature</option><option value="Sports">Sports</option><option value="School">Learning &amp; arts</option><option value="Seasonal">Seasons</option></select><div class="studio-logo-results" id="uxLogoResults" role="status" aria-live="polite">Loading public images…</div><div id="uxLogoGroups"></div><p id="uxLogoEmpty" hidden>No images match these filters.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload my own picture</button>':
   '<h3>Image Library</h3><p>Search team logos, school logos, FIRST artwork, and coach-approved public images in one place. Public images are reviewed before appearing here; there is no live internet image search.</p><label for="uxLogoSearch">Search images</label><input type="search" id="uxLogoSearch" placeholder="Search names, teams, or keywords" autocomplete="off"><label for="uxLogoCategory">Category</label><select id="uxLogoCategory"><option value="All">All images</option><option value="School Logos">School Logos</option><option value="Robotics Teams">Robotics Teams</option><option value="FIRST Logos">FIRST Logos</option><option value="Public Images">Public Images</option></select><div class="studio-logo-results" id="uxLogoResults" role="status" aria-live="polite">Loading images…</div><div id="uxLogoGroups"></div><p id="uxLogoEmpty" hidden>No images match these filters.</p><button type="button" class="studio-upload" id="uxUpload">+ Upload my own picture</button>';
- const logoTab=!general?document.getElementById('logosTools')?.querySelector('.toolSectionBody'):null;
+ const logoTab=document.getElementById('logosTools')?.querySelector('.toolSectionBody')||null;
  if(logoTab){
   // Keep the existing hidden inputs and layer controls wired to the editor,
   // while using the searchable gallery as the single image selection UI.
@@ -59,13 +59,13 @@
  }
 
 
- if(!general){
+ {
    const groupsContainer=document.getElementById('uxLogoGroups');
    const search=document.getElementById('uxLogoSearch');
    const select=document.getElementById('uxLogoCategory');
    const results=document.getElementById('uxLogoResults');
    const empty=document.getElementById('uxLogoEmpty');
-   const ORDER=['Robotics Teams','FIRST Logos','School Logos','Public Images'];
+   const ORDER=general?['Public Images']:['Robotics Teams','FIRST Logos','School Logos','Public Images'];
    const PUBLIC_CATEGORIES=new Set(['Robotics','Science','Nature','Sports','School','Seasonal']);
    let assets=[];
    let busy=false;
@@ -100,7 +100,7 @@
      return typeof path==='string'&&/^approved-art\/images\/[a-z0-9-]+\.(?:svg|png|jpe?g|webp)$/.test(path);
    }
    function validItemPath(item){
-     return item.category==='Public Images'?validPublicPath(item.path):validPath(item.path,item.category);
+     return general?(item.category==='Public Images'&&validPublicPath(item.path)):(item.category==='Public Images'?validPublicPath(item.path):validPath(item.path,item.category));
    }
    async function approvedPng(blob,color='original'){
      if(!blob.size||blob.size>8*1024*1024)throw Error('Artwork is empty or larger than 8 MB');
@@ -257,7 +257,7 @@
        img.dataset.requestedColor=color;
      }
    }
-   const imageUrl=path=>path.split('/').map(encodeURIComponent).join('/');
+   const imageUrl=path=>(general?'../':'')+path.split('/').map(encodeURIComponent).join('/');
    const publicBlobCache=new Map(),publicPreviewCache=new Map();
    function publicBlob(path,color){
      const key=path+'|'+color;
@@ -286,7 +286,7 @@
    function showGallery(){
      groupsContainer.replaceChildren();
      const query=search.value.trim().toLowerCase(),category=select.value;
-     const filtered=assets.filter(item=>(category==='All'||item.category===category)&&
+     const filtered=assets.filter(item=>(category==='All'||(general?item.subcategory===category:item.category===category))&&
       (!tigerPicturesOnly||TIGER_PICTURES.has(item.path))&&
       (item.name+' '+item.category+' '+(item.subcategory||'')+' '+item.tags.join(' ')).toLowerCase().includes(query));
      for(const groupName of ORDER){
@@ -373,7 +373,7 @@
      results.textContent='Loading image gallery…';
      const unavailable=[];
      let logoAssets=[],publicAssets=[];
-     try{
+     if(!general)try{
        const response=await fetch('logos/catalog.json',{cache:'no-store'});
        if(!response.ok)throw Error('Team-logo catalog unavailable');
        const manifest=await response.json();
@@ -389,12 +389,13 @@
        }));
      }catch(error){unavailable.push('team logos')}
      try{
-       const response=await fetch('approved-art/catalog.json',{cache:'no-store'});
+       const response=await fetch(general?'../approved-art/catalog.json':'approved-art/catalog.json',{cache:'no-store'});
        if(!response.ok)throw Error('Approved artwork catalog unavailable');
        const manifest=await response.json();
        if(manifest.version!==1||!Array.isArray(manifest.images))throw Error('Invalid approved artwork catalog');
        const paths=new Set(),ids=new Set();
        publicAssets=manifest.images.filter(item=>{
+          if(general&&(/fenton/i.test(item.id||'')||/fenton/i.test(item.name||'')||/fenton/i.test(item.path||'')))return false;
          if(!item||item.approved!==true||!validPublicPath(item.path)||typeof item.name!=='string'||
             !item.name.trim()||!PUBLIC_CATEGORIES.has(item.category)||
             !['cc0','pdm'].includes(item.license)||typeof item.id!=='string'||
