@@ -11,4 +11,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node tests/smoke.cjs
+      - name: Check standalone files and dependencies
+        run: node tests/smoke.cjs
+      - name: Install browser test driver
+        run: npm install --no-save playwright-core
+      - name: Verify the editor, gallery, PDF and mobile layout
+        run: node tests/browser.cjs
+      - name: Package the standalone repository for migration
+        if: always()
+        run: git archive --format=zip --output=button-studio-repo.zip HEAD
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: button-studio-standalone
+          path: button-studio-repo.zip
+          retention-days: 30
+          if-no-files-found: error
