@@ -6,7 +6,7 @@
   'use strict';
 
   // Obtain from your Umami website's tracking-code settings.
-  const UMAMI_WEBSITE_ID = '';
+  const UMAMI_WEBSITE_ID = 'b7b12dc9-cd5c-4465-b28c-58961dc1914d';
 
   const pending = [];
   let ready = false;
