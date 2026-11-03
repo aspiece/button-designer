@@ -1,59 +1,40 @@
-/* GitHub Pages offline shell. Never caches student uploads or private projects. */
-const VERSION = 'button-studio-pwa-20261102-v21';
+/* Offline shell for standalone Button Studio. Student projects are never transmitted or cached. */
+const VERSION = 'button-studio-standalone-v1';
 const SHELL = VERSION + '-shell';
 const RUNTIME = VERSION + '-runtime';
-const SCOPE = self.registration.scope;
-const ROOT = new URL(SCOPE);
+const ROOT = new URL(self.registration.scope);
 const FILES = [
-  './', './studio/', './phase1.js?v=20261102', './phase2.js?v=20261102', './phase3.js?v=20261102',
-  './phase1.css?v=20261101-all-screens', './phase2.css?v=20261101f', './phase3.css?v=20261101',
-  './properties.js?v=20261102', './properties.css?v=20261101d',
-  './library.js?v=20261101', './library.css?v=20261101', './studio/general.css?v=20261102',
-  './pwa.js?v=20261101', './pwa.css?v=20261101', './manifest.json', './manifest-general.json',
-  './icons/icon-192.png', './icons/icon-512.png', './logos/catalog.json', './approved-art/catalog.json',
-  './logos/school-logos/fenton-bengal-tiger-head.png',
-  './logos/school-logos/fenton-siberian-tiger-head.png',
-  './logos/school-logos/fenton-f-paw-for-white-background.svg',
-  './logos/school-logos/fenton-f-paw-for-black-background.svg',
-  './logos/school-logos/fenton-f-paw-for-orange-background.svg',
-  './logos/titanium-tigers-approved.svg',
-  './logos/school-logos/state-road-clean-approved.png',
-  './logos/school-logos/logo_Nr-web.png',
-  './logos/school-logos/logo_template_300.png'
+  './', './index.html', './phase1.js', './phase2.js', './phase3.js',
+  './properties.js', './pwa.js', './phase1.css', './phase2.css',
+  './phase3.css', './properties.css', './pwa.css', './general.css',
+  './manifest.json', './icons/icon-192.png', './icons/icon-512.png',
+  './approved-art/catalog.json'
 ];
-self.addEventListener('install', event => {
-  event.waitUntil(caches.open(SHELL).then(c => c.addAll(FILES.map(p => new URL(p, ROOT).href))).then(() => self.skipWaiting()));
+self.addEventListener('install',event=>{
+  event.waitUntil(caches.open(SHELL).then(c=>c.addAll(FILES.map(p=>new URL(p,ROOT).href))).then(()=>self.skipWaiting()));
 });
-self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(keys =>
-    Promise.all(keys.filter(k => k.startsWith('button-studio-pwa-') && ![SHELL,RUNTIME].includes(k)).map(k => caches.delete(k)))
-  ).then(() => self.clients.claim()));
+self.addEventListener('activate',event=>{
+  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('button-studio-')&&![SHELL,RUNTIME].includes(k)).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
 });
-async function remember(request, response) {
-  if (!response || !response.ok || response.type === 'opaque') return;
-  const cache = await caches.open(RUNTIME);
-  await cache.put(request, response.clone());
-  const keys = await cache.keys();
-  if (keys.length > 75) await Promise.all(keys.slice(0,keys.length-75).map(key => cache.delete(key)));
+async function remember(request,response){
+ if(!response||!response.ok||response.type==='opaque')return;
+ const c=await caches.open(RUNTIME);
+ await c.put(request,response.clone());
+ const keys=await c.keys();
+ if(keys.length>100)await Promise.all(keys.slice(0,keys.length-100).map(key=>c.delete(key)));
 }
-self.addEventListener('fetch', event => {
-  const request=event.request, url=new URL(request.url);
-  if (request.method !== 'GET' || url.origin !== ROOT.origin || !url.pathname.startsWith(ROOT.pathname)) return;
-  if (request.mode === 'navigate' || ['script','style','image','font'].includes(request.destination) || /\.json$/.test(url.pathname)) {
-    event.respondWith((async () => {
-      try {
-        const network = await fetch(request);
-        if (network.ok) event.waitUntil(remember(request, network));
-        return network;
-      } catch (_) {
-        const fromRuntime=await caches.match(request);
-        if (fromRuntime) return fromRuntime;
-        if (request.mode==='navigate') {
-          const fallback = url.pathname.startsWith(ROOT.pathname+'studio/') ? './studio/' : './';
-          return (await caches.match(new URL(fallback,ROOT).href)) || Response.error();
-        }
-        return Response.error();
-      }
-    })());
-  }
+self.addEventListener('fetch',event=>{
+ const request=event.request,url=new URL(request.url);
+ if(request.method!=='GET'||url.origin!==ROOT.origin||!url.pathname.startsWith(ROOT.pathname))return;
+ if(request.mode==='navigate'||['script','style','image','font'].includes(request.destination)||/\.json$/.test(url.pathname)){
+  event.respondWith((async()=>{
+   try{const network=await fetch(request);if(network.ok)event.waitUntil(remember(request,network));return network}
+   catch(_){
+    const fallback=await caches.match(request);
+    if(fallback)return fallback;
+    if(request.mode==='navigate')return (await caches.match(new URL('./',ROOT).href))||Response.error();
+    return Response.error();
+   }
+  })());
+ }
 });

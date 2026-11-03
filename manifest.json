@@ -1,13 +1,13 @@
 {
   "id": "./",
-  "name": "Fenton Robotics Button Designer",
-  "short_name": "Fenton Buttons",
-  "description": "Design and print Fenton Robotics buttons.",
+  "name": "Button Studio",
+  "short_name": "Button Studio",
+  "description": "Create, customize, save and print round buttons with public-use artwork.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f1f5fa",
-  "theme_color": "#171717",
+  "background_color": "#eef3f9",
+  "theme_color": "#2563eb",
   "icons": [
     {
       "src": "icons/icon-192.png",

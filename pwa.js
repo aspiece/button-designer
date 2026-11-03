@@ -47,7 +47,7 @@
     } else showGuide();
   });
   if ('serviceWorker' in navigator && window.isSecureContext) {
-    const workerURL = document.body.dataset.studioEdition === 'general' ? '../service-worker.js' : './service-worker.js';
+    const workerURL = './service-worker.js';
     window.addEventListener('load', () => {
       navigator.serviceWorker.register(workerURL)
         .catch(err => console.warn('Offline app registration unavailable:', err));

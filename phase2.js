@@ -257,7 +257,7 @@
        img.dataset.requestedColor=color;
      }
    }
-   const imageUrl=path=>(general?'../':'')+path.split('/').map(encodeURIComponent).join('/');
+   const imageUrl=path=>path.split('/').map(encodeURIComponent).join('/');
    const publicBlobCache=new Map(),publicPreviewCache=new Map();
    function publicBlob(path,color){
      const key=path+'|'+color;
@@ -389,7 +389,7 @@
        }));
      }catch(error){unavailable.push('team logos')}
      try{
-       const response=await fetch(general?'../approved-art/catalog.json':'approved-art/catalog.json',{cache:'no-store'});
+       const response=await fetch('approved-art/catalog.json',{cache:'no-store'});
        if(!response.ok)throw Error('Approved artwork catalog unavailable');
        const manifest=await response.json();
        if(manifest.version!==1||!Array.isArray(manifest.images))throw Error('Invalid approved artwork catalog');
