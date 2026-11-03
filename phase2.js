@@ -443,7 +443,11 @@
        // Let the existing file-import pipeline validate, normalize, and create an editable layer.
        const suffix=entry.category==='Robotics Teams'?' '+color:entry.category==='Public Images'?' '+publicColor:'';
         const file=new File([blob],(entry.name+suffix).replace(/[^a-zA-Z0-9 _-]/g,'').slice(0,55)+'.'+(entry.category!=='FIRST Logos'?'png':entry.path.split('.').pop().toLowerCase()),{type:entry.category!=='FIRST Logos'?'image/png':mimetype(entry.path)});
-       addImages([file]);
+       addImages([file],entry.category==='Public Images'?null:{
+         path:entry.path,
+         category:entry.category,
+         color:entry.category==='Robotics Teams'?color:null
+       });
        results.textContent='Added '+entry.name+'. Drag the image to position it.';
      }catch(err){
        results.textContent='Could not add '+entry.name+': '+err.message;
